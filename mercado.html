@@ -116,8 +116,18 @@ function addComp(){comps.push({id:++cid,preco:'',reviews:'',rating:'',pos:''});r
 function remComp(id){comps=comps.filter(c=>c.id!==id);renderComps();}
 function upComp(id,f,v){const c=comps.find(c=>c.id===id);if(c)c[f]=v;}
 function renderComps(){
-  const el=document.getElementById('comp-rows');if(!el)return;
-  el.innerHTML=comps.map((c,i)=>'<tr><td><span style="font-family:Syne,sans-serif;font-size:11px;font-weight:700;width:22px;height:22px;border-radius:5px;background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;color:var(--muted2)">'+(i+1)+'</span></td><td><input type="number" placeholder="preço" value="'+c.preco+'" oninput="upComp('+c.id+','preco',this.value)" style="width:80px"></td><td><input type="number" placeholder="reviews" value="'+c.reviews+'" oninput="upComp('+c.id+','reviews',this.value)" style="width:75px"></td><td><input type="number" placeholder="4.5" step="0.1" value="'+c.rating+'" oninput="upComp('+c.id+','rating',this.value)" style="width:60px"></td><td><button class="brm" onclick="remComp('+c.id+')">×</button></td></tr>').join('');
+  const el = document.getElementById('comp-rows');
+  if (!el) return;
+
+  el.innerHTML = comps.map((c, i) =>
+    '<tr>' +
+      '<td><span style="font-family:Syne,sans-serif;font-size:11px;font-weight:700;width:22px;height:22px;border-radius:5px;background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;color:var(--muted2)">' + (i + 1) + '</span></td>' +
+      '<td><input type="number" placeholder="preço" value="' + c.preco + '" oninput="upComp(' + c.id + ',\\'preco\\',this.value)" style="width:80px"></td>' +
+      '<td><input type="number" placeholder="reviews" value="' + c.reviews + '" oninput="upComp(' + c.id + ',\\'reviews\\',this.value)" style="width:75px"></td>' +
+      '<td><input type="number" placeholder="4.5" step="0.1" value="' + c.rating + '" oninput="upComp(' + c.id + ',\\'rating\\',this.value)" style="width:60px"></td>' +
+      '<td><button class="brm" onclick="remComp(' + c.id + ')">×</button></td>' +
+    '</tr>'
+  ).join('');
 }
 
 function renderForm(){
