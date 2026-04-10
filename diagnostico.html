@@ -501,19 +501,6 @@ try {
 } catch (e) {
   aiNote = `<div class="ai-note">Não foi possível gerar a análise completa com IA no momento.</div>`;
 }
-  const data = await res.json();
-
-  if (res.ok) {
-    const txt = (data.content || []).map(c => c.text || '').join('') || '';
-    if (txt) {
-      diagHTML = `<div class="card"><p class="card-section">Análise Nexora</p><div class="diag-text">${txt.replace(/\</g,'&lt;')}</div></div>`;
-    }
-  } else {
-    aiNote = `<div class="ai-note">Não foi possível gerar a análise completa com IA no momento.</div>`;
-  }
-} catch (e) {
-  aiNote = `<div class="ai-note">Não foi possível gerar a análise completa com IA no momento.</div>`;
-}
 
   // Save Cérebro 1 output to localStorage for Cérebro 2 and 3
   const nexoraOutput = {
