@@ -514,8 +514,15 @@ try {
     timestamp: new Date().toISOString()
   };
   try {
-  localStorage.setItem('nx_c1', JSON.stringify(nexoraOutput));
-} catch(e){}
+  if (nexoraOutput && Object.keys(nexoraOutput).length > 0) {
+    console.log('SALVANDO C1:', nexoraOutput);
+    localStorage.setItem('nx_c1', JSON.stringify(nexoraOutput));
+  } else {
+    console.warn('C1 NÃO SALVO: objeto vazio');
+  }
+} catch (e) {
+  console.error('Erro ao salvar C1', e);
+}
 
   document.getElementById('app').innerHTML=`
     <div style="padding-top:20px">
