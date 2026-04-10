@@ -104,11 +104,31 @@ try{C1=JSON.parse(localStorage.getItem('nx_c1')||'null');}catch(e){}
 try{C2=JSON.parse(localStorage.getItem('nx_c2')||'null');}catch(e){}
 
 function loadCtx(){
-  const el=document.getElementById('ctx-area');
-  const pills=[];
-  if(C1){const s=C1.scores;pills.push('<div class="ctx-pill"><span class="cdot" style="background:'+(s.ctr==='CRÍTICO'||s.ctr==='BAIXO'?'#f25858':'#22c98a')+'"></span>CTR <strong>'+s.ctr+'</strong></div>','<div class="ctx-pill"><span class="cdot" style="background:'+(s.cvr==='CRÍTICO'||s.cvr==='BAIXO'?'#f25858':'#22c98a')+'"></span>CVR <strong>'+s.cvr+'</strong></div>');if(C1.cat)pills.push('<div class="ctx-pill"><strong>'+(C1.sub||C1.cat)+'</strong></div>');}
-  if(C2){pills.push('<div class="ctx-pill">CTR-read <strong>'+C2.scores?.ctr_readiness+'/100</strong></div>','<div class="ctx-pill">CVR-read <strong>'+C2.scores?.cvr_readiness+'/100</strong></div>');}
-  el.innerHTML=pills.length?'<div class="ctx-pills">'+pills.join('')+'</div>':'<p style="font-size:12px;color:var(--muted2);margin-bottom:16px">Faça os Cérebros 1 e 2 primeiro para análise completa.</p>';
+  const el = document.getElementById('ctx-area');
+  const pills = [];
+
+  if (C1) {
+    const s = C1.scores || {};
+    pills.push(
+      '<div class="ctx-pill"><span class="cdot" style="background:' + ((s.ctr === 'CRÍTICO' || s.ctr === 'BAIXO') ? '#f25858' : '#22c98a') + '"></span>CTR <strong>' + (s.ctr || '-') + '</strong></div>',
+      '<div class="ctx-pill"><span class="cdot" style="background:' + ((s.cvr === 'CRÍTICO' || s.cvr === 'BAIXO') ? '#f25858' : '#22c98a') + '"></span>CVR <strong>' + (s.cvr || '-') + '</strong></div>'
+    );
+
+    if (C1.cat) {
+      pills.push('<div class="ctx-pill"><strong>' + (C1.sub || C1.cat) + '</strong></div>');
+    }
+  }
+
+  if (C2) {
+    pills.push(
+      '<div class="ctx-pill">CTR-read <strong>' + (C2.scores?.ctr_readiness ?? '-') + '/100</strong></div>',
+      '<div class="ctx-pill">CVR-read <strong>' + (C2.scores?.cvr_readiness ?? '-') + '/100</strong></div>'
+    );
+  }
+
+  el.innerHTML = pills.length
+    ? '<div class="ctx-pills">' + pills.join('') + '</div>'
+    : '<p style="font-size:12px;color:var(--muted2);margin-bottom:16px">Faça os Cérebros 1 e 2 primeiro para análise completa.</p>';
 }
 
 function selRb(el,k,val){document.querySelectorAll('[data-k="'+k+'"]').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');rbState[k]=val;}
