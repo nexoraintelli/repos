@@ -103,7 +103,7 @@ function render(){
     <div class="status-card ${h3?'ready':''}" onclick="location.href='mercado.html'"><span class="sdot ${h3?'sdot-ok':'sdot-no'}"></span><div><div class="sname">Cérebro 3</div><div class="ssub">${h3?'Mercado analisado':'Não feito'}</div></div></div>
   </div>`;
   if(!h1){
-    document.getElementById('app').innerHTML=status+'<div class="card" style="text-align:center;padding:32px"><p style="font-family:Syne,sans-serif;font-size:16px;font-weight:700;margin-bottom:8px">Comece pelo Cérebro 1</p><p style="font-size:13px;color:var(--muted);margin-bottom:18px">O Cérebro 1 é a base do diagnóstico.</p><button class="brun" style="width:auto;padding:11px 24px" onclick="location.href='diagnostico.html'">Ir ao Cérebro 1 →</button></div>';
+   document.getElementById('app').innerHTML = status + `<div class="card" style="text-align:center;padding:32px"><p style="font-family:Syne,sans-serif;font-size:16px;font-weight:700;margin-bottom:8px">Comece pelo Cérebro 1</p><p style="font-size:13px;color:var(--muted);margin-bottom:18px">O Cérebro 1 é a base do diagnóstico.</p><button class="brun" style="width:auto;padding:11px 24px" onclick="location.href='diagnostico.html'">Ir ao Cérebro 1 →</button></div>`;
     return;
   }
   document.getElementById('app').innerHTML=status+`
