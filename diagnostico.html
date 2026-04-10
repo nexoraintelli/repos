@@ -513,7 +513,9 @@ try {
     pilares: priorities().map(p=>p.txt),
     timestamp: new Date().toISOString()
   };
-  try { localStorage.setItem('nexora_cerebro1', JSON.stringify(nexoraOutput)); } catch(e){}
+  try {
+  localStorage.setItem('nx_c1', JSON.stringify(nexoraOutput));
+} catch(e){}
 
   document.getElementById('app').innerHTML=`
     <div style="padding-top:20px">
