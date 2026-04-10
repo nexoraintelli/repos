@@ -228,8 +228,6 @@ const STEPS=[
   {id:'ops',label:'Etapa 5 · Operação & logística'},
 ];
 
-const API_KEY = ''; // Cole sua API key aqui: sk-ant-...
-
 let step=0,D={};
 const v=k=>D[k]||'',n=k=>parseFloat(D[k])||0;
 
@@ -474,21 +472,26 @@ async function runDiag(){
   </div>`;
 
   const pris=priorities().map(p=>`<div class="pri-item"><span class="tag ${p.t}">${p.tag}</span>${p.txt}</div>`).join('');
+body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: buildPrompt() }]
+    })
+  });
 
-  let diagHTML='';
-  if(API_KEY){
-    try{
-      const res=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01'},
-        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:buildPrompt()}]})
-      });
-      const data=await res.json();
-      const txt=data.content?.map(c=>c.text||'').join('')||'';
-      if(txt)diagHTML=`<div class="card"><p class="card-section">Análise Nexora</p><div class="diag-text">${txt.replace(/</g,'&lt;')}</div></div>`;
-    }catch(e){}
+  const data = await res.json();
+
+  if (res.ok) {
+    const txt = (data.content || []).map(c => c.text || '').join('') || '';
+    if (txt) {
+      diagHTML = `<div class="card"><p class="card-section">Análise Nexora</p><div class="diag-text">${txt.replace(/\</g,'&lt;')}</div></div>`;
+    }
+  } else {
+    aiNote = `<div class="ai-note">Não foi possível gerar a análise completa com IA no momento.</div>`;
   }
-
-  const aiNote=!API_KEY?`<div class="ai-note">Para ativar a análise completa com IA, adicione sua <strong>API key da Anthropic</strong> no arquivo <code>index.html</code> na variável <code>API_KEY</code>. <a href="https://console.anthropic.com" target="_blank">Criar API key →</a></div>`:'';
+} catch (e) {
+  aiNote = `<div class="ai-note">Não foi possível gerar a análise completa com IA no momento.</div>`;
+}
 
   // Save Cérebro 1 output to localStorage for Cérebro 2 and 3
   const nexoraOutput = {
