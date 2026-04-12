@@ -150,13 +150,25 @@ footer{padding:32px 0;border-top:1px solid var(--border);margin-top:40px}
 </style>
 </head>
 <body>
-<div class="bg-glow"></div>
-<div class="wrap">
-  <header>
-  <div class="logo-row">
- S
+  <div class="bg-glow"></div>
+  <div class="wrap">
+    <header>
+      <div class="logo-row">
+        <img src="logo-horizontal.png" alt="Nexora Intelligence" class="logo-img">
+      </div>
 
-  <footer>
+      <h1 class="header-title">Diagnóstico de Performance</h1>
+      <p class="header-sub">Leitura baseada em benchmarks reais</p>
+    </header>
+
+    <div class="progress-wrap">
+      <div class="progress-track" id="progress-track"></div>
+      <p class="progress-label" id="progress-label"></p>
+    </div>
+
+    <div id="app"></div>
+
+    <footer>
     <p class="footer-text">Nexora Intelligence &copy; 2025 &nbsp;·&nbsp; Sistema proprietário de diagnóstico Amazon</p>
   </footer>
 </div>
