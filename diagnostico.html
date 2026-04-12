@@ -37,13 +37,13 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 
 /* HEADER */
 header{padding:40px 0 32px;border-bottom:1px solid var(--border)}
-.logo-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.logo-row{display:flex;justify-content:center;align-items:center;margin-bottom:20px}
+.logo-img{max-width:460px;width:100%;height:auto;display:block}
 .logo-icon{width:32px;height:65px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .logo-icon svg{width:16px;height:16px}
 .logo-text{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:.15em;color:var(--muted);text-transform:uppercase}
 .header-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--text);letter-spacing:-.02em}
 .header-sub{font-size:13px;color:var(--muted);margin-top:4px}
-
 /* PROGRESS */
 .progress-wrap{padding:28px 0 0}
 .progress-track{display:flex;gap:5px;margin-bottom:10px}
@@ -154,20 +154,7 @@ footer{padding:32px 0;border-top:1px solid var(--border);margin-top:40px}
 <div class="wrap">
   <header>
   <div class="logo-row">
-    <img src="logo-horizontal.png" alt="Nexora Intelligence" class="logo-img">
-    <span class="logo-text">Nexora Intelligence</span>
-  </div>
-
-  <h1 class="header-title">Diagnóstico de Performance</h1>
-  <p class="header-sub">Leitura baseada em benchmarks reais</p>
-</header>
-
-  <div class="progress-wrap">
-    <div class="progress-track" id="progress-track"></div>
-    <p class="progress-label" id="progress-label"></p>
-  </div>
-
-  <div id="app"></div>
+ S
 
   <footer>
     <p class="footer-text">Nexora Intelligence &copy; 2025 &nbsp;·&nbsp; Sistema proprietário de diagnóstico Amazon</p>
