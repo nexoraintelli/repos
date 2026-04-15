@@ -819,17 +819,6 @@ function mapBrainOutputToReport(source) {
     document.getElementById('btn-load-example').addEventListener('click', () => {
  const readyReport = localStorage.getItem("nexora_relatorio_pronto");
 
-if (readyReport) {
-  try {
-    reportData = JSON.parse(readyReport);
-    renderQuickEditor();
-    renderReport();
-  } catch (e) {
-    loadSource(exampleBrainOutput);
-  }
-} else {
-  loadSource(exampleBrainOutput);
-}
     document.getElementById('btn-load-source').addEventListener('click', () => {
       try {
         const parsed = JSON.parse(document.getElementById('input-source').value);
