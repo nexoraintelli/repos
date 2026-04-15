@@ -130,6 +130,7 @@ Retorne SOMENTE JSON sem markdown:
   try{
     const raw=await callAI([{role:'user',content:prompt}],2000);
     result=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    windows.result=result;
   }catch(e){
     let sc=70;
     if(C1?.scores?.ctr==='CRÍTICO')sc-=15;else if(C1?.scores?.ctr==='BAIXO')sc-=8;
@@ -139,6 +140,7 @@ Retorne SOMENTE JSON sem markdown:
     sc=Math.max(5,Math.min(100,Math.round(sc)));
     result={score_geral:sc,confianca:C1&&C2&&C3?'ALTA':C1?'MÉDIA':'BAIXA',problema_raiz:C1?.pilares?.[0]||'Configure a API key para análise completa',diagnostico_executivo:'IA indisponível: '+e.message+'\n\nConfigure a variável ANTHROPIC_API_KEY no painel do Vercel em Settings → Environment Variables.',pilares:{atracao:{status:C1?.scores?.ctr==='CRÍTICO'?'CRÍTICO':C1?.scores?.ctr==='BAIXO'?'ATENÇÃO':'OK',resumo:'CTR '+(C1?.ctr||'—')+'%'},conversao:{status:C1?.scores?.cvr==='CRÍTICO'?'CRÍTICO':C1?.scores?.cvr==='BAIXO'?'ATENÇÃO':'OK',resumo:'CVR '+(C1?.cvr||'—')+'%'},mercado:{status:C3?.riscos?.[0]?.nivel==='CRÍTICO'?'CRÍTICO':'ATENÇÃO',resumo:C3?.forca_dominante||'Não analisado'},operacao:{status:C1?.scores?.ops||'OK',resumo:(C1?.fba||'—')+' · BuyBox: '+(C1?.bb||'—')}},plano_acao:[{prioridade:'URGENTE',titulo:'Configurar API key no Vercel',detalhe:'Vá em Settings → Environment Variables e adicione ANTHROPIC_API_KEY com sua chave sk-ant-...',impacto:'Ativa diagnóstico completo com IA'}],veredicto:'Configure a API key para obter o veredicto estratégico completo.'};
   }
+  windows.result=result;
   const sc=result.score_geral;
   const scColor=sc>=70?'#22c98a':sc>=50?'#f5a623':'#f25858';
   function pClass(s){return s==='CRÍTICO'?'p-cr':s==='ATENÇÃO'?'p-wn':'p-ok';}
@@ -176,4 +178,37 @@ function resetAll(){
   location.href='diagnostico.html';
 }
 render();
-</script></body></html>
+render();
+</script>
+
+<div style="
+  position:fixed;
+  bottom:24px;
+  right:24px;
+  z-index:999;
+  display:flex;
+  gap:12px;
+">
+  <button onclick="abrirRelatorio()" style="
+    background:#e84040;
+    color:#fff;
+    border:none;
+    padding:14px 20px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:700;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+  ">
+    Gerar PDF
+  </button>
+</div>
+
+<script>
+function abrirRelatorio() {
+  localStorage.setItem("nexora_resultado", JSON.stringify(window.result || {}));
+  window.location.href = "/relatorio/relatorio_v3.html";
+}
+</script>
+
+</body>
+</html>
