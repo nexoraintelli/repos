@@ -725,53 +725,15 @@ function mapBrainOutputToReport(source) {
   return mapped;
 }
 
-function normalizeLevel(level) {
+  function normalizeLevel(level) {
   const safe = String(level || "").toLowerCase().trim();
 
   if (["good", "positivo", "healthy", "ok"].includes(safe)) return "good";
   if (["bad", "critical", "critico", "crítico", "ruim"].includes(safe)) return "bad";
-
-  // mapeamento dos status da síntese
-  if (["crítico", "critico"].includes(safe)) return "bad";
-  if (["atenção", "atencao"].includes(safe)) return "warn";
-  if (["ok"].includes(safe)) return "good";
+  if (["atenção", "atencao", "warn"].includes(safe)) return "warn";
 
   return "warn";
 }
-      if ((!mapped.metrics || mapped.metrics.length === 0) && Array.isArray(source?.metrics)) {
-        mapped.metrics = source.metrics.map(metric => ({
-          title: metric.title || "Métrica",
-          score: metric.value || metric.score || "-",
-          level: normalizeLevel(metric.level),
-          description: metric.diagnosis || metric.description || ""
-        }));
-      }
-
-      if (Array.isArray(source?.action_plan)) {
-        mapped.actions = source.action_plan
-          .sort((a, b) => (a.priority || 999) - (b.priority || 999))
-          .map(action => ({
-            title: action.title || "Ação prioritária",
-            description: action.description || ""
-          }));
-      }
-
-      if ((!mapped.actions || mapped.actions.length === 0) && Array.isArray(source?.actions)) {
-        mapped.actions = source.actions.map(action => ({
-          title: action.title || "Ação prioritária",
-          description: action.description || ""
-        }));
-      }
-
-      return mapped;
-    }
-
-    function normalizeLevel(level) {
-      const safe = String(level || "").toLowerCase().trim();
-      if (["good", "positivo", "healthy", "ok"].includes(safe)) return "good";
-      if (["bad", "critical", "critico", "crítico", "ruim"].includes(safe)) return "bad";
-      return "warn";
-    }
 
     function escapeHtml(text) {
       return String(text)
