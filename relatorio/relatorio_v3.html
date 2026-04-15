@@ -704,9 +704,18 @@
     }
 
     document.getElementById('btn-load-example').addEventListener('click', () => {
-      loadSource(exampleBrainOutput);
-    });
+   const savedResult = localStorage.getItem("nexora_resultado");
 
+if (savedResult) {
+  try {
+    const parsed = JSON.parse(savedResult);
+    loadSource(parsed);
+  } catch (e) {
+    loadSource(exampleBrainOutput);
+  }
+} else {
+  loadSource(exampleBrainOutput);
+}
     document.getElementById('btn-load-source').addEventListener('click', () => {
       try {
         const parsed = JSON.parse(document.getElementById('input-source').value);
