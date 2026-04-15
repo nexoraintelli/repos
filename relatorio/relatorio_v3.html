@@ -839,22 +839,24 @@ if (readyReport) {
       }
     });
 
-    document.getElementById('btn-refresh').addEventListener('click', () => {
-      syncQuickEditor();
-      renderReport();
-    });
+document.getElementById("btn-refresh").addEventListener("click", () => {
+  syncQuickEditor();
+  renderReport();
+});
 
-  document.getElementById("btn-reset").addEventListener("click", () => {
+document.getElementById("btn-reset").addEventListener("click", () => {
   loadSource(exampleBrainOutput);
 });
 
-const savedResult = localStorage.getItem("nexora_resultado");
+const readyReport = localStorage.getItem("nexora_relatorio_pronto");
 
-if (savedResult) {
+if (readyReport) {
   try {
-    const parsed = JSON.parse(savedResult);
-    loadSource(parsed);
+    reportData = JSON.parse(readyReport);
+    renderQuickEditor();
+    renderReport();
   } catch (e) {
+    console.error("Erro ao carregar nexora_relatorio_pronto:", e);
     loadSource(exampleBrainOutput);
   }
 } else {
