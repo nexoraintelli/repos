@@ -561,32 +561,184 @@
       };
     }
 
-    function mapBrainOutputToReport(source) {
-      const mapped = defaultMappedData();
+  <script>
+function mapBrainOutputToReport(source) {
+  const mapped = defaultMappedData();
 
-      mapped.clientName = source?.client?.name || source?.brand_name || "Cliente não informado";
-      mapped.productName = source?.client?.product || source?.product?.name || source?.asin || "Produto não informado";
-      mapped.reportDate = source?.delivery?.date || source?.report_date || new Date().toLocaleDateString('pt-BR');
-      mapped.deliveryType = source?.delivery?.type || source?.service_type || "Plano Estratégico";
+  const savedC1 = JSON.parse(localStorage.getItem("nx_c1") || "null");
+  const savedC2 = JSON.parse(localStorage.getItem("nx_c2") || "null");
+  const savedC3 = JSON.parse(localStorage.getItem("nx_c3") || "null");
 
-      const fs = source?.final_synthesis || {};
-      mapped.headline = fs.headline || "Relatório <span class='accent'>Estratégico</span><br>da <span class='red'>Nexora</span>";
-      mapped.coverSub = fs.cover_sub || "Diagnóstico automático convertido em relatório final Nexora.";
-      mapped.executiveSummary = fs.executive_summary || source?.executive_summary || "";
-      mapped.rootCause = fs.root_cause || source?.root_cause || "";
-      mapped.categorySummary = fs.category_summary || source?.category_summary || "";
-      mapped.categoryTags = Array.isArray(fs.category_tags) ? fs.category_tags : [];
-      mapped.nextSteps = fs.next_steps || source?.next_steps || "";
+  mapped.clientName =
+    source?.client?.name ||
+    savedC1?.brand ||
+    savedC1?.cliente ||
+    "Cliente não informado";
 
-      if (source?.metrics && typeof source.metrics === 'object' && !Array.isArray(source.metrics)) {
-        mapped.metrics = Object.values(source.metrics).map(metric => ({
-          title: metric.title || "Métrica",
-          score: metric.value || metric.score || "-",
-          level: normalizeLevel(metric.level),
-          description: metric.diagnosis || metric.description || ""
-        }));
+  mapped.productName =
+    source?.client?.product ||
+    savedC1?.asin ||
+    savedC1?.produto ||
+    "Produto não informado";
+
+  mapped.reportDate =
+    source?.delivery?.date ||
+    new Date().toLocaleDateString("pt-BR");
+
+  mapped.deliveryType =
+    source?.delivery?.type ||
+    "Plano Estratégico";
+
+  // CASO 1: formato completo antigo
+  if (source?.final_synthesis) {
+    const fs = source.final_synthesis;
+
+    mapped.headline =
+      fs.headline ||
+      "Relatório <span class='accent'>Estratégico</span><br>da <span class='red'>Nexora</span>";
+
+    mapped.coverSub =
+      fs.cover_sub ||
+      "Diagnóstico automático convertido em relatório final Nexora.";
+
+    mapped.executiveSummary =
+      fs.executive_summary || "";
+
+    mapped.rootCause =
+      fs.root_cause || "";
+
+    mapped.categorySummary =
+      fs.category_summary || "";
+
+    mapped.categoryTags =
+      Array.isArray(fs.category_tags) ? fs.category_tags : [];
+
+    mapped.nextSteps =
+      fs.next_steps || "";
+  }
+
+  // CASO 2: formato atual da síntese.html
+  else {
+    mapped.headline = `
+      Score geral de <span class="red">${source?.score_geral ?? "-"}</span><br>
+      com confiança <span class="accent">${source?.confianca ?? "N/A"}</span>
+    `;
+
+    mapped.coverSub =
+      source?.veredicto ||
+      "Síntese estratégica gerada automaticamente pela Nexora.";
+
+    mapped.executiveSummary =
+      source?.diagnostico_executivo ||
+      "Diagnóstico executivo não disponível.";
+
+    mapped.rootCause =
+      source?.problema_raiz ||
+      "Causa raiz não informada.";
+
+    const pilares = source?.pilares || {};
+
+    mapped.categorySummary = `
+      A leitura consolidada mostra confiança <strong>${source?.confianca ?? "N/A"}</strong>
+      com foco principal em <strong>${source?.problema_raiz || "causa raiz não identificada"}</strong>.
+    `;
+
+    mapped.categoryTags = [
+      `Score ${source?.score_geral ?? "-"}`,
+      `Confiança ${source?.confianca ?? "N/A"}`,
+      pilares?.atracao?.status ? `Atração ${pilares.atracao.status}` : null,
+      pilares?.conversao?.status ? `Conversão ${pilares.conversao.status}` : null,
+      pilares?.mercado?.status ? `Mercado ${pilares.mercado.status}` : null,
+      pilares?.operacao?.status ? `Operação ${pilares.operacao.status}` : null
+    ].filter(Boolean);
+
+    if (Array.isArray(source?.plano_acao) && source.plano_acao.length) {
+      mapped.nextSteps = source.plano_acao
+        .map((item, i) => `${i + 1}. ${item.titulo || item.title || "Ação"} — ${item.descricao || item.description || ""}`)
+        .join(" ");
+    } else {
+      mapped.nextSteps =
+        source?.veredicto ||
+        "Sem próximos passos detalhados.";
+    }
+  }
+
+  // Métricas
+  if (source?.metrics && typeof source.metrics === "object" && !Array.isArray(source.metrics)) {
+    mapped.metrics = Object.values(source.metrics).map(metric => ({
+      title: metric.title || "Métrica",
+      score: metric.value || metric.score || "-",
+      level: normalizeLevel(metric.level),
+      description: metric.diagnosis || metric.description || ""
+    }));
+  }
+
+  // fallback usando pilares da síntese atual
+  if ((!mapped.metrics || mapped.metrics.length === 0) && source?.pilares) {
+    const pilares = source.pilares;
+
+    mapped.metrics = [
+      {
+        title: "Atração",
+        score: pilares?.atracao?.status || "-",
+        level: normalizeLevel(pilares?.atracao?.status),
+        description: pilares?.atracao?.resumo || "Sem resumo"
+      },
+      {
+        title: "Conversão",
+        score: pilares?.conversao?.status || "-",
+        level: normalizeLevel(pilares?.conversao?.status),
+        description: pilares?.conversao?.resumo || "Sem resumo"
+      },
+      {
+        title: "Mercado",
+        score: pilares?.mercado?.status || "-",
+        level: normalizeLevel(pilares?.mercado?.status),
+        description: pilares?.mercado?.resumo || "Sem resumo"
+      },
+      {
+        title: "Operação",
+        score: pilares?.operacao?.status || "-",
+        level: normalizeLevel(pilares?.operacao?.status),
+        description: pilares?.operacao?.resumo || "Sem resumo"
       }
+    ];
+  }
 
+  // Plano de ação
+  if (Array.isArray(source?.action_plan)) {
+    mapped.actions = source.action_plan
+      .sort((a, b) => (a.priority || 999) - (b.priority || 999))
+      .map(action => ({
+        title: action.title || "Ação prioritária",
+        description: action.description || ""
+      }));
+  }
+
+  // fallback plano_acao da síntese
+  if ((!mapped.actions || mapped.actions.length === 0) && Array.isArray(source?.plano_acao)) {
+    mapped.actions = source.plano_acao.map((action, index) => ({
+      title: action.titulo || action.title || `Ação ${index + 1}`,
+      description: action.descricao || action.description || ""
+    }));
+  }
+
+  return mapped;
+}
+
+function normalizeLevel(level) {
+  const safe = String(level || "").toLowerCase().trim();
+
+  if (["good", "positivo", "healthy", "ok"].includes(safe)) return "good";
+  if (["bad", "critical", "critico", "crítico", "ruim"].includes(safe)) return "bad";
+
+  // mapeamento dos status da síntese
+  if (["crítico", "critico"].includes(safe)) return "bad";
+  if (["atenção", "atencao"].includes(safe)) return "warn";
+  if (["ok"].includes(safe)) return "good";
+
+  return "warn";
+}
       if ((!mapped.metrics || mapped.metrics.length === 0) && Array.isArray(source?.metrics)) {
         mapped.metrics = source.metrics.map(metric => ({
           title: metric.title || "Métrica",
@@ -730,11 +882,22 @@ if (savedResult) {
       renderReport();
     });
 
-    document.getElementById('btn-reset').addEventListener('click', () => {
-      loadSource(exampleBrainOutput);
-    });
+  document.getElementById("btn-reset").addEventListener("click", () => {
+  loadSource(exampleBrainOutput);
+});
 
+const savedResult = localStorage.getItem("nexora_resultado");
+
+if (savedResult) {
+  try {
+    const parsed = JSON.parse(savedResult);
+    loadSource(parsed);
+  } catch (e) {
     loadSource(exampleBrainOutput);
+  }
+} else {
+  loadSource(exampleBrainOutput);
+}
   </script>
 </body>
 </html>
