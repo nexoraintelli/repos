@@ -205,8 +205,105 @@ render();
 
 <script>
 function abrirRelatorio() {
-  localStorage.setItem("nexora_resultado", JSON.stringify(window.result || {}));
+  const result = window.result || {};
+  const c1 = JSON.parse(localStorage.getItem("nx_c1") || "null");
+  const c2 = JSON.parse(localStorage.getItem("nx_c2") || "null");
+  const c3 = JSON.parse(localStorage.getItem("nx_c3") || "null");
+
+  const reportPayload = {
+    clientName:
+      c1?.brand ||
+      c1?.cliente ||
+      "Cliente não informado",
+
+    productName:
+      c1?.asin ||
+      c1?.produto ||
+      "Produto não informado",
+
+    reportDate: new Date().toLocaleDateString("pt-BR"),
+    deliveryType: "Plano Estratégico",
+
+    headline: `Score geral de <span class="red">${result.score_geral ?? "-"}</span><br>com confiança <span class="accent">${result.confianca ?? "N/A"}</span>`,
+
+    coverSub:
+      result.veredicto ||
+      "Síntese estratégica gerada automaticamente pela Nexora.",
+
+    executiveSummary:
+      result.diagnostico_executivo ||
+      "Diagnóstico executivo não disponível.",
+
+    rootCause:
+      result.problema_raiz ||
+      "Causa raiz não informada.",
+
+    categorySummary: `
+      A leitura consolidada dos 3 cérebros aponta confiança <strong>${result.confianca ?? "N/A"}</strong>
+      e como principal bloqueio <strong>${result.problema_raiz || "não identificado"}</strong>.
+    `,
+
+    categoryTags: [
+      `Score ${result.score_geral ?? "-"}`,
+      `Confiança ${result.confianca ?? "N/A"}`,
+      result?.pilares?.atracao?.status ? `Atração ${result.pilares.atracao.status}` : null,
+      result?.pilares?.conversao?.status ? `Conversão ${result.pilares.conversao.status}` : null,
+      result?.pilares?.mercado?.status ? `Mercado ${result.pilares.mercado.status}` : null,
+      result?.pilares?.operacao?.status ? `Operação ${result.pilares.operacao.status}` : null
+    ].filter(Boolean),
+
+    nextSteps:
+      Array.isArray(result.plano_acao) && result.plano_acao.length
+        ? result.plano_acao
+            .map((item, i) => `${i + 1}. ${item.titulo || "Ação"} — ${item.descricao || ""}`)
+            .join(" ")
+        : (result.veredicto || "Sem próximos passos detalhados."),
+
+    metrics: [
+      {
+        title: "Atração",
+        score: result?.pilares?.atracao?.status || "-",
+        level: normalizeMetricLevel(result?.pilares?.atracao?.status),
+        description: result?.pilares?.atracao?.resumo || "Sem resumo"
+      },
+      {
+        title: "Conversão",
+        score: result?.pilares?.conversao?.status || "-",
+        level: normalizeMetricLevel(result?.pilares?.conversao?.status),
+        description: result?.pilares?.conversao?.resumo || "Sem resumo"
+      },
+      {
+        title: "Mercado",
+        score: result?.pilares?.mercado?.status || "-",
+        level: normalizeMetricLevel(result?.pilares?.mercado?.status),
+        description: result?.pilares?.mercado?.resumo || "Sem resumo"
+      },
+      {
+        title: "Operação",
+        score: result?.pilares?.operacao?.status || "-",
+        level: normalizeMetricLevel(result?.pilares?.operacao?.status),
+        description: result?.pilares?.operacao?.resumo || "Sem resumo"
+      }
+    ],
+
+    actions: Array.isArray(result.plano_acao)
+      ? result.plano_acao.map((item, index) => ({
+          title: item.titulo || `Ação ${index + 1}`,
+          description: item.descricao || ""
+        }))
+      : []
+  };
+
+  localStorage.setItem("nexora_relatorio_pronto", JSON.stringify(reportPayload));
   window.location.href = "/relatorio/relatorio_v3.html";
+}
+
+function normalizeMetricLevel(status) {
+  const s = String(status || "").toLowerCase().trim();
+  if (["crítico", "critico", "bad", "critical"].includes(s)) return "bad";
+  if (["atenção", "atencao", "warn"].includes(s)) return "warn";
+  if (["ok", "good"].includes(s)) return "good";
+  return "warn";
 }
 </script>
 
