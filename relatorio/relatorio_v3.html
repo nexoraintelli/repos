@@ -46,18 +46,12 @@
     }
 
     .noise{
-      position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.025;
-      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    }
-
-    .floating-actions{
       position:fixed;
-      top:20px;
-      right:20px;
-      z-index:99999;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      opacity:.025;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
 
     .layout{
@@ -71,6 +65,11 @@
       align-items:start;
     }
 
+    .layout.no-debug{
+      grid-template-columns:1fr;
+      width:min(1120px, calc(100vw - 32px));
+    }
+
     .panel, .report{
       background:linear-gradient(180deg, rgba(13,16,24,.98), rgba(8,8,15,1));
       border:1px solid var(--border);
@@ -79,7 +78,14 @@
       box-shadow:0 18px 60px rgba(0,0,0,.35);
     }
 
-    .panel{position:sticky;top:16px}
+    .panel{
+      position:sticky;
+      top:16px;
+    }
+
+    .hidden{
+      display:none !important;
+    }
 
     .panel-head, .topbar{
       display:flex;
@@ -92,42 +98,109 @@
       backdrop-filter:blur(10px);
     }
 
-    .brand{display:flex;align-items:center;gap:12px;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:.04em}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-family:'Syne',sans-serif;
+      font-weight:700;
+      letter-spacing:.04em;
+    }
+
     .brand-mark{
-      width:36px;height:36px;border-radius:10px;
+      width:36px;
+      height:36px;
+      border-radius:10px;
       background:linear-gradient(145deg, rgba(74,144,217,.18), rgba(232,64,64,.08));
       border:1px solid var(--border2);
-      display:flex;align-items:center;justify-content:center;
-      color:var(--text);font-size:15px;font-weight:800;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--text);
+      font-size:15px;
+      font-weight:800;
     }
-    .brand-copy{display:flex;flex-direction:column;line-height:1.1}
-    .brand-copy strong{font-size:13px}
-    .brand-copy span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-top:4px}
 
-    .panel-body{padding:18px;display:grid;gap:14px}
+    .brand-copy{
+      display:flex;
+      flex-direction:column;
+      line-height:1.1;
+    }
+
+    .brand-copy strong{font-size:13px}
+    .brand-copy span{
+      font-size:10px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      margin-top:4px;
+    }
+
+    .panel-body{
+      padding:18px;
+      display:grid;
+      gap:14px;
+    }
+
     .field label{
-      display:block;font-size:11px;color:var(--muted);text-transform:uppercase;
-      letter-spacing:.12em;margin-bottom:8px;font-weight:700;
+      display:block;
+      font-size:11px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      margin-bottom:8px;
+      font-weight:700;
     }
+
     .field input, .field textarea, .field select{
-      width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:12px;
-      color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:12px 14px;outline:none;
+      width:100%;
+      background:var(--surface2);
+      border:1px solid var(--border2);
+      border-radius:12px;
+      color:var(--text);
+      font-family:'DM Sans',sans-serif;
+      font-size:14px;
+      padding:12px 14px;
+      outline:none;
     }
+
     .field textarea{min-height:110px;resize:vertical}
     .field input:focus, .field textarea:focus, .field select:focus{
-      border-color:var(--blue2);box-shadow:0 0 0 3px rgba(42,106,176,.12);
+      border-color:var(--blue2);
+      box-shadow:0 0 0 3px rgba(42,106,176,.12);
     }
 
     .hint{font-size:12px;color:var(--muted)}
-    .divider{height:1px;background:var(--border);margin:4px 0}
 
-    .btn-row{display:flex;gap:10px;flex-wrap:wrap}
+    .divider{
+      height:1px;
+      background:var(--border);
+      margin:4px 0;
+    }
+
+    .btn-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
     .btn{
-      appearance:none;border:none;border-radius:10px;padding:12px 16px;
-      font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:.05em;
-      cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+      appearance:none;
+      border:none;
+      border-radius:10px;
+      padding:12px 16px;
+      font-family:'Syne',sans-serif;
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.05em;
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
       transition:all .2s ease;
     }
+
     .btn-primary{background:var(--red);color:#fff}
     .btn-primary:hover{background:var(--red2)}
     .btn-ghost{background:transparent;color:var(--gray);border:1px solid var(--border2)}
@@ -136,120 +209,330 @@
     .btn-blue:hover{filter:brightness(1.08)}
 
     .report{min-height:100vh}
+
     .cover{
       padding:48px 42px 42px;
       border-bottom:1px solid var(--border);
-      position:relative;overflow:hidden;
+      position:relative;
+      overflow:hidden;
     }
+
     .cover::before{
-      content:'';position:absolute;inset:-20% -10% auto auto;
-      width:320px;height:320px;border-radius:50%;
+      content:'';
+      position:absolute;
+      inset:-20% -10% auto auto;
+      width:320px;
+      height:320px;
+      border-radius:50%;
       background:radial-gradient(circle, rgba(74,144,217,.12) 0%, transparent 68%);
       pointer-events:none;
     }
 
     .cover-tag,.section-tag{
-      display:inline-flex;align-items:center;gap:8px;
-      font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.15em;
-      text-transform:uppercase;color:var(--blue-light);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-family:'Syne',sans-serif;
+      font-size:10px;
+      font-weight:700;
+      letter-spacing:.15em;
+      text-transform:uppercase;
+      color:var(--blue-light);
     }
-    .cover-tag{
-      padding:8px 14px;border-radius:999px;border:1px solid rgba(74,144,217,.2);
-      background:rgba(74,144,217,.05);margin-bottom:24px;
-    }
-    .cover-tag-dot{width:5px;height:5px;border-radius:50%;background:var(--red2)}
 
-    .cover-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:end}
-    h1{font-family:'Syne',sans-serif;font-size:clamp(38px,5vw,56px);line-height:1.02;letter-spacing:-.04em;margin-bottom:18px}
+    .cover-tag{
+      padding:8px 14px;
+      border-radius:999px;
+      border:1px solid rgba(74,144,217,.2);
+      background:rgba(74,144,217,.05);
+      margin-bottom:24px;
+    }
+
+    .cover-tag-dot{
+      width:5px;
+      height:5px;
+      border-radius:50%;
+      background:var(--red2);
+    }
+
+    .cover-grid{
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:28px;
+      align-items:end;
+    }
+
+    h1{
+      font-family:'Syne',sans-serif;
+      font-size:clamp(38px,5vw,56px);
+      line-height:1.02;
+      letter-spacing:-.04em;
+      margin-bottom:18px;
+    }
+
     .accent{color:var(--blue-light)}
     .red{color:var(--red2)}
-    .cover-sub{font-size:17px;color:var(--gray);max-width:560px;font-weight:300;line-height:1.8}
 
-    .meta-card,.card,.metric-card,.action-item{background:var(--surface);border:1px solid var(--border);border-radius:18px}
-    .meta-card{padding:22px;position:relative}
+    .cover-sub{
+      font-size:17px;
+      color:var(--gray);
+      max-width:560px;
+      font-weight:300;
+      line-height:1.8;
+    }
+
+    .meta-card,.card,.metric-card,.action-item{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:18px;
+    }
+
+    .meta-card{
+      padding:22px;
+      position:relative;
+    }
+
     .meta-card::after,.metric-card::after{
-      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:2px;
       background:linear-gradient(90deg,var(--blue),var(--blue-light));
     }
 
     .meta-list{display:grid;gap:14px}
-    .meta-item span{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:3px}
-    .meta-item strong{font-size:15px;font-weight:600;color:var(--text)}
 
-    .content{padding:36px 42px 46px;display:grid;gap:34px}
-    .section-tag{display:block;margin-bottom:10px}
-    .section-title{font-family:'Syne',sans-serif;font-size:24px;line-height:1.1;letter-spacing:-.02em;margin-bottom:16px}
+    .meta-item span{
+      display:block;
+      font-size:11px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      margin-bottom:3px;
+    }
+
+    .meta-item strong{
+      font-size:15px;
+      font-weight:600;
+      color:var(--text);
+    }
+
+    .content{
+      padding:36px 42px 46px;
+      display:grid;
+      gap:34px;
+    }
+
+    .section-tag{
+      display:block;
+      margin-bottom:10px;
+    }
+
+    .section-title{
+      font-family:'Syne',sans-serif;
+      font-size:24px;
+      line-height:1.1;
+      letter-spacing:-.02em;
+      margin-bottom:16px;
+    }
 
     .card{padding:24px}
-    .executive-text{font-size:16px;color:var(--text);line-height:1.85}
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .metric-card{padding:20px;position:relative;overflow:hidden}
-    .metric-card h3{font-family:'Syne',sans-serif;font-size:15px;margin-bottom:8px}
-    .score{font-family:'Syne',sans-serif;font-size:32px;line-height:1;margin-bottom:10px;color:var(--text)}
+    .executive-text{
+      font-size:16px;
+      color:var(--text);
+      line-height:1.85;
+      white-space:pre-wrap;
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+    }
+
+    .metric-card{
+      padding:20px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .metric-card h3{
+      font-family:'Syne',sans-serif;
+      font-size:15px;
+      margin-bottom:8px;
+    }
+
+    .score{
+      font-family:'Syne',sans-serif;
+      font-size:32px;
+      line-height:1;
+      margin-bottom:10px;
+      color:var(--text);
+    }
+
     .score.good{color:var(--success)}
     .score.warn{color:var(--warning)}
     .score.bad{color:var(--red2)}
-    .metric-card p{color:var(--gray);font-size:14px;line-height:1.7}
 
-    .root-cause{border-left:4px solid var(--red2);background:linear-gradient(180deg, rgba(232,64,64,.06), rgba(13,16,24,1))}
-    .root-cause p{font-size:16px;line-height:1.85;color:var(--text)}
+    .metric-card p{
+      color:var(--gray);
+      font-size:14px;
+      line-height:1.7;
+      white-space:pre-wrap;
+    }
 
-    .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .root-cause{
+      border-left:4px solid var(--red2);
+      background:linear-gradient(180deg, rgba(232,64,64,.06), rgba(13,16,24,1));
+    }
+
+    .root-cause p{
+      font-size:16px;
+      line-height:1.85;
+      color:var(--text);
+      white-space:pre-wrap;
+    }
+
+    .chips{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+
     .chip{
-      padding:7px 11px;border-radius:999px;background:var(--surface2);border:1px solid var(--border2);
-      font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
-      font-family:'Syne',sans-serif;color:var(--gray);
+      padding:7px 11px;
+      border-radius:999px;
+      background:var(--surface2);
+      border:1px solid var(--border2);
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+      font-family:'Syne',sans-serif;
+      color:var(--gray);
     }
 
     .actions{display:grid;gap:14px}
-    .action-item{display:flex;gap:14px;align-items:flex-start;padding:18px 18px}
-    .action-num{
-      width:34px;height:34px;border-radius:10px;flex:0 0 34px;display:flex;align-items:center;justify-content:center;
-      background:rgba(74,144,217,.1);border:1px solid rgba(74,144,217,.2);
-      color:var(--blue-light);font-family:'Syne',sans-serif;font-size:11px;font-weight:800;
-    }
-    .action-copy strong{display:block;font-family:'Syne',sans-serif;font-size:15px;margin-bottom:5px}
-    .action-copy p{font-size:14px;color:var(--gray);line-height:1.7}
 
-    .footer-note{border-top:1px solid var(--border);padding-top:22px;color:var(--muted);font-size:13px}
+    .action-item{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      padding:18px 18px;
+    }
+
+    .action-num{
+      width:34px;
+      height:34px;
+      border-radius:10px;
+      flex:0 0 34px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(74,144,217,.1);
+      border:1px solid rgba(74,144,217,.2);
+      color:var(--blue-light);
+      font-family:'Syne',sans-serif;
+      font-size:11px;
+      font-weight:800;
+    }
+
+    .action-copy strong{
+      display:block;
+      font-family:'Syne',sans-serif;
+      font-size:15px;
+      margin-bottom:5px;
+    }
+
+    .action-copy p{
+      font-size:14px;
+      color:var(--gray);
+      line-height:1.7;
+      white-space:pre-wrap;
+    }
+
+    .footer-note{
+      border-top:1px solid var(--border);
+      padding-top:22px;
+      color:var(--muted);
+      font-size:13px;
+    }
 
     @media print{
-      body{background:#fff;color:#111;padding:0}
-      body::before,.noise,.panel,.floating-actions{display:none !important}
-      .layout{display:block;width:100%;max-width:none;margin:0}
-      .report{width:100%;max-width:none;min-height:auto;margin:0;border:none;border-radius:0;box-shadow:none;background:#fff}
-      .cover,.content{padding-left:0;padding-right:0}
-      .cover,.meta-card,.card,.metric-card,.action-item{background:#fff !important;color:#111 !important;border-color:#dcdcdc !important}
-      .cover-sub,.metric-card p,.action-copy p,.footer-note,.meta-item span,.chip{color:#555 !important}
-      .section-tag,.cover-tag,.accent,.red,.score.good,.score.warn,.score.bad{color:#111 !important}
-      .root-cause{border-left-color:#111 !important;background:#fff !important}
+      body{
+        background:#fff;
+        color:#111;
+        padding:0;
+      }
+
+      body::before,.noise,.panel,.topbar .btn-row{display:none !important}
+
+      .layout,.layout.no-debug{
+        display:block;
+        width:100%;
+        max-width:none;
+        margin:0;
+      }
+
+      .report{
+        width:100%;
+        max-width:none;
+        min-height:auto;
+        margin:0;
+        border:none;
+        border-radius:0;
+        box-shadow:none;
+        background:#fff;
+      }
+
+      .cover,.content{
+        padding-left:0;
+        padding-right:0;
+      }
+
+      .cover,.meta-card,.card,.metric-card,.action-item{
+        background:#fff !important;
+        color:#111 !important;
+        border-color:#dcdcdc !important;
+      }
+
+      .cover-sub,.metric-card p,.action-copy p,.footer-note,.meta-item span,.chip{
+        color:#555 !important;
+      }
+
+      .section-tag,.cover-tag,.accent,.red,.score.good,.score.warn,.score.bad{
+        color:#111 !important;
+      }
+
+      .root-cause{
+        border-left-color:#111 !important;
+        background:#fff !important;
+      }
     }
 
     @media (max-width: 980px){
       .layout{grid-template-columns:1fr}
       .panel{position:relative;top:0}
-      .floating-actions{position:relative;top:auto;right:auto;width:min(1340px, calc(100vw - 32px));margin:0 auto 12px;z-index:2}
+      .layout.no-debug{width:min(1120px, calc(100vw - 16px))}
     }
+
     @media (max-width: 760px){
       body{padding:16px 0 48px}
-      .layout{width:min(1340px, calc(100vw - 16px))}
+      .layout,.layout.no-debug{width:min(1340px, calc(100vw - 16px))}
       .cover,.content{padding-left:22px;padding-right:22px}
       .cover-grid,.grid-2{grid-template-columns:1fr}
       h1{font-size:34px}
-      .floating-actions{width:min(1340px, calc(100vw - 16px))}
     }
   </style>
 </head>
 <body>
-  <div class="floating-actions">
-    <button id="btn-generate-pdf" class="btn btn-ghost">Gerar PDF</button>
-    <button id="btn-save-final" class="btn btn-primary">Salvar versão final</button>
-  </div>
-
   <div class="noise"></div>
 
-  <div class="layout">
-    <aside class="panel">
+  <div id="layout" class="layout">
+    <aside id="debug-panel" class="panel">
       <div class="panel-head">
         <div class="brand">
           <div class="brand-mark">N</div>
@@ -276,7 +559,7 @@
 
         <div class="field">
           <label>JSON mapeado para o relatório</label>
-          <textarea id="output-mapped" spellcheck="false" readonly></textarea>
+          <textarea id="output-mapped" spellcheck="false"></textarea>
           <div class="hint">Esse é o objeto final já pronto para popular o layout do relatório.</div>
         </div>
 
@@ -285,12 +568,13 @@
         <div id="quick-edit"></div>
 
         <div class="btn-row">
+          <button class="btn btn-primary" id="btn-save-final">Salvar versão final</button>
           <button class="btn btn-ghost" id="btn-reset">Resetar</button>
         </div>
       </div>
     </aside>
 
-    <div class="report" id="report-root">
+    <div class="report">
       <div class="topbar">
         <div class="brand">
           <div class="brand-mark">N</div>
@@ -298,6 +582,11 @@
             <strong>NEXORA INTELLIGENCE</strong>
             <span>Relatório dinâmico v3</span>
           </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-ghost" id="btn-open-debug">Debug</button>
+          <button class="btn btn-primary" id="btn-print">Gerar PDF</button>
         </div>
       </div>
 
@@ -383,202 +672,189 @@
         </section>
 
         <div class="footer-note">
-          Versão 3 preparada para receber o resultado dos cérebros da Nexora automaticamente. O próximo passo no seu sistema é trocar o JSON de exemplo pelo JSON real retornado pela análise.
+          Versão 3 preparada para receber automaticamente o resultado da síntese da Nexora e converter isso em relatório final.
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    const STORAGE_KEYS = {
-      raw: 'nexora_relatorio_pronto',
-      mapped: 'nexora_relatorio_mapeado',
-      c1: 'nx_c1',
-      c2: 'nx_c2',
-      c3: 'nx_c3'
-    };
-
     const exampleBrainOutput = {
-      client: {
-        name: 'Marca Exemplo',
-        product: 'ASIN B0XXXXX',
-        category: 'Pet Supplies',
-        phase: 'Validação'
-      },
-      delivery: {
-        date: '14/04/2026',
-        type: 'Plano Estratégico'
-      },
-      final_synthesis: {
-        headline: "O produto não está travado por falta de <span class='accent'>tráfego</span>. Está travado por <span class='red'>conversão e posicionamento</span>.",
-        cover_sub: 'Versão 3 do relatório da Nexora preparada para receber automaticamente os resultados reais dos cérebros do sistema.',
-        executive_summary: 'A leitura sistêmica da Nexora indica que o principal problema não está na atração inicial, mas na capacidade da página de sustentar intenção de compra dentro de uma categoria com alta sensibilidade a percepção de valor. O diagnóstico aponta desalinhamento entre preço, proposta e expectativa competitiva.',
-        root_cause: 'O bloqueio principal está no desalinhamento entre preço, posicionamento e percepção de valor. O produto consegue gerar algum interesse inicial, mas a página não converte com força suficiente dentro de um mercado mais sensível à comparação. Escalar tráfego antes de corrigir isso tende a aumentar desperdício.',
-        category_summary: 'A categoria apresenta sinais de <strong>Price War</strong> com elementos de <strong>Review Dominance</strong>, o que exige clareza de posicionamento e competitividade real na oferta.',
-        category_tags: ['Price War', 'Review Dominance', 'Categoria competitiva', 'Sensível a preço'],
-        next_steps: 'O diagnóstico mostra que o produto tem potencial, mas ainda não está encaixado da forma correta dentro da categoria. O primeiro movimento precisa ser estrutural: melhorar a forma como a oferta é percebida. Só depois disso faz sentido pressionar crescimento com mais tráfego.'
-      },
-      metrics: {
-        ctr: {
-          title: 'CTR',
-          value: '1.1%',
-          level: 'warn',
-          diagnosis: 'Baixo poder de atração frente ao contexto competitivo. Imagem principal e promessa não estão parando o scroll do cliente com força suficiente.'
+      score_geral: 72,
+      confianca: "ALTA",
+      problema_raiz: "O bloqueio principal está no desalinhamento entre preço, posicionamento e percepção de valor.",
+      diagnostico_executivo: "A leitura sistêmica da Nexora indica que o principal problema não está na atração inicial, mas na capacidade da página de sustentar intenção de compra dentro de uma categoria competitiva. O diagnóstico aponta desalinhamento entre preço, proposta e expectativa competitiva.",
+      pilares: {
+        atracao: {
+          status: "ATENÇÃO",
+          resumo: "CTR com poder de atração abaixo do ideal frente ao mercado."
         },
-        cvr: {
-          title: 'CVR',
-          value: '6.2%',
-          level: 'bad',
-          diagnosis: 'Conversão abaixo do esperado para a categoria. A percepção de valor não sustenta o clique gerado e a página não reduz objeções com clareza.'
+        conversao: {
+          status: "CRÍTICO",
+          resumo: "A página não sustenta a intenção de compra depois do clique."
         },
-        price: {
-          title: 'Preço',
-          value: '+12%',
-          level: 'warn',
-          diagnosis: 'Preço acima da média do Top 10 sem justificativa suficientemente forte na comunicação da oferta.'
+        mercado: {
+          status: "ATENÇÃO",
+          resumo: "Mercado com sinais de guerra de preço e barreira de reviews."
         },
-        reviews: {
-          title: 'Reviews',
-          value: '4.6★',
-          level: 'good',
-          diagnosis: 'Boa nota, mas volume ainda abaixo da barreira competitiva dominante da categoria, o que reduz confiança relativa.'
+        operacao: {
+          status: "OK",
+          resumo: "Operação estável, sem indício de gargalo principal."
         }
       },
-      action_plan: [
+      plano_acao: [
         {
-          priority: 1,
-          title: 'Reposicionar a oferta na página',
-          description: 'Reorganizar headline, imagem principal e estrutura de promessa para justificar melhor o preço e reduzir comparação rasa.'
+          prioridade: "URGENTE",
+          titulo: "Reposicionar a oferta na página",
+          detalhe: "Reorganizar headline, imagem principal e estrutura de promessa para justificar melhor o preço e reduzir comparação rasa."
         },
         {
-          priority: 2,
-          title: 'Revisar estratégia de preço',
-          description: 'Avaliar se o mercado comporta o preço atual sem reforço adicional de diferenciação. Se não comportar, reposicionar ou ajustar faixa competitiva.'
+          prioridade: "IMPORTANTE",
+          titulo: "Revisar estratégia de preço",
+          detalhe: "Avaliar se o mercado comporta o preço atual sem reforço adicional de diferenciação."
         },
         {
-          priority: 3,
-          title: 'Escalar tráfego só depois da correção',
-          description: 'Evitar aumentar investimento em Ads antes de melhorar base de conversão. O foco agora é eficiência, não volume.'
+          prioridade: "ESTRATÉGICO",
+          titulo: "Escalar tráfego só depois da correção",
+          detalhe: "Evitar aumentar investimento em Ads antes de melhorar a base de conversão."
         }
-      ]
+      ],
+      veredicto: "O produto tem potencial, mas ainda não está encaixado da forma correta dentro da categoria."
     };
 
-    let reportData = defaultMappedData();
-    let rawSourceData = null;
+    let reportData = {};
 
     function defaultMappedData() {
       return {
-        clientName: '',
-        productName: '',
-        reportDate: '',
-        deliveryType: '',
-        headline: '',
-        coverSub: '',
-        executiveSummary: '',
-        rootCause: '',
-        categorySummary: '',
+        clientName: "",
+        productName: "",
+        reportDate: "",
+        deliveryType: "",
+        headline: "",
+        coverSub: "",
+        executiveSummary: "",
+        rootCause: "",
+        categorySummary: "",
         categoryTags: [],
-        nextSteps: '',
+        nextSteps: "",
         metrics: [],
         actions: []
       };
     }
 
     function normalizeLevel(level) {
-      const safe = String(level || '').toLowerCase().trim();
-      if (['good', 'positivo', 'healthy', 'ok', 'forte'].includes(safe)) return 'good';
-      if (['bad', 'critical', 'critico', 'crítico', 'ruim', 'fraco'].includes(safe)) return 'bad';
-      if (['atenção', 'atencao', 'warn', 'moderado', 'médio', 'medio'].includes(safe)) return 'warn';
-      return 'warn';
+      const safe = String(level || "").toLowerCase().trim();
+
+      if (["good", "positivo", "healthy", "ok"].includes(safe)) return "good";
+      if (["bad", "critical", "critico", "crítico", "ruim"].includes(safe)) return "bad";
+      if (["atenção", "atencao", "warn"].includes(safe)) return "warn";
+
+      return "warn";
     }
 
     function escapeHtml(text) {
-      return String(text ?? '')
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;');
-    }
-
-    function readJsonStorage(key) {
-      try {
-        const raw = localStorage.getItem(key);
-        return raw ? JSON.parse(raw) : null;
-      } catch (error) {
-        console.warn(`Erro ao ler ${key}:`, error);
-        return null;
-      }
-    }
-
-    function persistCurrentState() {
-      localStorage.setItem(STORAGE_KEYS.mapped, JSON.stringify(reportData));
-      if (rawSourceData) {
-        localStorage.setItem(STORAGE_KEYS.raw, JSON.stringify(rawSourceData));
-      }
+      return String(text ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
     }
 
     function mapBrainOutputToReport(source) {
       const mapped = defaultMappedData();
 
-      const savedC1 = readJsonStorage(STORAGE_KEYS.c1);
-      const savedC2 = readJsonStorage(STORAGE_KEYS.c2);
-      const savedC3 = readJsonStorage(STORAGE_KEYS.c3);
+      const savedC1 = JSON.parse(localStorage.getItem("nx_c1") || "null");
+      const savedC2 = JSON.parse(localStorage.getItem("nx_c2") || "null");
+      const savedC3 = JSON.parse(localStorage.getItem("nx_c3") || "null");
 
       mapped.clientName =
+        source?.clientName ||
         source?.client?.name ||
-        source?.cliente ||
         savedC1?.brand ||
         savedC1?.cliente ||
-        savedC2?.brand ||
-        savedC3?.brand ||
-        'Cliente não informado';
+        "Cliente não informado";
 
       mapped.productName =
+        source?.productName ||
         source?.client?.product ||
-        source?.produto ||
-        source?.asin ||
         savedC1?.asin ||
         savedC1?.produto ||
-        savedC2?.asin ||
-        savedC3?.asin ||
-        'Produto não informado';
+        "Produto não informado";
 
-      mapped.reportDate = source?.delivery?.date || new Date().toLocaleDateString('pt-BR');
-      mapped.deliveryType = source?.delivery?.type || 'Plano Estratégico';
+      mapped.reportDate =
+        source?.reportDate ||
+        source?.delivery?.date ||
+        new Date().toLocaleDateString("pt-BR");
+
+      mapped.deliveryType =
+        source?.deliveryType ||
+        source?.delivery?.type ||
+        "Plano Estratégico";
+
+      if (source?.headline || source?.executiveSummary || source?.metrics || source?.actions) {
+        mapped.headline =
+          source.headline ||
+          'Relatório <span class="accent">Estratégico</span><br>da <span class="red">Nexora</span>';
+
+        mapped.coverSub =
+          source.coverSub ||
+          "Diagnóstico automático convertido em relatório final Nexora.";
+
+        mapped.executiveSummary = source.executiveSummary || "";
+        mapped.rootCause = source.rootCause || "";
+        mapped.categorySummary = source.categorySummary || "";
+        mapped.categoryTags = Array.isArray(source.categoryTags) ? source.categoryTags : [];
+        mapped.nextSteps = source.nextSteps || "";
+        mapped.metrics = Array.isArray(source.metrics) ? source.metrics : [];
+        mapped.actions = Array.isArray(source.actions) ? source.actions : [];
+
+        return mapped;
+      }
 
       if (source?.final_synthesis) {
         const fs = source.final_synthesis;
 
         mapped.headline =
           fs.headline ||
-          "Relatório <span class='accent'>Estratégico</span><br>da <span class='red'>Nexora</span>";
+          'Relatório <span class="accent">Estratégico</span><br>da <span class="red">Nexora</span>';
 
-        mapped.coverSub = fs.cover_sub || 'Diagnóstico automático convertido em relatório final Nexora.';
-        mapped.executiveSummary = fs.executive_summary || '';
-        mapped.rootCause = fs.root_cause || '';
-        mapped.categorySummary = fs.category_summary || '';
+        mapped.coverSub =
+          fs.cover_sub ||
+          "Diagnóstico automático convertido em relatório final Nexora.";
+
+        mapped.executiveSummary = fs.executive_summary || "";
+        mapped.rootCause = fs.root_cause || "";
+        mapped.categorySummary = fs.category_summary || "";
         mapped.categoryTags = Array.isArray(fs.category_tags) ? fs.category_tags : [];
-        mapped.nextSteps = fs.next_steps || '';
+        mapped.nextSteps = fs.next_steps || "";
       } else {
         mapped.headline = `
-          Score geral de <span class="red">${escapeHtml(source?.score_geral ?? '-')}</span><br>
-          com confiança <span class="accent">${escapeHtml(source?.confianca ?? 'N/A')}</span>
+          Score geral de <span class="red">${source?.score_geral ?? "-"}</span><br>
+          com confiança <span class="accent">${source?.confianca ?? "N/A"}</span>
         `;
 
-        mapped.coverSub = source?.veredicto || 'Síntese estratégica gerada automaticamente pela Nexora.';
-        mapped.executiveSummary = source?.diagnostico_executivo || 'Diagnóstico executivo não disponível.';
-        mapped.rootCause = source?.problema_raiz || 'Causa raiz não informada.';
+        mapped.coverSub =
+          source?.veredicto ||
+          "Síntese estratégica gerada automaticamente pela Nexora.";
+
+        mapped.executiveSummary =
+          source?.diagnostico_executivo ||
+          "Diagnóstico executivo não disponível.";
+
+        mapped.rootCause =
+          source?.problema_raiz ||
+          "Causa raiz não informada.";
 
         const pilares = source?.pilares || {};
 
         mapped.categorySummary = `
-          A leitura consolidada mostra confiança <strong>${escapeHtml(source?.confianca ?? 'N/A')}</strong>
-          com foco principal em <strong>${escapeHtml(source?.problema_raiz || 'causa raiz não identificada')}</strong>.
+          A leitura consolidada dos 3 cérebros aponta confiança <strong>${source?.confianca ?? "N/A"}</strong>
+          e como principal bloqueio <strong>${source?.problema_raiz || "não identificado"}</strong>.
         `;
 
         mapped.categoryTags = [
-          `Score ${source?.score_geral ?? '-'}`,
-          `Confiança ${source?.confianca ?? 'N/A'}`,
+          `Score ${source?.score_geral ?? "-"}`,
+          `Confiança ${source?.confianca ?? "N/A"}`,
           pilares?.atracao?.status ? `Atração ${pilares.atracao.status}` : null,
           pilares?.conversao?.status ? `Conversão ${pilares.conversao.status}` : null,
           pilares?.mercado?.status ? `Mercado ${pilares.mercado.status}` : null,
@@ -587,65 +863,68 @@
 
         if (Array.isArray(source?.plano_acao) && source.plano_acao.length) {
           mapped.nextSteps = source.plano_acao
-            .map((item, i) => `${i + 1}. ${item.titulo || item.title || 'Ação'} — ${item.descricao || item.description || ''}`)
-            .join(' ');
+            .map((item, i) => `${i + 1}. ${item.titulo || item.title || "Ação"} — ${item.detalhe || item.descricao || item.description || ""}`)
+            .join(" ");
         } else {
-          mapped.nextSteps = source?.veredicto || 'Sem próximos passos detalhados.';
+          mapped.nextSteps =
+            source?.veredicto ||
+            "Sem próximos passos detalhados.";
         }
       }
 
-      if (source?.metrics && typeof source.metrics === 'object' && !Array.isArray(source.metrics)) {
+      if (source?.metrics && typeof source.metrics === "object" && !Array.isArray(source.metrics)) {
         mapped.metrics = Object.values(source.metrics).map(metric => ({
-          title: metric.title || 'Métrica',
-          score: metric.value || metric.score || '-',
+          title: metric.title || "Métrica",
+          score: metric.value || metric.score || "-",
           level: normalizeLevel(metric.level),
-          description: metric.diagnosis || metric.description || ''
+          description: metric.diagnosis || metric.description || ""
         }));
       }
 
       if ((!mapped.metrics || mapped.metrics.length === 0) && source?.pilares) {
         const pilares = source.pilares;
+
         mapped.metrics = [
           {
-            title: 'Atração',
-            score: pilares?.atracao?.status || '-',
+            title: "Atração",
+            score: pilares?.atracao?.status || "-",
             level: normalizeLevel(pilares?.atracao?.status),
-            description: pilares?.atracao?.resumo || 'Sem resumo'
+            description: pilares?.atracao?.resumo || "Sem resumo"
           },
           {
-            title: 'Conversão',
-            score: pilares?.conversao?.status || '-',
+            title: "Conversão",
+            score: pilares?.conversao?.status || "-",
             level: normalizeLevel(pilares?.conversao?.status),
-            description: pilares?.conversao?.resumo || 'Sem resumo'
+            description: pilares?.conversao?.resumo || "Sem resumo"
           },
           {
-            title: 'Mercado',
-            score: pilares?.mercado?.status || '-',
+            title: "Mercado",
+            score: pilares?.mercado?.status || "-",
             level: normalizeLevel(pilares?.mercado?.status),
-            description: pilares?.mercado?.resumo || 'Sem resumo'
+            description: pilares?.mercado?.resumo || "Sem resumo"
           },
           {
-            title: 'Operação',
-            score: pilares?.operacao?.status || '-',
+            title: "Operação",
+            score: pilares?.operacao?.status || "-",
             level: normalizeLevel(pilares?.operacao?.status),
-            description: pilares?.operacao?.resumo || 'Sem resumo'
+            description: pilares?.operacao?.resumo || "Sem resumo"
           }
-        ].filter(item => item.score !== '-' || item.description !== 'Sem resumo');
+        ];
       }
 
       if (Array.isArray(source?.action_plan)) {
         mapped.actions = source.action_plan
           .sort((a, b) => (a.priority || 999) - (b.priority || 999))
           .map(action => ({
-            title: action.title || 'Ação prioritária',
-            description: action.description || ''
+            title: action.title || "Ação prioritária",
+            description: action.description || ""
           }));
       }
 
       if ((!mapped.actions || mapped.actions.length === 0) && Array.isArray(source?.plano_acao)) {
         mapped.actions = source.plano_acao.map((action, index) => ({
           title: action.titulo || action.title || `Ação ${index + 1}`,
-          description: action.descricao || action.description || ''
+          description: action.detalhe || action.descricao || action.description || ""
         }));
       }
 
@@ -653,7 +932,8 @@
     }
 
     function renderQuickEditor() {
-      const wrap = document.getElementById('quick-edit');
+      const wrap = document.getElementById("quick-edit");
+
       wrap.innerHTML = `
         <div class="field">
           <label>Cliente</label>
@@ -675,125 +955,162 @@
     }
 
     function syncQuickEditor() {
-      const client = document.getElementById('edit-clientName');
-      const product = document.getElementById('edit-productName');
-      const executive = document.getElementById('edit-executiveSummary');
-      const rootCause = document.getElementById('edit-rootCause');
+      const clientInput = document.getElementById("edit-clientName");
+      const productInput = document.getElementById("edit-productName");
+      const summaryInput = document.getElementById("edit-executiveSummary");
+      const rootInput = document.getElementById("edit-rootCause");
 
-      if (client) reportData.clientName = client.value;
-      if (product) reportData.productName = product.value;
-      if (executive) reportData.executiveSummary = executive.value;
-      if (rootCause) reportData.rootCause = rootCause.value;
+      if (clientInput) reportData.clientName = clientInput.value;
+      if (productInput) reportData.productName = productInput.value;
+      if (summaryInput) reportData.executiveSummary = summaryInput.value;
+      if (rootInput) reportData.rootCause = rootInput.value;
     }
 
     function renderReport() {
-      document.getElementById('cover-headline').innerHTML = reportData.headline;
-      document.getElementById('cover-sub').textContent = reportData.coverSub;
-      document.getElementById('meta-client').textContent = reportData.clientName;
-      document.getElementById('meta-product').textContent = reportData.productName;
-      document.getElementById('meta-date').textContent = reportData.reportDate;
-      document.getElementById('meta-delivery').textContent = reportData.deliveryType;
-      document.getElementById('executive-summary').textContent = reportData.executiveSummary;
-      document.getElementById('root-cause').textContent = reportData.rootCause;
-      document.getElementById('category-summary').innerHTML = reportData.categorySummary;
+      document.getElementById("cover-headline").innerHTML = reportData.headline || "";
+      document.getElementById("cover-sub").textContent = reportData.coverSub || "";
+      document.getElementById("meta-client").textContent = reportData.clientName || "";
+      document.getElementById("meta-product").textContent = reportData.productName || "";
+      document.getElementById("meta-date").textContent = reportData.reportDate || "";
+      document.getElementById("meta-delivery").textContent = reportData.deliveryType || "";
+      document.getElementById("executive-summary").textContent = reportData.executiveSummary || "";
+      document.getElementById("root-cause").textContent = reportData.rootCause || "";
+      document.getElementById("category-summary").innerHTML = reportData.categorySummary || "";
 
-      document.getElementById('category-chips').innerHTML = (reportData.categoryTags || [])
+      document.getElementById("category-chips").innerHTML = (reportData.categoryTags || [])
         .map(tag => `<span class="chip">${escapeHtml(tag)}</span>`)
-        .join('');
+        .join("");
 
-      document.getElementById('metrics-list').innerHTML = (reportData.metrics || []).map(metric => `
+      document.getElementById("metrics-list").innerHTML = (reportData.metrics || []).map(metric => `
         <div class="metric-card">
           <h3>${escapeHtml(metric.title)}</h3>
           <div class="score ${escapeHtml(metric.level)}">${escapeHtml(metric.score)}</div>
           <p>${escapeHtml(metric.description)}</p>
         </div>
-      `).join('');
+      `).join("");
 
-      document.getElementById('actions-list').innerHTML = (reportData.actions || []).map((action, index) => `
+      document.getElementById("actions-list").innerHTML = (reportData.actions || []).map((action, index) => `
         <div class="action-item">
-          <div class="action-num">${String(index + 1).padStart(2, '0')}</div>
+          <div class="action-num">${String(index + 1).padStart(2, "0")}</div>
           <div class="action-copy">
             <strong>${escapeHtml(action.title)}</strong>
             <p>${escapeHtml(action.description)}</p>
           </div>
         </div>
-      `).join('');
+      `).join("");
 
-      document.getElementById('next-steps').textContent = reportData.nextSteps;
-      document.getElementById('output-mapped').value = JSON.stringify(reportData, null, 2);
+      document.getElementById("next-steps").textContent = reportData.nextSteps || "";
+      document.getElementById("output-mapped").value = JSON.stringify(reportData, null, 2);
+    }
+
+    function saveMappedReport() {
+      localStorage.setItem("nexora_relatorio_mapeado", JSON.stringify(reportData));
     }
 
     function loadSource(sourceObj) {
-      rawSourceData = sourceObj;
       reportData = mapBrainOutputToReport(sourceObj);
-      document.getElementById('input-source').value = JSON.stringify(sourceObj, null, 2);
+      document.getElementById("input-source").value = JSON.stringify(sourceObj, null, 2);
       renderQuickEditor();
       renderReport();
-      persistCurrentState();
+      saveMappedReport();
     }
 
-    function saveFinalVersion() {
+    function handlePrint() {
       syncQuickEditor();
       renderReport();
-      persistCurrentState();
-      alert('Versão final salva no localStorage com sucesso.');
-    }
-
-    function generatePdf() {
-      syncQuickEditor();
-      renderReport();
-      persistCurrentState();
+      saveMappedReport();
       window.print();
     }
 
-    function restoreInitialState() {
-      const savedRaw = readJsonStorage(STORAGE_KEYS.raw);
-      const savedMapped = readJsonStorage(STORAGE_KEYS.mapped);
-
-      if (savedRaw) {
-        loadSource(savedRaw);
-        return;
-      }
-
-      if (savedMapped) {
-        reportData = { ...defaultMappedData(), ...savedMapped };
-        rawSourceData = savedMapped;
-        document.getElementById('input-source').value = JSON.stringify(savedMapped, null, 2);
-        renderQuickEditor();
-        renderReport();
-        persistCurrentState();
-        return;
-      }
-
-      loadSource(exampleBrainOutput);
+    function openDebugMode() {
+      const url = new URL(window.location.href);
+      url.searchParams.set("debug", "1");
+      window.location.href = url.toString();
     }
 
-    document.getElementById('btn-load-source').addEventListener('click', () => {
+    function applyDebugMode() {
+      const params = new URLSearchParams(window.location.search);
+      const debug = params.get("debug") === "1";
+
+      const layout = document.getElementById("layout");
+      const panel = document.getElementById("debug-panel");
+      const debugButton = document.getElementById("btn-open-debug");
+
+      if (debug) {
+        layout.classList.remove("no-debug");
+        panel.classList.remove("hidden");
+        debugButton.classList.add("hidden");
+      } else {
+        layout.classList.add("no-debug");
+        panel.classList.add("hidden");
+        debugButton.classList.remove("hidden");
+      }
+    }
+
+    function bootstrapFromStorage() {
+      const mappedSaved = localStorage.getItem("nexora_relatorio_mapeado");
+      const readyReport = localStorage.getItem("nexora_relatorio_pronto");
+      const sinteseResult = localStorage.getItem("nexora_sintese_result");
+
       try {
-        const parsed = JSON.parse(document.getElementById('input-source').value);
+        if (mappedSaved) {
+          reportData = JSON.parse(mappedSaved);
+          document.getElementById("input-source").value = JSON.stringify(reportData, null, 2);
+          renderQuickEditor();
+          renderReport();
+          return;
+        }
+
+        if (readyReport) {
+          loadSource(JSON.parse(readyReport));
+          return;
+        }
+
+        if (sinteseResult) {
+          loadSource(JSON.parse(sinteseResult));
+          return;
+        }
+
+        loadSource(exampleBrainOutput);
+      } catch (e) {
+        console.error("Erro ao carregar relatório salvo:", e);
+        loadSource(exampleBrainOutput);
+      }
+    }
+
+    document.getElementById("btn-load-source").addEventListener("click", () => {
+      try {
+        const parsed = JSON.parse(document.getElementById("input-source").value);
         loadSource(parsed);
       } catch (error) {
-        console.error(error);
-        alert('O JSON colado não é válido. Verifique a estrutura e tente novamente.');
+        alert("O JSON colado não é válido. Verifique a estrutura e tente novamente.");
       }
     });
 
-    document.getElementById('btn-refresh').addEventListener('click', () => {
+    document.getElementById("btn-refresh").addEventListener("click", () => {
       syncQuickEditor();
       renderReport();
-      persistCurrentState();
+      saveMappedReport();
     });
 
-    document.getElementById('btn-reset').addEventListener('click', () => {
-      localStorage.removeItem(STORAGE_KEYS.raw);
-      localStorage.removeItem(STORAGE_KEYS.mapped);
+    document.getElementById("btn-save-final").addEventListener("click", () => {
+      syncQuickEditor();
+      renderReport();
+      saveMappedReport();
+      localStorage.setItem("nexora_relatorio_pronto", JSON.stringify(reportData));
+      alert("Versão final salva com sucesso.");
+    });
+
+    document.getElementById("btn-reset").addEventListener("click", () => {
+      localStorage.removeItem("nexora_relatorio_mapeado");
       loadSource(exampleBrainOutput);
     });
 
-    document.getElementById('btn-save-final').addEventListener('click', saveFinalVersion);
-    document.getElementById('btn-generate-pdf').addEventListener('click', generatePdf);
+    document.getElementById("btn-print").addEventListener("click", handlePrint);
+    document.getElementById("btn-open-debug").addEventListener("click", openDebugMode);
 
-    restoreInitialState();
+    applyDebugMode();
+    bootstrapFromStorage();
   </script>
 </body>
 </html>
