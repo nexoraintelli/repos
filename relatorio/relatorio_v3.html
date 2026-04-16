@@ -50,6 +50,16 @@
       background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
 
+    .floating-actions{
+      position:fixed;
+      top:20px;
+      right:20px;
+      z-index:99999;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
     .layout{
       width:min(1340px, calc(100vw - 32px));
       margin:0 auto;
@@ -69,10 +79,7 @@
       box-shadow:0 18px 60px rgba(0,0,0,.35);
     }
 
-    .panel{
-      position:sticky;
-      top:16px;
-    }
+    .panel{position:sticky;top:16px}
 
     .panel-head, .topbar{
       display:flex;
@@ -85,66 +92,34 @@
       backdrop-filter:blur(10px);
     }
 
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      font-family:'Syne',sans-serif;
-      font-weight:700;
-      letter-spacing:.04em;
-    }
-
+    .brand{display:flex;align-items:center;gap:12px;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:.04em}
     .brand-mark{
       width:36px;height:36px;border-radius:10px;
       background:linear-gradient(145deg, rgba(74,144,217,.18), rgba(232,64,64,.08));
       border:1px solid var(--border2);
       display:flex;align-items:center;justify-content:center;
-      color:var(--text);
-      font-size:15px;font-weight:800;
+      color:var(--text);font-size:15px;font-weight:800;
     }
-
     .brand-copy{display:flex;flex-direction:column;line-height:1.1}
     .brand-copy strong{font-size:13px}
     .brand-copy span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-top:4px}
 
-    .panel-body{
-      padding:18px;
-      display:grid;
-      gap:14px;
-    }
-
+    .panel-body{padding:18px;display:grid;gap:14px}
     .field label{
-      display:block;
-      font-size:11px;
-      color:var(--muted);
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      margin-bottom:8px;
-      font-weight:700;
+      display:block;font-size:11px;color:var(--muted);text-transform:uppercase;
+      letter-spacing:.12em;margin-bottom:8px;font-weight:700;
     }
-
     .field input, .field textarea, .field select{
-      width:100%;
-      background:var(--surface2);
-      border:1px solid var(--border2);
-      border-radius:12px;
-      color:var(--text);
-      font-family:'DM Sans',sans-serif;
-      font-size:14px;
-      padding:12px 14px;
-      outline:none;
+      width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:12px;
+      color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:12px 14px;outline:none;
     }
-
     .field textarea{min-height:110px;resize:vertical}
     .field input:focus, .field textarea:focus, .field select:focus{
-      border-color:var(--blue2);
-      box-shadow:0 0 0 3px rgba(42,106,176,.12);
+      border-color:var(--blue2);box-shadow:0 0 0 3px rgba(42,106,176,.12);
     }
 
     .hint{font-size:12px;color:var(--muted)}
-    .divider{
-      height:1px;background:var(--border);margin:4px 0;
-    }
+    .divider{height:1px;background:var(--border);margin:4px 0}
 
     .btn-row{display:flex;gap:10px;flex-wrap:wrap}
     .btn{
@@ -184,26 +159,13 @@
     }
     .cover-tag-dot{width:5px;height:5px;border-radius:50%;background:var(--red2)}
 
-    .cover-grid{
-      display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:end;
-    }
-
-    h1{
-      font-family:'Syne',sans-serif;
-      font-size:clamp(38px,5vw,56px);
-      line-height:1.02;letter-spacing:-.04em;margin-bottom:18px;
-    }
-
+    .cover-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:end}
+    h1{font-family:'Syne',sans-serif;font-size:clamp(38px,5vw,56px);line-height:1.02;letter-spacing:-.04em;margin-bottom:18px}
     .accent{color:var(--blue-light)}
     .red{color:var(--red2)}
+    .cover-sub{font-size:17px;color:var(--gray);max-width:560px;font-weight:300;line-height:1.8}
 
-    .cover-sub{
-      font-size:17px;color:var(--gray);max-width:560px;font-weight:300;line-height:1.8;
-    }
-
-    .meta-card,.card,.metric-card,.action-item{
-      background:var(--surface);border:1px solid var(--border);border-radius:18px;
-    }
+    .meta-card,.card,.metric-card,.action-item{background:var(--surface);border:1px solid var(--border);border-radius:18px}
     .meta-card{padding:22px;position:relative}
     .meta-card::after,.metric-card::after{
       content:'';position:absolute;top:0;left:0;right:0;height:2px;
@@ -211,36 +173,25 @@
     }
 
     .meta-list{display:grid;gap:14px}
-    .meta-item span{
-      display:block;font-size:11px;color:var(--muted);text-transform:uppercase;
-      letter-spacing:.12em;margin-bottom:3px;
-    }
+    .meta-item span{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:3px}
     .meta-item strong{font-size:15px;font-weight:600;color:var(--text)}
 
     .content{padding:36px 42px 46px;display:grid;gap:34px}
     .section-tag{display:block;margin-bottom:10px}
-    .section-title{
-      font-family:'Syne',sans-serif;font-size:24px;line-height:1.1;
-      letter-spacing:-.02em;margin-bottom:16px;
-    }
+    .section-title{font-family:'Syne',sans-serif;font-size:24px;line-height:1.1;letter-spacing:-.02em;margin-bottom:16px}
 
     .card{padding:24px}
     .executive-text{font-size:16px;color:var(--text);line-height:1.85}
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
     .metric-card{padding:20px;position:relative;overflow:hidden}
     .metric-card h3{font-family:'Syne',sans-serif;font-size:15px;margin-bottom:8px}
-    .score{
-      font-family:'Syne',sans-serif;font-size:32px;line-height:1;margin-bottom:10px;color:var(--text);
-    }
+    .score{font-family:'Syne',sans-serif;font-size:32px;line-height:1;margin-bottom:10px;color:var(--text)}
     .score.good{color:var(--success)}
     .score.warn{color:var(--warning)}
     .score.bad{color:var(--red2)}
     .metric-card p{color:var(--gray);font-size:14px;line-height:1.7}
 
-    .root-cause{
-      border-left:4px solid var(--red2);
-      background:linear-gradient(180deg, rgba(232,64,64,.06), rgba(13,16,24,1));
-    }
+    .root-cause{border-left:4px solid var(--red2);background:linear-gradient(180deg, rgba(232,64,64,.06), rgba(13,16,24,1))}
     .root-cause p{font-size:16px;line-height:1.85;color:var(--text)}
 
     .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
@@ -253,29 +204,22 @@
     .actions{display:grid;gap:14px}
     .action-item{display:flex;gap:14px;align-items:flex-start;padding:18px 18px}
     .action-num{
-      width:34px;height:34px;border-radius:10px;flex:0 0 34px;
-      display:flex;align-items:center;justify-content:center;
+      width:34px;height:34px;border-radius:10px;flex:0 0 34px;display:flex;align-items:center;justify-content:center;
       background:rgba(74,144,217,.1);border:1px solid rgba(74,144,217,.2);
       color:var(--blue-light);font-family:'Syne',sans-serif;font-size:11px;font-weight:800;
     }
-    .action-copy strong{
-      display:block;font-family:'Syne',sans-serif;font-size:15px;margin-bottom:5px;
-    }
+    .action-copy strong{display:block;font-family:'Syne',sans-serif;font-size:15px;margin-bottom:5px}
     .action-copy p{font-size:14px;color:var(--gray);line-height:1.7}
 
     .footer-note{border-top:1px solid var(--border);padding-top:22px;color:var(--muted);font-size:13px}
 
     @media print{
       body{background:#fff;color:#111;padding:0}
-      body::before,.noise,.panel,.topbar .btn-row{display:none !important}
+      body::before,.noise,.panel,.floating-actions{display:none !important}
       .layout{display:block;width:100%;max-width:none;margin:0}
-      .report{
-        width:100%;max-width:none;min-height:auto;margin:0;border:none;border-radius:0;box-shadow:none;background:#fff;
-      }
+      .report{width:100%;max-width:none;min-height:auto;margin:0;border:none;border-radius:0;box-shadow:none;background:#fff}
       .cover,.content{padding-left:0;padding-right:0}
-      .cover,.meta-card,.card,.metric-card,.action-item{
-        background:#fff !important;color:#111 !important;border-color:#dcdcdc !important;
-      }
+      .cover,.meta-card,.card,.metric-card,.action-item{background:#fff !important;color:#111 !important;border-color:#dcdcdc !important}
       .cover-sub,.metric-card p,.action-copy p,.footer-note,.meta-item span,.chip{color:#555 !important}
       .section-tag,.cover-tag,.accent,.red,.score.good,.score.warn,.score.bad{color:#111 !important}
       .root-cause{border-left-color:#111 !important;background:#fff !important}
@@ -284,6 +228,7 @@
     @media (max-width: 980px){
       .layout{grid-template-columns:1fr}
       .panel{position:relative;top:0}
+      .floating-actions{position:relative;top:auto;right:auto;width:min(1340px, calc(100vw - 32px));margin:0 auto 12px;z-index:2}
     }
     @media (max-width: 760px){
       body{padding:16px 0 48px}
@@ -291,43 +236,16 @@
       .cover,.content{padding-left:22px;padding-right:22px}
       .cover-grid,.grid-2{grid-template-columns:1fr}
       h1{font-size:34px}
+      .floating-actions{width:min(1340px, calc(100vw - 16px))}
     }
   </style>
 </head>
 <body>
-  <div style="
-  position:fixed;
-  top:20px;
-  right:20px;
-  z-index:99999;
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-">
-  <button onclick="window.print()" style="
-    background:#111;
-    color:#fff;
-    border:1px solid #444;
-    padding:12px 16px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:700;
-  ">
-    Gerar PDF
-  </button>
+  <div class="floating-actions">
+    <button id="btn-generate-pdf" class="btn btn-ghost">Gerar PDF</button>
+    <button id="btn-save-final" class="btn btn-primary">Salvar versão final</button>
+  </div>
 
-  <button onclick="window.print()" style="
-    background:#e84040;
-    color:#fff;
-    border:none;
-    padding:12px 16px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:700;
-  ">
-    Salvar versão final
-  </button>
-</div>
   <div class="noise"></div>
 
   <div class="layout">
@@ -349,20 +267,16 @@
           <div class="hint">Cole aqui o JSON real vindo do seu sistema. A página converte isso em relatório.</div>
         </div>
 
-        <div class="btn-row" style="display:flex;gap:10px;flex-wrap:wrap;">
-  <button onclick="window.print()" style="background:#111;color:#fff;border:1px solid #444;padding:12px 16px;border-radius:10px;cursor:pointer;">
-    Gerar PDF
-  </button>
-  <button onclick="window.print()" style="background:#e84040;color:#fff;border:none;padding:12px 16px;border-radius:10px;cursor:pointer;">
-    Salvar versão final
-  </button>
-</div>
+        <div class="btn-row">
+          <button class="btn btn-blue" id="btn-load-source">Carregar JSON</button>
+          <button class="btn btn-ghost" id="btn-refresh">Atualizar preview</button>
+        </div>
 
         <div class="divider"></div>
 
         <div class="field">
           <label>JSON mapeado para o relatório</label>
-          <textarea id="output-mapped" spellcheck="false"></textarea>
+          <textarea id="output-mapped" spellcheck="false" readonly></textarea>
           <div class="hint">Esse é o objeto final já pronto para popular o layout do relatório.</div>
         </div>
 
@@ -371,13 +285,12 @@
         <div id="quick-edit"></div>
 
         <div class="btn-row">
-          <button class="btn btn-blue" id="btn-refresh">Atualizar preview</button>
           <button class="btn btn-ghost" id="btn-reset">Resetar</button>
         </div>
       </div>
     </aside>
 
-    <div class="report">
+    <div class="report" id="report-root">
       <div class="topbar">
         <div class="brand">
           <div class="brand-mark">N</div>
@@ -386,6 +299,7 @@
             <span>Relatório dinâmico v3</span>
           </div>
         </div>
+      </div>
 
       <section class="cover">
         <div class="cover-tag">
@@ -476,271 +390,266 @@
   </div>
 
   <script>
+    const STORAGE_KEYS = {
+      raw: 'nexora_relatorio_pronto',
+      mapped: 'nexora_relatorio_mapeado',
+      c1: 'nx_c1',
+      c2: 'nx_c2',
+      c3: 'nx_c3'
+    };
+
     const exampleBrainOutput = {
       client: {
-        name: "Marca Exemplo",
-        product: "ASIN B0XXXXX",
-        category: "Pet Supplies",
-        phase: "Validação"
+        name: 'Marca Exemplo',
+        product: 'ASIN B0XXXXX',
+        category: 'Pet Supplies',
+        phase: 'Validação'
       },
       delivery: {
-        date: "14/04/2026",
-        type: "Plano Estratégico"
+        date: '14/04/2026',
+        type: 'Plano Estratégico'
       },
       final_synthesis: {
         headline: "O produto não está travado por falta de <span class='accent'>tráfego</span>. Está travado por <span class='red'>conversão e posicionamento</span>.",
-        cover_sub: "Versão 3 do relatório da Nexora preparada para receber automaticamente os resultados reais dos cérebros do sistema.",
-        executive_summary: "A leitura sistêmica da Nexora indica que o principal problema não está na atração inicial, mas na capacidade da página de sustentar intenção de compra dentro de uma categoria com alta sensibilidade a percepção de valor. O diagnóstico aponta desalinhamento entre preço, proposta e expectativa competitiva.",
-        root_cause: "O bloqueio principal está no desalinhamento entre preço, posicionamento e percepção de valor. O produto consegue gerar algum interesse inicial, mas a página não converte com força suficiente dentro de um mercado mais sensível à comparação. Escalar tráfego antes de corrigir isso tende a aumentar desperdício.",
-        category_summary: "A categoria apresenta sinais de <strong>Price War</strong> com elementos de <strong>Review Dominance</strong>, o que exige clareza de posicionamento e competitividade real na oferta.",
-        category_tags: ["Price War", "Review Dominance", "Categoria competitiva", "Sensível a preço"],
-        next_steps: "O diagnóstico mostra que o produto tem potencial, mas ainda não está encaixado da forma correta dentro da categoria. O primeiro movimento precisa ser estrutural: melhorar a forma como a oferta é percebida. Só depois disso faz sentido pressionar crescimento com mais tráfego."
+        cover_sub: 'Versão 3 do relatório da Nexora preparada para receber automaticamente os resultados reais dos cérebros do sistema.',
+        executive_summary: 'A leitura sistêmica da Nexora indica que o principal problema não está na atração inicial, mas na capacidade da página de sustentar intenção de compra dentro de uma categoria com alta sensibilidade a percepção de valor. O diagnóstico aponta desalinhamento entre preço, proposta e expectativa competitiva.',
+        root_cause: 'O bloqueio principal está no desalinhamento entre preço, posicionamento e percepção de valor. O produto consegue gerar algum interesse inicial, mas a página não converte com força suficiente dentro de um mercado mais sensível à comparação. Escalar tráfego antes de corrigir isso tende a aumentar desperdício.',
+        category_summary: 'A categoria apresenta sinais de <strong>Price War</strong> com elementos de <strong>Review Dominance</strong>, o que exige clareza de posicionamento e competitividade real na oferta.',
+        category_tags: ['Price War', 'Review Dominance', 'Categoria competitiva', 'Sensível a preço'],
+        next_steps: 'O diagnóstico mostra que o produto tem potencial, mas ainda não está encaixado da forma correta dentro da categoria. O primeiro movimento precisa ser estrutural: melhorar a forma como a oferta é percebida. Só depois disso faz sentido pressionar crescimento com mais tráfego.'
       },
       metrics: {
         ctr: {
-          title: "CTR",
-          value: "1.1%",
-          level: "warn",
-          diagnosis: "Baixo poder de atração frente ao contexto competitivo. Imagem principal e promessa não estão parando o scroll do cliente com força suficiente."
+          title: 'CTR',
+          value: '1.1%',
+          level: 'warn',
+          diagnosis: 'Baixo poder de atração frente ao contexto competitivo. Imagem principal e promessa não estão parando o scroll do cliente com força suficiente.'
         },
         cvr: {
-          title: "CVR",
-          value: "6.2%",
-          level: "bad",
-          diagnosis: "Conversão abaixo do esperado para a categoria. A percepção de valor não sustenta o clique gerado e a página não reduz objeções com clareza."
+          title: 'CVR',
+          value: '6.2%',
+          level: 'bad',
+          diagnosis: 'Conversão abaixo do esperado para a categoria. A percepção de valor não sustenta o clique gerado e a página não reduz objeções com clareza.'
         },
         price: {
-          title: "Preço",
-          value: "+12%",
-          level: "warn",
-          diagnosis: "Preço acima da média do Top 10 sem justificativa suficientemente forte na comunicação da oferta."
+          title: 'Preço',
+          value: '+12%',
+          level: 'warn',
+          diagnosis: 'Preço acima da média do Top 10 sem justificativa suficientemente forte na comunicação da oferta.'
         },
         reviews: {
-          title: "Reviews",
-          value: "4.6★",
-          level: "good",
-          diagnosis: "Boa nota, mas volume ainda abaixo da barreira competitiva dominante da categoria, o que reduz confiança relativa."
+          title: 'Reviews',
+          value: '4.6★',
+          level: 'good',
+          diagnosis: 'Boa nota, mas volume ainda abaixo da barreira competitiva dominante da categoria, o que reduz confiança relativa.'
         }
       },
       action_plan: [
         {
           priority: 1,
-          title: "Reposicionar a oferta na página",
-          description: "Reorganizar headline, imagem principal e estrutura de promessa para justificar melhor o preço e reduzir comparação rasa."
+          title: 'Reposicionar a oferta na página',
+          description: 'Reorganizar headline, imagem principal e estrutura de promessa para justificar melhor o preço e reduzir comparação rasa.'
         },
         {
           priority: 2,
-          title: "Revisar estratégia de preço",
-          description: "Avaliar se o mercado comporta o preço atual sem reforço adicional de diferenciação. Se não comportar, reposicionar ou ajustar faixa competitiva."
+          title: 'Revisar estratégia de preço',
+          description: 'Avaliar se o mercado comporta o preço atual sem reforço adicional de diferenciação. Se não comportar, reposicionar ou ajustar faixa competitiva.'
         },
         {
           priority: 3,
-          title: "Escalar tráfego só depois da correção",
-          description: "Evitar aumentar investimento em Ads antes de melhorar base de conversão. O foco agora é eficiência, não volume."
+          title: 'Escalar tráfego só depois da correção',
+          description: 'Evitar aumentar investimento em Ads antes de melhorar base de conversão. O foco agora é eficiência, não volume.'
         }
       ]
     };
 
-    let reportData = {};
+    let reportData = defaultMappedData();
+    let rawSourceData = null;
 
     function defaultMappedData() {
       return {
-        clientName: "",
-        productName: "",
-        reportDate: "",
-        deliveryType: "",
-        headline: "",
-        coverSub: "",
-        executiveSummary: "",
-        rootCause: "",
-        categorySummary: "",
+        clientName: '',
+        productName: '',
+        reportDate: '',
+        deliveryType: '',
+        headline: '',
+        coverSub: '',
+        executiveSummary: '',
+        rootCause: '',
+        categorySummary: '',
         categoryTags: [],
-        nextSteps: "",
+        nextSteps: '',
         metrics: [],
         actions: []
       };
     }
-    
-function mapBrainOutputToReport(source) {
-  const mapped = defaultMappedData();
 
-  const savedC1 = JSON.parse(localStorage.getItem("nx_c1") || "null");
-  const savedC2 = JSON.parse(localStorage.getItem("nx_c2") || "null");
-  const savedC3 = JSON.parse(localStorage.getItem("nx_c3") || "null");
-
-  mapped.clientName =
-    source?.client?.name ||
-    savedC1?.brand ||
-    savedC1?.cliente ||
-    "Cliente não informado";
-
-  mapped.productName =
-    source?.client?.product ||
-    savedC1?.asin ||
-    savedC1?.produto ||
-    "Produto não informado";
-
-  mapped.reportDate =
-    source?.delivery?.date ||
-    new Date().toLocaleDateString("pt-BR");
-
-  mapped.deliveryType =
-    source?.delivery?.type ||
-    "Plano Estratégico";
-
-  // CASO 1: formato completo antigo
-  if (source?.final_synthesis) {
-    const fs = source.final_synthesis;
-
-    mapped.headline =
-      fs.headline ||
-      "Relatório <span class='accent'>Estratégico</span><br>da <span class='red'>Nexora</span>";
-
-    mapped.coverSub =
-      fs.cover_sub ||
-      "Diagnóstico automático convertido em relatório final Nexora.";
-
-    mapped.executiveSummary =
-      fs.executive_summary || "";
-
-    mapped.rootCause =
-      fs.root_cause || "";
-
-    mapped.categorySummary =
-      fs.category_summary || "";
-
-    mapped.categoryTags =
-      Array.isArray(fs.category_tags) ? fs.category_tags : [];
-
-    mapped.nextSteps =
-      fs.next_steps || "";
-  }
-
-  // CASO 2: formato atual da síntese.html
-  else {
-    mapped.headline = `
-      Score geral de <span class="red">${source?.score_geral ?? "-"}</span><br>
-      com confiança <span class="accent">${source?.confianca ?? "N/A"}</span>
-    `;
-
-    mapped.coverSub =
-      source?.veredicto ||
-      "Síntese estratégica gerada automaticamente pela Nexora.";
-
-    mapped.executiveSummary =
-      source?.diagnostico_executivo ||
-      "Diagnóstico executivo não disponível.";
-
-    mapped.rootCause =
-      source?.problema_raiz ||
-      "Causa raiz não informada.";
-
-    const pilares = source?.pilares || {};
-
-    mapped.categorySummary = `
-      A leitura consolidada mostra confiança <strong>${source?.confianca ?? "N/A"}</strong>
-      com foco principal em <strong>${source?.problema_raiz || "causa raiz não identificada"}</strong>.
-    `;
-
-    mapped.categoryTags = [
-      `Score ${source?.score_geral ?? "-"}`,
-      `Confiança ${source?.confianca ?? "N/A"}`,
-      pilares?.atracao?.status ? `Atração ${pilares.atracao.status}` : null,
-      pilares?.conversao?.status ? `Conversão ${pilares.conversao.status}` : null,
-      pilares?.mercado?.status ? `Mercado ${pilares.mercado.status}` : null,
-      pilares?.operacao?.status ? `Operação ${pilares.operacao.status}` : null
-    ].filter(Boolean);
-
-    if (Array.isArray(source?.plano_acao) && source.plano_acao.length) {
-      mapped.nextSteps = source.plano_acao
-        .map((item, i) => `${i + 1}. ${item.titulo || item.title || "Ação"} — ${item.descricao || item.description || ""}`)
-        .join(" ");
-    } else {
-      mapped.nextSteps =
-        source?.veredicto ||
-        "Sem próximos passos detalhados.";
+    function normalizeLevel(level) {
+      const safe = String(level || '').toLowerCase().trim();
+      if (['good', 'positivo', 'healthy', 'ok', 'forte'].includes(safe)) return 'good';
+      if (['bad', 'critical', 'critico', 'crítico', 'ruim', 'fraco'].includes(safe)) return 'bad';
+      if (['atenção', 'atencao', 'warn', 'moderado', 'médio', 'medio'].includes(safe)) return 'warn';
+      return 'warn';
     }
-  }
-
-  // Métricas
-  if (source?.metrics && typeof source.metrics === "object" && !Array.isArray(source.metrics)) {
-    mapped.metrics = Object.values(source.metrics).map(metric => ({
-      title: metric.title || "Métrica",
-      score: metric.value || metric.score || "-",
-      level: normalizeLevel(metric.level),
-      description: metric.diagnosis || metric.description || ""
-    }));
-  }
-
-  // fallback usando pilares da síntese atual
-  if ((!mapped.metrics || mapped.metrics.length === 0) && source?.pilares) {
-    const pilares = source.pilares;
-
-    mapped.metrics = [
-      {
-        title: "Atração",
-        score: pilares?.atracao?.status || "-",
-        level: normalizeLevel(pilares?.atracao?.status),
-        description: pilares?.atracao?.resumo || "Sem resumo"
-      },
-      {
-        title: "Conversão",
-        score: pilares?.conversao?.status || "-",
-        level: normalizeLevel(pilares?.conversao?.status),
-        description: pilares?.conversao?.resumo || "Sem resumo"
-      },
-      {
-        title: "Mercado",
-        score: pilares?.mercado?.status || "-",
-        level: normalizeLevel(pilares?.mercado?.status),
-        description: pilares?.mercado?.resumo || "Sem resumo"
-      },
-      {
-        title: "Operação",
-        score: pilares?.operacao?.status || "-",
-        level: normalizeLevel(pilares?.operacao?.status),
-        description: pilares?.operacao?.resumo || "Sem resumo"
-      }
-    ];
-  }
-
-  // Plano de ação
-  if (Array.isArray(source?.action_plan)) {
-    mapped.actions = source.action_plan
-      .sort((a, b) => (a.priority || 999) - (b.priority || 999))
-      .map(action => ({
-        title: action.title || "Ação prioritária",
-        description: action.description || ""
-      }));
-  }
-
-  // fallback plano_acao da síntese
-  if ((!mapped.actions || mapped.actions.length === 0) && Array.isArray(source?.plano_acao)) {
-    mapped.actions = source.plano_acao.map((action, index) => ({
-      title: action.titulo || action.title || `Ação ${index + 1}`,
-      description: action.descricao || action.description || ""
-    }));
-  }
-
-  return mapped;
-}
-
-  function normalizeLevel(level) {
-  const safe = String(level || "").toLowerCase().trim();
-
-  if (["good", "positivo", "healthy", "ok"].includes(safe)) return "good";
-  if (["bad", "critical", "critico", "crítico", "ruim"].includes(safe)) return "bad";
-  if (["atenção", "atencao", "warn"].includes(safe)) return "warn";
-
-  return "warn";
-}
 
     function escapeHtml(text) {
-      return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;");
+      return String(text ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;');
+    }
+
+    function readJsonStorage(key) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : null;
+      } catch (error) {
+        console.warn(`Erro ao ler ${key}:`, error);
+        return null;
+      }
+    }
+
+    function persistCurrentState() {
+      localStorage.setItem(STORAGE_KEYS.mapped, JSON.stringify(reportData));
+      if (rawSourceData) {
+        localStorage.setItem(STORAGE_KEYS.raw, JSON.stringify(rawSourceData));
+      }
+    }
+
+    function mapBrainOutputToReport(source) {
+      const mapped = defaultMappedData();
+
+      const savedC1 = readJsonStorage(STORAGE_KEYS.c1);
+      const savedC2 = readJsonStorage(STORAGE_KEYS.c2);
+      const savedC3 = readJsonStorage(STORAGE_KEYS.c3);
+
+      mapped.clientName =
+        source?.client?.name ||
+        source?.cliente ||
+        savedC1?.brand ||
+        savedC1?.cliente ||
+        savedC2?.brand ||
+        savedC3?.brand ||
+        'Cliente não informado';
+
+      mapped.productName =
+        source?.client?.product ||
+        source?.produto ||
+        source?.asin ||
+        savedC1?.asin ||
+        savedC1?.produto ||
+        savedC2?.asin ||
+        savedC3?.asin ||
+        'Produto não informado';
+
+      mapped.reportDate = source?.delivery?.date || new Date().toLocaleDateString('pt-BR');
+      mapped.deliveryType = source?.delivery?.type || 'Plano Estratégico';
+
+      if (source?.final_synthesis) {
+        const fs = source.final_synthesis;
+
+        mapped.headline =
+          fs.headline ||
+          "Relatório <span class='accent'>Estratégico</span><br>da <span class='red'>Nexora</span>";
+
+        mapped.coverSub = fs.cover_sub || 'Diagnóstico automático convertido em relatório final Nexora.';
+        mapped.executiveSummary = fs.executive_summary || '';
+        mapped.rootCause = fs.root_cause || '';
+        mapped.categorySummary = fs.category_summary || '';
+        mapped.categoryTags = Array.isArray(fs.category_tags) ? fs.category_tags : [];
+        mapped.nextSteps = fs.next_steps || '';
+      } else {
+        mapped.headline = `
+          Score geral de <span class="red">${escapeHtml(source?.score_geral ?? '-')}</span><br>
+          com confiança <span class="accent">${escapeHtml(source?.confianca ?? 'N/A')}</span>
+        `;
+
+        mapped.coverSub = source?.veredicto || 'Síntese estratégica gerada automaticamente pela Nexora.';
+        mapped.executiveSummary = source?.diagnostico_executivo || 'Diagnóstico executivo não disponível.';
+        mapped.rootCause = source?.problema_raiz || 'Causa raiz não informada.';
+
+        const pilares = source?.pilares || {};
+
+        mapped.categorySummary = `
+          A leitura consolidada mostra confiança <strong>${escapeHtml(source?.confianca ?? 'N/A')}</strong>
+          com foco principal em <strong>${escapeHtml(source?.problema_raiz || 'causa raiz não identificada')}</strong>.
+        `;
+
+        mapped.categoryTags = [
+          `Score ${source?.score_geral ?? '-'}`,
+          `Confiança ${source?.confianca ?? 'N/A'}`,
+          pilares?.atracao?.status ? `Atração ${pilares.atracao.status}` : null,
+          pilares?.conversao?.status ? `Conversão ${pilares.conversao.status}` : null,
+          pilares?.mercado?.status ? `Mercado ${pilares.mercado.status}` : null,
+          pilares?.operacao?.status ? `Operação ${pilares.operacao.status}` : null
+        ].filter(Boolean);
+
+        if (Array.isArray(source?.plano_acao) && source.plano_acao.length) {
+          mapped.nextSteps = source.plano_acao
+            .map((item, i) => `${i + 1}. ${item.titulo || item.title || 'Ação'} — ${item.descricao || item.description || ''}`)
+            .join(' ');
+        } else {
+          mapped.nextSteps = source?.veredicto || 'Sem próximos passos detalhados.';
+        }
+      }
+
+      if (source?.metrics && typeof source.metrics === 'object' && !Array.isArray(source.metrics)) {
+        mapped.metrics = Object.values(source.metrics).map(metric => ({
+          title: metric.title || 'Métrica',
+          score: metric.value || metric.score || '-',
+          level: normalizeLevel(metric.level),
+          description: metric.diagnosis || metric.description || ''
+        }));
+      }
+
+      if ((!mapped.metrics || mapped.metrics.length === 0) && source?.pilares) {
+        const pilares = source.pilares;
+        mapped.metrics = [
+          {
+            title: 'Atração',
+            score: pilares?.atracao?.status || '-',
+            level: normalizeLevel(pilares?.atracao?.status),
+            description: pilares?.atracao?.resumo || 'Sem resumo'
+          },
+          {
+            title: 'Conversão',
+            score: pilares?.conversao?.status || '-',
+            level: normalizeLevel(pilares?.conversao?.status),
+            description: pilares?.conversao?.resumo || 'Sem resumo'
+          },
+          {
+            title: 'Mercado',
+            score: pilares?.mercado?.status || '-',
+            level: normalizeLevel(pilares?.mercado?.status),
+            description: pilares?.mercado?.resumo || 'Sem resumo'
+          },
+          {
+            title: 'Operação',
+            score: pilares?.operacao?.status || '-',
+            level: normalizeLevel(pilares?.operacao?.status),
+            description: pilares?.operacao?.resumo || 'Sem resumo'
+          }
+        ].filter(item => item.score !== '-' || item.description !== 'Sem resumo');
+      }
+
+      if (Array.isArray(source?.action_plan)) {
+        mapped.actions = source.action_plan
+          .sort((a, b) => (a.priority || 999) - (b.priority || 999))
+          .map(action => ({
+            title: action.title || 'Ação prioritária',
+            description: action.description || ''
+          }));
+      }
+
+      if ((!mapped.actions || mapped.actions.length === 0) && Array.isArray(source?.plano_acao)) {
+        mapped.actions = source.plano_acao.map((action, index) => ({
+          title: action.titulo || action.title || `Ação ${index + 1}`,
+          description: action.descricao || action.description || ''
+        }));
+      }
+
+      return mapped;
     }
 
     function renderQuickEditor() {
@@ -766,10 +675,15 @@ function mapBrainOutputToReport(source) {
     }
 
     function syncQuickEditor() {
-      reportData.clientName = document.getElementById('edit-clientName').value;
-      reportData.productName = document.getElementById('edit-productName').value;
-      reportData.executiveSummary = document.getElementById('edit-executiveSummary').value;
-      reportData.rootCause = document.getElementById('edit-rootCause').value;
+      const client = document.getElementById('edit-clientName');
+      const product = document.getElementById('edit-productName');
+      const executive = document.getElementById('edit-executiveSummary');
+      const rootCause = document.getElementById('edit-rootCause');
+
+      if (client) reportData.clientName = client.value;
+      if (product) reportData.productName = product.value;
+      if (executive) reportData.executiveSummary = executive.value;
+      if (rootCause) reportData.rootCause = rootCause.value;
     }
 
     function renderReport() {
@@ -810,10 +724,48 @@ function mapBrainOutputToReport(source) {
     }
 
     function loadSource(sourceObj) {
+      rawSourceData = sourceObj;
       reportData = mapBrainOutputToReport(sourceObj);
       document.getElementById('input-source').value = JSON.stringify(sourceObj, null, 2);
       renderQuickEditor();
       renderReport();
+      persistCurrentState();
+    }
+
+    function saveFinalVersion() {
+      syncQuickEditor();
+      renderReport();
+      persistCurrentState();
+      alert('Versão final salva no localStorage com sucesso.');
+    }
+
+    function generatePdf() {
+      syncQuickEditor();
+      renderReport();
+      persistCurrentState();
+      window.print();
+    }
+
+    function restoreInitialState() {
+      const savedRaw = readJsonStorage(STORAGE_KEYS.raw);
+      const savedMapped = readJsonStorage(STORAGE_KEYS.mapped);
+
+      if (savedRaw) {
+        loadSource(savedRaw);
+        return;
+      }
+
+      if (savedMapped) {
+        reportData = { ...defaultMappedData(), ...savedMapped };
+        rawSourceData = savedMapped;
+        document.getElementById('input-source').value = JSON.stringify(savedMapped, null, 2);
+        renderQuickEditor();
+        renderReport();
+        persistCurrentState();
+        return;
+      }
+
+      loadSource(exampleBrainOutput);
     }
 
     document.getElementById('btn-load-source').addEventListener('click', () => {
@@ -821,33 +773,27 @@ function mapBrainOutputToReport(source) {
         const parsed = JSON.parse(document.getElementById('input-source').value);
         loadSource(parsed);
       } catch (error) {
+        console.error(error);
         alert('O JSON colado não é válido. Verifique a estrutura e tente novamente.');
       }
     });
 
-document.getElementById("btn-refresh").addEventListener("click", () => {
-  syncQuickEditor();
-  renderReport();
-});
+    document.getElementById('btn-refresh').addEventListener('click', () => {
+      syncQuickEditor();
+      renderReport();
+      persistCurrentState();
+    });
 
-document.getElementById("btn-reset").addEventListener("click", () => {
-  loadSource(exampleBrainOutput);
-});
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      localStorage.removeItem(STORAGE_KEYS.raw);
+      localStorage.removeItem(STORAGE_KEYS.mapped);
+      loadSource(exampleBrainOutput);
+    });
 
-const readyReport = localStorage.getItem("nexora_relatorio_pronto");
+    document.getElementById('btn-save-final').addEventListener('click', saveFinalVersion);
+    document.getElementById('btn-generate-pdf').addEventListener('click', generatePdf);
 
-if (readyReport) {
-  try {
-    reportData = JSON.parse(readyReport);
-    renderQuickEditor();
-    renderReport();
-  } catch (e) {
-    console.error("Erro ao carregar nexora_relatorio_pronto:", e);
-    loadSource(exampleBrainOutput);
-  }
-} else {
-  loadSource(exampleBrainOutput);
-}
+    restoreInitialState();
   </script>
 </body>
 </html>
