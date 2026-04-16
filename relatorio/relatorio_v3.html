@@ -108,18 +108,26 @@
     }
 
     .brand-mark{
-      width:36px;
-      height:36px;
-      border-radius:10px;
-      background:linear-gradient(145deg, rgba(74,144,217,.18), rgba(232,64,64,.08));
-      border:1px solid var(--border2);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:var(--text);
-      font-size:15px;
-      font-weight:800;
-    }
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.brand-mark-horizontal{
+  width:190px;
+  height:40px;
+  background:transparent;
+  border:none;
+  border-radius:0;
+  padding:0;
+}
+
+.brand-mark-horizontal img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
 
     .brand-copy{
       display:flex;
@@ -535,13 +543,9 @@
     <aside id="debug-panel" class="panel">
       <div class="panel-head">
         <div class="brand">
-          <div class="brand-mark">N</div>
-          <div class="brand-copy">
-            <strong>NEXORA INTELLIGENCE</strong>
-            <span>Versão 3 automática</span>
-          </div>
-        </div>
-      </div>
+         <div class="brand-mark brand-mark-horizontal">
+  <img src="../logo-horizontal.png" alt="Nexora Intelligence" />
+</div>
 
       <div class="panel-body">
         <div class="field">
