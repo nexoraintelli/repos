@@ -1,9 +1,61 @@
 <!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <title>Nexora · Análise de Página</title>
 <style>
-:root{--bg:#0a0a0f;--surface:#111118;--surface2:#18181f;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--blue:#4f8ef7;--purple:#7b5cf0;--green:#22c98a;--amber:#f5a623;--red:#f25858;--teal:#2dd4bf;--text:#f0f0f5;--muted:#8888a0;--muted2:#555568}
-*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
+:root{ --bg:
+    radial-gradient(circle at 15% 20%, rgba(128, 0, 0, 0.45) 0%, transparent 30%),
+    radial-gradient(circle at 75% 25%, rgba(111, 29, 29, 0.40) 0%, transparent 28%),
+    radial-gradient(circle at 60% 80%, rgba(214, 31, 31, 0.22) 0%, transparent 22%),
+    linear-gradient(135deg, #0b0b0c 0%, #121212 35%, #1a0000 100%);
+}
+      --surface:#111118;
+      --surface2:#18181f;
+      --border:rgba(255,255,255,0.07);
+      --border2:rgba(255,255,255,0.12);
+      --blue:#4f8ef7;
+      --purple:#7b5cf0;
+      --green:#22c98a;
+      --amber:#f5a623;
+      --red:#f25858;
+      --teal:#2dd4bf;
+      --text:#f0f0f5;
+      --muted:#8888a0;
+      --muted2:#555568}
+*{box-sizing:border-box;margin:0;padding:0}
+  body{
+  background:#0b0b0c;
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+}
+
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(128, 0, 0, 0.45) 0%, transparent 30%),
+    radial-gradient(circle at 75% 25%, rgba(111, 29, 29, 0.40) 0%, transparent 28%),
+    radial-gradient(circle at 60% 80%, rgba(214, 31, 31, 0.22) 0%, transparent 22%),
+    linear-gradient(135deg, #0b0b0c 0%, #121212 35%, #1a0000 100%);
+  pointer-events:none;
+  z-index:0;
+}
+  body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.00) 0px,
+      rgba(255, 0, 0, 0.00) 3px,
+      rgba(255, 0, 0, 0.05) 4px,
+      rgba(255, 0, 0, 0.00) 7px
+    );
+  opacity:.35;
+  pointer-events:none;
+  z-index:0;
+}
 .wrap{max-width:720px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
 .tnav{display:flex;align-items:center;gap:8px;padding:20px 0 0;margin-bottom:22px;flex-wrap:wrap}
 .cr{font-size:12px;color:var(--muted2);cursor:pointer}.cr:hover{color:var(--muted)}.cr.act{color:var(--blue);font-weight:500}
