@@ -8,7 +8,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0a0f;
+  --bg: :root{
+  --bg:
+    radial-gradient(circle at 15% 20%, rgba(128, 0, 0, 0.45) 0%, transparent 30%),
+    radial-gradient(circle at 75% 25%, rgba(111, 29, 29, 0.40) 0%, transparent 28%),
+    radial-gradient(circle at 60% 80%, rgba(214, 31, 31, 0.22) 0%, transparent 22%),
+    linear-gradient(135deg, #0b0b0c 0%, #121212 35%, #1a0000 100%);
+}
   --surface: #111118;
   --surface2: #18181f;
   --border: rgba(255,255,255,0.07);
@@ -24,12 +30,42 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;min-height:100vh;line-height:1.6}
+body{
+  background:#0b0b0c;
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+}
 
 /* NOISE TEXTURE */
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
-
-/* GLOW BG */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(128, 0, 0, 0.45) 0%, transparent 30%),
+    radial-gradient(circle at 75% 25%, rgba(111, 29, 29, 0.40) 0%, transparent 28%),
+    radial-gradient(circle at 60% 80%, rgba(214, 31, 31, 0.22) 0%, transparent 22%),
+    linear-gradient(135deg, #0b0b0c 0%, #121212 35%, #1a0000 100%);
+  pointer-events:none;
+  z-index:0;
+}
+  body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.00) 0px,
+      rgba(255, 0, 0, 0.00) 3px,
+      rgba(255, 0, 0, 0.05) 4px,
+      rgba(255, 0, 0, 0.00) 7px
+    );
+  opacity:.35;
+  pointer-events:none;
+  z-index:0;
+}
 .bg-glow{position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:900px;height:500px;background:radial-gradient(ellipse at center, rgba(79,142,247,0.06) 0%, transparent 70%);pointer-events:none;z-index:0}
 
 /* LAYOUT */
