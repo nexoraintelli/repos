@@ -211,14 +211,12 @@ footer{padding:32px 0;border-top:1px solid var(--border);margin-top:40px}
 </div>
 
 <script>
-
 const supabaseUrl = 'https://ctvhnqnzgmtotxzbtfov.supabase.co'
-const supabaseKey = 'sb_publishable_qQU32GWPw5fogw-foLHhIA_UbHYf3n1'
+const supabaseKey = 'sb_publishable_qQU32GWPw5fogw-foLhHIA_UbHYf3n1'
 
 const sb = window.supabase.createClient(supabaseUrl, supabaseKey)
 
 async function buscarBenchmark(category, subcategory) {
- async function buscarBenchmark(category, subcategory) {
   console.log('BUSCANDO:', { category, subcategory })
 
   const { data, error } = await sb
