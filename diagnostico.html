@@ -218,19 +218,37 @@ const supabaseKey = 'sb_publishable_qQU32GWPw5fogw-foLHhIA_UbHYf3n1'
 const sb = window.supabase.createClient(supabaseUrl, supabaseKey)
 
 async function buscarBenchmark(category, subcategory) {
+ async function buscarBenchmark(category, subcategory) {
+  console.log('BUSCANDO:', { category, subcategory })
+
   const { data, error } = await sb
     .from('benchmarks')
     .select('*')
-    .eq('category', category)
-    .eq('subcategory', subcategory)
-    .limit(1)
+
+  console.log('RETORNO RAW:', { data, error })
 
   if (error) {
     console.error('Erro ao buscar benchmark:', error)
     return null
   }
 
-  return data?.[0] || null
+  const normalizarTexto = (txt) =>
+    (txt || '')
+      .trim()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+
+  const catNorm = normalizarTexto(category)
+  const subNorm = normalizarTexto(subcategory)
+
+  const match = data.find(row =>
+    normalizarTexto(row.category) === catNorm &&
+    normalizarTexto(row.subcategory) === subNorm
+  )
+
+  console.log('MATCH ENCONTRADO:', match)
+  return match || null
 }
   
 const CATS = ["ALIMENTOS E BEBIDAS","AUTOMOTIVO","BEBÊS","BELEZA","BRINQUEDOS E JOGOS","CASA","COMPUTADORES E INFORMÁTICA","COZINHA","ELETRODOMÉSTICOS","ELETRÔNICOS E TECNOLOGIA","ESPORTE, AVENTURA E LAZER","FERRAMENTAS E MATERIAIS DE CONSTRUÇÃO","INDUSTRIA E COMÉRCIO","INSTRUMENTOS MUSICAIS","JARDIM E PISCINA","MODA","PAPELARIA E ESCRITÓRIO","PETSHOP","SAÚDE E BEM ESTAR"];
