@@ -184,6 +184,7 @@ footer{padding:32px 0;border-top:1px solid var(--border);margin-top:40px}
   .bm-cols{grid-template-columns:repeat(3,1fr)}
 }
 </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <div class="bg-glow"></div>
@@ -210,6 +211,30 @@ footer{padding:32px 0;border-top:1px solid var(--border);margin-top:40px}
 </div>
 
 <script>
+
+const supabaseUrl = 'https://ctvhnqnzgmtotxzbtfov.supabase.co/rest/v1/'
+const supabaseKey = 'sb_publishable_qQU32GWPw5fogw-foLHhIA_UbHYf3n1'
+
+const sb = window.supabase.createClient(supabaseUrl, supabaseKey)
+
+async function buscarBenchmark(category, subcategory) {
+  const { data, error } = await sb
+    .from('benchmarks')
+    .select('*')
+    .eq('category', category)
+    .eq('subcategory', subcategory)
+    .limit(1)
+
+  if (error) {
+    console.error('Erro ao buscar benchmark:', error)
+    return null
+  }
+
+  return data?.[0] || null
+}
+
+const CATS = ["ALIMENTOS E BEBIDAS", "AUTOMOTIVO", ...]
+  
 const CATS = ["ALIMENTOS E BEBIDAS","AUTOMOTIVO","BEBÊS","BELEZA","BRINQUEDOS E JOGOS","CASA","COMPUTADORES E INFORMÁTICA","COZINHA","ELETRODOMÉSTICOS","ELETRÔNICOS E TECNOLOGIA","ESPORTE, AVENTURA E LAZER","FERRAMENTAS E MATERIAIS DE CONSTRUÇÃO","INDUSTRIA E COMÉRCIO","INSTRUMENTOS MUSICAIS","JARDIM E PISCINA","MODA","PAPELARIA E ESCRITÓRIO","PETSHOP","SAÚDE E BEM ESTAR"];
 
 const SUBCATS = {
@@ -575,7 +600,8 @@ try {
     </div>`;
   updateProgress();
 }
-
+buscarBenchmark("ALIMENTOS E BEBIDAS", "congelados")
+  .then(res => console.log("BENCHMARK:", res))
 render();
 </script>
 </body>
