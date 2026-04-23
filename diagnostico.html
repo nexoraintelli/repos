@@ -719,15 +719,29 @@ let aiNote = '';
 try {
   const prompt = buildPrompt();
 
-  const res = await fetch('/api/diagnostico', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt })
-  });
+  const res = await fetch('/api/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    model: 'claude-3-5-sonnet-20241022',
+    max_tokens: 900,
+    messages: [
+      {
+        role: 'user',
+        content: prompt
+      }
+    ]
+  })
+});
 
-  const out = await res.json();
-  const txt = out?.text || out?.result || out?.output || '';
+const out = await res.json();
 
+const txt =
+  out?.content?.[0]?.text ||
+  out?.text ||
+  out?.result ||
+  out?.output ||
+  '';
   if (txt) {
     diagHTML = `
       <div class="card">
