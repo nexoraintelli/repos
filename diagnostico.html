@@ -713,16 +713,33 @@ const pris = priorities().map(p =>
   `<div class="pri-item"><span class="tag ${p.t}">${p.tag}</span>${p.txt}</div>`
 ).join('');
 
-const diagHTML = `
-  <div class="card">
-    <p class="card-section">Análise Nexora</p>
-    <div class="diag-text">
-      Diagnóstico baseado na comparação entre métricas reais e benchmarks da categoria.
-    </div>
-  </div>
-`;
+let diagHTML = '';
+let aiNote = '';
 
-const aiNote = '';
+try {
+  const prompt = buildPrompt();
+
+  const res = await fetch('/api/diagnostico', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt })
+  });
+
+  const out = await res.json();
+  const txt = out?.text || out?.result || out?.output || '';
+
+  if (txt) {
+    diagHTML = `
+      <div class="card">
+        <p class="card-section">Análise Nexora</p>
+        <div class="diag-text">${txt.replace(/\</g,'&lt;').replace(/\n/g,'<br>')}</div>
+    `;
+  } else {
+    aiNote = `<div class="ai-note">Não foi possível gerar a análise completa com IA no momento.</div>`;
+  }
+} catch (e) {
+  aiNote = `<div class="ai-note">Não foi possível gerar a análise completa com IA no momento.</div>`;
+}
 
   document.getElementById('app').innerHTML = `
     <div style="padding-top:20px">
