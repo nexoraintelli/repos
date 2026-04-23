@@ -735,6 +735,12 @@ try {
 });
 
 const out = await res.json();
+  
+  console.log('Resposta IA:', out);
+
+if (!res.ok) {
+  throw new Error(out?.error || `HTTP ${res.status}`);
+}
 
 const txt =
   out?.content?.[0]?.text ||
@@ -752,6 +758,7 @@ const txt =
     aiNote = `<div class="ai-note">Não foi possível gerar a análise completa com IA no momento.</div>`;
   }
 } catch (e) {
+  console.error('Erro IA:', e);
   aiNote = `<div class="ai-note">Não foi possível gerar a análise completa com IA no momento.</div>`;
 }
 
