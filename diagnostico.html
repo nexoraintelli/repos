@@ -742,7 +742,11 @@ const out = await res.json();
   console.log('Resposta IA:', out);
 
 if (!res.ok) {
-  throw new Error(out?.error || `HTTP ${res.status}`);
+  throw new Error(
+    typeof out?.error === 'string'
+      ? out.error
+      : JSON.stringify(out)
+  );
 }
 
 const txt =
@@ -762,7 +766,7 @@ const txt =
   }
 } catch (e) {
   console.error('Erro IA:', e);
-  aiNote = `<div class="ai-note">Não foi possível gerar a análise completa com IA no momento.</div>`;
+  aiNote = `<div class="ai-note">${String(e.message || e)}</div>`;
 }
 
   document.getElementById('app').innerHTML = `
