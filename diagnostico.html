@@ -622,17 +622,29 @@ const [sOps, sOpsc] = scoreOps();
     <div class="score-card ${sOpsc}"><div class="score-name">OPERAÇÃO</div><div class="score-val">${sOps}</div></div>
   </div>`;
 
-  const bmBar=`<div class="bm-preview" style="display:block;margin-bottom:16px">
-    <div class="bm-row">
-      <span class="bm-title">Benchmark Nexora · ${D.sub||D.cat||'categoria'}</span>
-      <span class="bm-badge">${bm.source}</span>
+ const bmBar = `<div class="bm-preview" style="display:block;margin-bottom:16px">
+  <div class="bm-row">
+    <span class="bm-title">Benchmark Nexora · ${D.sub || D.cat || 'categoria'}</span>
+    <span class="bm-badge">${bm.source || 'subcategoria'}</span>
+  </div>
+  <div class="bm-cols">
+    <div class="bm-col">
+      <div class="bm-col-lbl">CTR REF.</div>
+      <div class="bm-col-val">${Number(bm.avg_ctr ?? 0).toFixed(2)}%</div>
+      <div class="bm-col-sub">seu: ${ctr.toFixed(2)}%</div>
     </div>
-    <div class="bm-cols">
-      <div class="bm-col"><div class="bm-col-lbl">CTR REF.</div><div class="bm-col-val">${bm.ctr.toFixed(2)}%</div><div class="bm-col-sub">seu: ${ctr.toFixed(2)}%</div></div>
-      <div class="bm-col"><div class="bm-col-lbl">CVR REF.</div><div class="bm-col-val">${bm.cvr.toFixed(1)}%</div><div class="bm-col-sub">seu: ${cvr.toFixed(1)}%</div></div>
-      <div class="bm-col"><div class="bm-col-lbl">ACOS REF.</div><div class="bm-col-val">${bm.acos.toFixed(1)}%</div><div class="bm-col-sub">seu: ${acos.toFixed(1)}%</div></div>
+    <div class="bm-col">
+      <div class="bm-col-lbl">CVR REF.</div>
+      <div class="bm-col-val">${Number(bm.avg_cvr ?? 0).toFixed(1)}%</div>
+      <div class="bm-col-sub">seu: ${cvr.toFixed(1)}%</div>
     </div>
-  </div>`;
+    <div class="bm-col">
+      <div class="bm-col-lbl">ACOS REF.</div>
+      <div class="bm-col-val">${Number(bm.avg_acos ?? 0).toFixed(1)}%</div>
+      <div class="bm-col-sub">seu: ${acos.toFixed(1)}%</div>
+    </div>
+  </div>
+</div>`;
 
  const pris = priorities().map(p=>`<div class="pri-item"><span class="tag ${p.t}">${p.tag}</span>${p.txt}</div>`).join('');
 
