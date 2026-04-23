@@ -734,7 +734,7 @@ try {
   console.error('Erro ao salvar C1', e);
 }
 
- document.getElementById('app').innerHTML = `
+document.getElementById('app').innerHTML = `
   <div style="padding-top:20px">
     <p style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--muted2);text-transform:uppercase;margin-bottom:14px">Diagnóstico · ${D.sub||D.cat||'produto'}</p>
     ${scores}
@@ -744,7 +744,7 @@ try {
     ${aiNote}
     <div class="result-actions">
       <button class="btn-restart" onclick="step=0;D={};render()">Novo diagnóstico</button>
-      <button class="btn-next" onclick="window.location.href='pagina.html'" style="text-decoration:none">Cérebro 2 — Análise de página →</button>
+      <button class="btn-next" onclick="window.location.href='pagina.html'" style="text-decoration:none">Cérebro 2 – Análise de página →</button>
     </div>
   </div>
 `;
