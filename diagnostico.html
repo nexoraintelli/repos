@@ -103,8 +103,31 @@ header{padding:40px 0 32px;border-bottom:1px solid var(--border)}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
 
 /* RADIO BUTTONS */
-.rgroup{display:flex;flex-wrap:wrap;gap:7px}
-.rbtn{font-size:12px;font-weight:500;padding:7px 14px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;color:var(--muted);background:transparent;transition:all .15s;font-family:'DM Sans',sans-serif}
+.group{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+}
+.rbtn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:10px 16px;
+  border-radius:10px;
+  border:1px solid var(--border2);
+  cursor:pointer;
+  color:var(--muted);
+  background:transparent;
+  transition:all .15s;
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;
+  font-weight:500;
+  white-space:nowrap;
+  width:auto;
+  flex:0 0 auto;
+}
 .rbtn:hover{border-color:var(--accent);color:var(--text)}
 .rbtn.sel{background:rgba(79,142,247,.12);color:var(--accent);border-color:var(--accent)}
 
