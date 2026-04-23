@@ -387,28 +387,81 @@ function saveInputs(){
   });
 }
 
-function scoreCTR(v){if(v<0.3)return['CRÍTICO','sc-cr'];if(v<0.8)return['BAIXO','sc-wn'];if(v<2)return['BOM','sc-ok'];return['FORTE','sc-ok'];}
-function scoreCVR(v){if(v<5)return['CRÍTICO','sc-cr'];if(v<10)return['BAIXO','sc-wn'];if(v<15)return['MÉDIO','sc-ok'];return['BOM','sc-ok'];}
-function scoreACOS(v){if(v>35)return['CRÍTICO','sc-cr'];if(v>25)return['ACEITÁVEL','sc-wn'];if(v>15)return['BOM','sc-ok'];return['EXCELENTE','sc-ok'];}
+function scoreCTR(v, bmCtr){
+  if(!bmCtr || bmCtr <= 0){
+    if(v < 0.3) return ['CRÍTICO','sc-cr'];
+    if(v < 0.8) return ['BAIXO','sc-wn'];
+    if(v < 2) return ['BOM','sc-ok'];
+    return ['FORTE','sc-ok'];
+  }
+
+  const ratio = v / bmCtr;
+
+  if(ratio < 0.7) return ['CRÍTICO','sc-cr'];
+  if(ratio < 0.95) return ['BAIXO','sc-wn'];
+  if(ratio <= 1.2) return ['BOM','sc-ok'];
+  return ['FORTE','sc-ok'];
+}
+  
+function scoreCVR(v, bmCvr){
+  if(!bmCvr || bmCvr <= 0){
+    if(v < 5) return ['CRÍTICO','sc-cr'];
+    if(v < 10) return ['BAIXO','sc-wn'];
+    if(v < 15) return ['MÉDIO','sc-ok'];
+    return ['BOM','sc-ok'];
+  }
+
+  const ratio = v / bmCvr;
+
+  if(ratio < 0.75) return ['CRÍTICO','sc-cr'];
+  if(ratio < 0.95) return ['BAIXO','sc-wn'];
+  if(ratio <= 1.15) return ['MÉDIO','sc-ok'];
+  return ['FORTE','sc-ok'];
+}
+  
+function scoreACOS(v, bmAcos){
+  if(!bmAcos || bmAcos <= 0){
+    if(v > 35) return ['CRÍTICO','sc-cr'];
+    if(v > 25) return ['ACEITÁVEL','sc-wn'];
+    if(v > 15) return ['BOM','sc-ok'];
+    return ['EXCELENTE','sc-ok'];
+  }
+
+  const ratio = v / bmAcos;
+
+  if(ratio > 1.3) return ['CRÍTICO','sc-cr'];
+  if(ratio > 1.05) return ['ACEITÁVEL','sc-wn'];
+  if(ratio >= 0.75) return ['BOM','sc-ok'];
+  return ['EXCELENTE','sc-ok'];
+}
 function scoreTACOS(v){if(v>15)return['ALTO','sc-cr'];if(v>8)return['ACEITÁVEL','sc-wn'];return['SAUDÁVEL','sc-ok'];}
 function scoreOps(){const bb=v('bb'),st=v('est');if(bb==='Não tenho'||st==='Zerado')return['CRÍTICO','sc-cr'];if(bb==='Disputada'||st==='Baixo'||v('fba')==='FBM')return['ATENÇÃO','sc-wn'];return['OK','sc-ok'];}
 
 function priorities(){
   const items=[];
   const ctr=n('ctr'),cvr=n('cvr'),acos=n('acos'),tacos=n('tacos'),mg=n('mg');
-  const bm=getBM(D.cat,D.sub);
-  if(ctr<0.3)items.push({t:'tag-cr',tag:'CRÍTICO',txt:'CTR crítico — imagem principal e diferenciação visual são prioridade máxima.'});
-  else if(ctr>0&&ctr<bm.ctr*0.8)items.push({t:'tag-wn',tag:'ABAIXO DA CATEGORIA',txt:`CTR (${ctr}%) abaixo do benchmark da categoria (${bm.ctr}%) — revisar thumbnail e preço relativo.`});
-  if(cvr<5)items.push({t:'tag-cr',tag:'CRÍTICO',txt:'CVR crítico — oferta fraca ou confiança muito baixa. Revisar copy, reviews e prova social.'});
-  else if(cvr>0&&cvr<bm.cvr*0.8)items.push({t:'tag-wn',tag:'ABAIXO DA CATEGORIA',txt:`CVR (${cvr}%) abaixo do benchmark (${bm.cvr}%) — avaliar diferenciação de oferta e qualidade de reviews.`});
-  if(acos>35)items.push({t:'tag-cr',tag:'CRÍTICO',txt:'ACOS crítico — PPC consumindo margem. Pausar keywords de baixo CVR e revisar bids.'});
-  else if(acos>0&&acos>bm.acos*1.2)items.push({t:'tag-wn',tag:'ACIMA DA CATEGORIA',txt:`ACOS (${acos}%) acima do benchmark da categoria (${bm.acos}%) — otimizar campanhas antes de escalar.`});
-  if(v('bb')==='Não tenho')items.push({t:'tag-cr',tag:'CRÍTICO',txt:'BuyBox perdida — sem BuyBox os ADS não funcionam. Resolver imediatamente.'});
-  if(v('est')==='Zerado')items.push({t:'tag-cr',tag:'CRÍTICO',txt:'Estoque zerado — ranking em colapso. Reposição urgente.'});
-  if(mg>0&&acos>0&&acos>=mg)items.push({t:'tag-wn',tag:'UNIT ECONOMICS',txt:'ACOS igual ou maior que a margem — produto possivelmente no prejuízo com ads.'});
-  if(tacos>15)items.push({t:'tag-wn',tag:'TACOS',txt:'TACOS alto — ads respondendo por fatia grande da receita. Trabalhar SEO orgânico.'});
-  if(v('fba')==='FBM')items.push({t:'tag-if',tag:'LOGÍSTICA',txt:'FBM reduz visibilidade vs FBA. Avaliar migração para ganhar Prime e ranking.'});
-  if(!items.length)items.push({t:'tag-ok',tag:'OK',txt:'Métricas dentro dos benchmarks da categoria. Foco em escalar o que funciona.'});
+function priorities(){
+  const items=[];
+  const ctr=n('ctr'),cvr=n('cvr'),acos=n('acos'),tacos=n('tacos'),mg=n('mg');
+  const bm = D.benchmark;
+  if (!bm) return items;
+
+  if(ctr < bm.avg_ctr * 0.8) items.push({t:'tag-cr',tag:'CRÍTICO',txt:`CTR ${ctr}% abaixo do benchmark da categoria (${bm.avg_ctr}%) — revisar thumbnail, imagem principal e diferenciação visual.`});
+  else if(ctr > bm.avg_ctr * 1.2) items.push({t:'tag-wn',tag:'ACIMA DA CATEGORIA',txt:`CTR (${ctr}%) acima do benchmark da categoria (${bm.avg_ctr}%).`});
+
+  if(cvr < bm.avg_cvr * 0.8) items.push({t:'tag-cr',tag:'CRÍTICO',txt:`CVR crítico — oferta fraca ou confiança muito baixa. Revisar copy, reviews e prova social.`});
+  else if(cvr > bm.avg_cvr * 1.2) items.push({t:'tag-ok',tag:'ACIMA DA CATEGORIA',txt:`CVR (${cvr}%) acima do benchmark da categoria (${bm.avg_cvr}%).`});
+
+  if(acos > bm.avg_acos * 1.2) items.push({t:'tag-wn',tag:'ACIMA DA CATEGORIA',txt:`ACOS (${acos}%) acima do benchmark da categoria (${bm.avg_acos}%) — otimizar campanhas antes de escalar.`});
+  else if(acos <= bm.avg_acos) items.push({t:'tag-ok',tag:'EFICIENTE',txt:`ACOS dentro ou abaixo do benchmark da categoria.`});
+
+  if(v('bb')==='Não tenho') items.push({t:'tag-cr',tag:'CRÍTICO',txt:'BuyBox perdida — sem BuyBox os ADS não funcionam. Resolver imediatamente.'});
+  if(v('est')==='Zerado') items.push({t:'tag-cr',tag:'CRÍTICO',txt:'Estoque zerado — ranking em colapso. Reposição urgente.'});
+  if(mg <= 0 || (acos >= mg)) items.push({t:'tag-wn',tag:'UNIT ECONOMICS',txt:'ACOS igual ou maior que a margem — produto possivelmente no prejuízo com ads.'});
+  if(tacos > 15) items.push({t:'tag-wn',tag:'TACOS',txt:'TACOS alto — ads respondendo por fatia grande da receita. Trabalhar SEO orgânico.'});
+  if(v('fba')==='FBM') items.push({t:'tag-if',tag:'LOGÍSTICA',txt:'FBM reduz visibilidade vs FBA. Avaliar migração para ganhar Prime e ranking.'});
+  if(!items.length) items.push({t:'tag-ok',tag:'OK',txt:'Métricas dentro dos benchmarks da categoria. Foco em escalar o que funciona.'});
+
   return items.slice(0,4);
 }
 
@@ -549,9 +602,15 @@ async function runDiag(){
   saveInputs();
   const ctr=n('ctr'),cvr=n('cvr'),acos=n('acos'),tacos=n('tacos');
   const bm=getBM(D.cat,D.sub);
-  const [sCTR,sCTRc]=scoreCTR(ctr),[sCVR,sCVRc]=scoreCVR(cvr);
-  const [sACOS,sACOSc]=scoreACOS(acos),[sTACOS,sTACOSc]=scoreTACOS(tacos);
-  const [sOps,sOpsc]=scoreOps();
+ const bmCtr = Number(D.benchmark?.avg_ctr ?? bm?.avg_ctr ?? 0);
+const bmCvr = Number(D.benchmark?.avg_cvr ?? bm?.avg_cvr ?? 0);
+const bmAcos = Number(D.benchmark?.avg_acos ?? bm?.avg_acos ?? 0);
+
+const [sCTR, sCTRc] = scoreCTR(ctr, bmCtr);
+const [sCVR, sCVRc] = scoreCVR(cvr, bmCvr);
+const [sACOS, sACOSc] = scoreACOS(acos, bmAcos);
+const [sTACOS, sTACOSc] = scoreTACOS(tacos);
+const [sOps, sOpsc] = scoreOps();
 
   document.getElementById('app').innerHTML=`<div class="loading"><div class="spinner"></div><p class="loading-text">Analisando com benchmarks reais de ${D.cat||'sua categoria'}...</p></div>`;
 
