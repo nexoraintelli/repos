@@ -645,12 +645,12 @@ async function runDiag(){
   const bmCvr = Number(bm.avg_cvr ?? bm.cvr ?? 0);
   const bmAcos = Number(bm.avg_acos ?? bm.acos ?? 0);
 
-  const [sCTR] = scoreCTR(ctr, bmCtr);
-  const [sCVR] = scoreCVR(cvr, bmCvr);
-  const [sACOS] = scoreACOS(acos, bmAcos);
-  const [sTACOS] = scoreTACOS(tacos);
-  const [sOPS] = scoreOps();
-
+const [sCTR, sCTRc] = scoreCTR(ctr, bmCtr);
+const [sCVR, sCVRc] = scoreCVR(cvr, bmCvr);
+const [sACOS, sACOSc] = scoreACOS(acos, bmAcos);
+const [sTACOS, sTACOSc] = scoreTACOS(tacos);
+const [sOps, sOpsc] = scoreOps();
+  
   document.getElementById('app').innerHTML = `
     <div class="loading">
       <div class="spinner"></div>
