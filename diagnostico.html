@@ -6,29 +6,30 @@
 <title>Nexora Intelligence — Diagnóstico Amazon</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: :root{
+
+:root{
   --bg:
     radial-gradient(circle at 15% 20%, rgba(128, 0, 0, 0.45) 0%, transparent 30%),
     radial-gradient(circle at 75% 25%, rgba(111, 29, 29, 0.40) 0%, transparent 28%),
     radial-gradient(circle at 60% 80%, rgba(214, 31, 31, 0.22) 0%, transparent 22%),
     linear-gradient(135deg, #0b0b0c 0%, #121212 35%, #1a0000 100%);
+  --surface:#111118;
+  --surface2:#18181f;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+  --accent:#4f8ef7;
+  --accent2:#7b5cf0;
+  --green:#22c98a;
+  --amber:#f5a623;
+  --red:#f25858;
+  --text:#f0f0f5;
+  --muted:#8888a0;
+  --muted2:#555568;
 }
-  --surface: #111118;
-  --surface2: #18181f;
-  --border: rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.12);
-  --accent: #4f8ef7;
-  --accent2: #7b5cf0;
-  --green: #22c98a;
-  --amber: #f5a623;
-  --red: #f25858;
-  --text: #f0f0f5;
-  --muted: #8888a0;
-  --muted2: #555568;
-}
+
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
+
 body{
   background:#0b0b0c;
   color:var(--text);
@@ -36,7 +37,6 @@ body{
   min-height:100vh;
 }
 
-/* NOISE TEXTURE */
 body::before{
   content:'';
   position:fixed;
@@ -49,200 +49,126 @@ body::before{
   pointer-events:none;
   z-index:0;
 }
-  body::after{
+
+body::after{
   content:'';
   position:fixed;
   inset:0;
   background:
     repeating-linear-gradient(
       90deg,
-      rgba(255, 0, 0, 0.00) 0px,
-      rgba(255, 0, 0, 0.00) 3px,
-      rgba(255, 0, 0, 0.05) 4px,
-      rgba(255, 0, 0, 0.00) 7px
+      rgba(255,0,0,0.00) 0px,
+      rgba(255,0,0,0.00) 3px,
+      rgba(255,0,0,0.05) 4px,
+      rgba(255,0,0,0.00) 7px
     );
   opacity:.35;
   pointer-events:none;
   z-index:0;
 }
-.bg-glow{position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:900px;height:500px;background:radial-gradient(ellipse at center, rgba(79,142,247,0.06) 0%, transparent 70%);pointer-events:none;z-index:0}
 
-/* LAYOUT */
-.wrap{max-width:680px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+.bg-glow{
+  position:fixed;
+  top:-20%;
+  left:50%;
+  transform:translateX(-50%);
+  width:900px;
+  height:500px;
+  background:radial-gradient(ellipse at center, rgba(79,142,247,0.06) 0%, transparent 70%);
+  pointer-events:none;
+  z-index:0;
+}
 
-/* HEADER */
-header{padding:40px 0 32px;border-bottom:1px solid var(--border)}
-.logo-row{display:flex;justify-content:center;align-items:center;margin-bottom:20px}
-.logo-img{max-width:460px;width:100%;height:auto;display:block}
-.logo-icon{width:32px;height:65px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.logo-icon svg{width:16px;height:16px}
-.logo-text{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:.15em;color:var(--muted);text-transform:uppercase}
-.header-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--text);letter-spacing:-.02em}
-.header-sub{font-size:13px;color:rgba(229, 228, 226, 0.82);margin-top:4px}
-/* PROGRESS */
+.wrap{
+  max-width:680px;
+  margin:0 auto;
+  padding:0 20px;
+  position:relative;
+  z-index:1;
+}
+
+header{
+  padding:40px 0 32px;
+  border-bottom:1px solid var(--border);
+}
+
+.logo-row{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.logo-img{
+  max-width:460px;
+  width:100%;
+  height:auto;
+  display:block;
+}
+
+.header-title{
+  font-family:'Syne',sans-serif;
+  font-size:26px;
+  font-weight:800;
+  color:var(--text);
+  letter-spacing:-.02em;
+}
+
+.header-sub{
+  font-size:13px;
+  color:rgba(229,228,226,0.82);
+  margin-top:4px;
+}
+
 .progress-wrap{padding:28px 0 0}
 .progress-track{display:flex;gap:5px;margin-bottom:10px}
 .progress-seg{flex:1;height:3px;border-radius:2px;background:var(--border2);transition:background .3s}
 .progress-seg.done{background:var(--green)}
 .progress-seg.active{background:var(--accent)}
-.progress-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;letter-spacing:.1em;color:rgba(229, 228, 226, 0.82);text-transform:uppercase}
+.progress-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;letter-spacing:.1em;color:rgba(229,228,226,0.82);text-transform:uppercase}
 
-/* CARDS */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin:16px 0}
-.card-section{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;color:rgba(229, 228, 226, 0.82);text-transform:uppercase;margin-bottom:16px}
+.card-section{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;color:rgba(229,228,226,0.82);text-transform:uppercase;margin-bottom:16px}
 
-/* FIELDS */
 .field{margin-bottom:22px}
 .field:last-child{margin-bottom:0}
-.field label{display:block;font-size:12px;font-weight:500;color:rgba(229, 228, 226, 0.82);margin-bottom:12px;letter-spacing:.02em}
-.field input,.field select{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:12px 16px;outline:none;transition:border .2s,box-shadow .2s;-webkit-appearance:none;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.field label{display:block;font-size:12px;font-weight:500;color:rgba(229,228,226,0.82);margin-bottom:12px;letter-spacing:.02em}
+.field input,.field select{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:12px 16px;outline:none;transition:border .2s, box-shadow .2s;-webkit-appearance:none;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .field input:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,142,247,.12)}
 .field select option{background:var(--surface2)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
 
-/* RADIO BUTTONS */
-.group{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  align-items:center;
-}
-.rbtn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:40px;
-  padding:10px 16px;
-  border-radius:10px;
-  border:1px solid var(--border2);
-  cursor:pointer;
-  color:var(--muted);
-  background:transparent;
-  transition:all .15s;
-  font-family:'DM Sans',sans-serif;
-  font-size:12px;
-  font-weight:500;
-  white-space:nowrap;
-  width:auto;
-  flex:0 0 auto;
-}
+.rgroup{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.rbtn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:10px 16px;border-radius:10px;border:1px solid var(--border2);cursor:pointer;color:var(--muted);background:transparent;transition:all .15s;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;white-space:nowrap;width:auto;flex:0 0 auto}
 .rbtn:hover{border-color:var(--accent);color:var(--text)}
 .rbtn.sel{background:rgba(79,142,247,.12);color:var(--accent);border-color:var(--accent)}
 
-/* BENCHMARK PREVIEW */
 .bm-preview{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-top:6px;display:none}
 .bm-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .bm-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
 .bm-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;background:rgba(79,142,247,.15);color:var(--accent);letter-spacing:.05em}
-.bm-cols{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
-}
-.bm-col{
-  background:rgba(255,255,255,0.03);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:12px;
-}
-.bm-col-lbl{
-  font-size:11px;
-  color:var(--muted2);
-  text-transform:uppercase;
-  letter-spacing:.08em;
-  margin-bottom:6px;
-}
+.bm-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.bm-col{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px;padding:12px}
+.bm-col-lbl{font-size:11px;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.bm-col-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:var(--text);line-height:1}
+.bm-col-sub{margin-top:6px;font-size:12px;color:var(--muted2)}
 
-.bm-col-val{
-  font-family:'Syne',sans-serif;
-  font-size:28px;
-  font-weight:700;
-  color:var(--text);
-  line-height:1;
-}
+.score-sub{margin-top:6px;font-size:12px;color:var(--muted2)}
 
-.bm-col-sub{
-  margin-top:6px;
-  font-size:12px;
-  color:var(--muted2);
+.nav{display:flex;justify-content:space-between;align-items:center;padding:20px 0 8px;gap:12px;flex-wrap:wrap}
+.btn-back{background:transparent;border:1px solid rgba(229,228,226,0.82);color:rgba(229,228,226,0.82);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:10px 20px;border-radius:12px;cursor:pointer;transition:all .2s ease}
+.btn-back:hover{border-color:var(--accent);color:var(--accent)}
+.btn-next{background:rgba(79,142,247,.15);border:1px solid rgba(79,142,247,.5);color:rgba(229,228,226,0.92);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;padding:10px 22px;border-radius:12px;cursor:pointer;transition:all .2s ease}
+.btn-next:hover{background:rgba(79,142,247,.22);border-color:var(--accent)}
+.btn-go{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;padding:12px 28px;border-radius:12px;cursor:pointer;transition:all .2s ease}
+.btn-go:hover{opacity:.88}
 
-  @media (max-width: 700px){
-  .bm-cols{
-    grid-template-columns:1fr;
-  }
-}
-
-/* NAV */
-.nav{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:20px 0 8px;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-.btn-back{
-  background:transparent;
-  border:1px solid rgba(229, 228, 226, 0.82);
-  color:rgba(229, 228, 226, 0.82);
-  font-family:'DM Sans',sans-serif;
-  font-size:13px;
-  font-weight:500;
-  padding:10px 20px;
-  border-radius:12px;
-  cursor:pointer;
-  transition:all .2s ease;
-}
-
-.btn-back:hover{
-  border-color:var(--accent);
-  color:var(--accent);
-}
-
-.btn-next{
-  background:rgba(79,142,247,.15);
-  border:1px solid rgba(79,142,247,.5);
-  color:rgba(229, 228, 226, 0.92);
-  font-family:'Syne',sans-serif;
-  font-size:13px;
-  font-weight:700;
-  padding:10px 22px;
-  border-radius:12px;
-  cursor:pointer;
-  transition:all .2s ease;
-}
-
-.btn-next:hover{
-  background:rgba(79,142,247,.22);
-  border-color:var(--accent);
-}
-
-.btn-go{
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  border:none;
-  color:#fff;
-  font-family:'Syne',sans-serif;
-  font-size:13px;
-  font-weight:700;
-  padding:12px 28px;
-  border-radius:12px;
-  cursor:pointer;
-  transition:all .2s ease;
-}
-
-.btn-go:hover{
-  opacity:.88;
-}
-
-/* LOADING */
 .loading{text-align:center;padding:60px 0}
 .spinner{width:36px;height:36px;border:2.5px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .75s linear infinite;margin:0 auto 16px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-size:13px;color:var(--muted)}
 
-/* SCORES */
 .score-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
 .score-card{border-radius:12px;padding:12px 8px;text-align:center;border:1px solid transparent}
 .score-name{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
@@ -260,10 +186,8 @@ header{padding:40px 0 32px;border-bottom:1px solid var(--border)}
 .sc-nt .score-name{color:var(--muted2)}
 .sc-nt .score-val{color:var(--muted)}
 
-/* DIAGNOSIS */
 .diag-text{font-size:14px;line-height:1.85;color:rgba(240,240,245,.85);white-space:pre-wrap}
 
-/* PRIORITY ITEMS */
 .pri-item{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);font-size:13px;color:rgba(240,240,245,.8);line-height:1.55}
 .pri-item:last-child{border:none}
 .tag{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;white-space:nowrap;letter-spacing:.05em;flex-shrink:0;margin-top:1px}
@@ -272,79 +196,23 @@ header{padding:40px 0 32px;border-bottom:1px solid var(--border)}
 .tag-ok{background:rgba(34,201,138,.15);color:var(--green)}
 .tag-if{background:rgba(79,142,247,.15);color:var(--accent)}
 
-/* RESULT ACTIONS */
 .result-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
 .btn-restart{background:transparent;border:1px solid var(--border2);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;padding:9px 18px;border-radius:10px;cursor:pointer;transition:all .15s}
 .btn-restart:hover{border-color:var(--border);color:var(--text)}
 .btn-deepen{background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.25);color:var(--accent);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;padding:9px 18px;border-radius:10px;cursor:pointer;letter-spacing:.04em}
 
-/* AI NOTE */
 .ai-note{background:rgba(79,142,247,.06);border:1px solid rgba(79,142,247,.12);border-radius:12px;padding:14px 16px;margin-top:12px;font-size:12px;color:var(--muted);line-height:1.6}
 .ai-note a{color:var(--accent);text-decoration:none}
 
-/* FOOTER */
 footer{padding:32px 0;border-top:1px solid var(--border);margin-top:40px}
 .footer-text{font-size:12px;color:var(--muted2);text-align:center}
 
 @media(max-width:520px){
   .score-grid{grid-template-columns:repeat(3,1fr)}
   .grid2,.grid3{grid-template-columns:1fr}
-  .bm-cols{grid-template-columns:repeat(3,1fr)}
-}
-  .nav{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:20px 0 8px;
-  gap:12px;
-  flex-wrap:wrap;
+  .bm-cols{grid-template-columns:1fr}
 }
 
-.btn-back,
-.btn-next,
-.btn-go{
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  min-height:42px !important;
-  padding:12px 18px !important;
-  border-radius:12px !important;
-  cursor:pointer !important;
-  font-family:'DM Sans',sans-serif !important;
-  font-size:14px !important;
-  font-weight:600 !important;
-  text-decoration:none !important;
-  width:auto !important;
-  appearance:none !important;
-  -webkit-appearance:none !important;
-}
-
-.btn-back{
-  background:transparent !important;
-  border:1px solid rgba(229,228,226,0.82) !important;
-  color:rgba(229,228,226,0.82) !important;
-}
-
-.btn-back:hover{
-  border-color:var(--accent) !important;
-  color:var(--accent) !important;
-}
-
-.btn-next{
-  background:rgba(79,142,247,.14) !important;
-  border:1px solid var(--accent) !important;
-  color:var(--accent) !important;
-}
-
-.btn-next:hover{
-  background:rgba(79,142,247,.22) !important;
-}
-
-.btn-go{
-  background:linear-gradient(135deg,var(--accent),var(--accent2)) !important;
-  border:none !important;
-  color:#fff !important;
-}
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -602,6 +470,9 @@ function scoreOps(){const bb=v('bb'),st=v('est');if(bb==='Não tenho'||st==='Zer
 function priorities(){
   const items=[];
   const ctr=n('ctr'),cvr=n('cvr'),acos=n('acos'),tacos=n('tacos'),mg=n('mg');
+function priorities(){
+  const items=[];
+  const ctr=n('ctr'),cvr=n('cvr'),acos=n('acos'),tacos=n('tacos'),mg=n('mg');
   const bm = D.benchmark;
   if (!bm) return items;
 
@@ -622,10 +493,11 @@ function priorities(){
   if(!items.length) items.push({t:'tag-ok',tag:'OK',txt:'Métricas dentro dos benchmarks da categoria. Foco em escalar o que funciona.'});
 
   return items.slice(0,4);
-} 
+}
+
 function buildPrompt(){
   const ctr = n('ctr'), cvr = n('cvr'), acos = n('acos'), tacos = n('tacos');
-  const bm = getBM(D.cat, D.sub);
+  const bm = D.benchmark || getBM(D.cat, D.sub);
 
   const [sCTR] = scoreCTR(ctr, Number(bm.avg_ctr ?? bm.ctr ?? 0));
   const [sCVR] = scoreCVR(cvr, Number(bm.avg_cvr ?? bm.cvr ?? 0));
@@ -750,9 +622,9 @@ function render(){
 
   const isLast=step===STEPS.length-1;
   html+=`<div class="nav">
-   ${step>0?`<button class="btn-back" onclick="goBack()" style="background:transparent;border:1px solid #e5e4e2;color:#e5e4e2;padding:12px 18px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;cursor:pointer;">← Voltar</button>`:`<span></span>`}
-${isLast?`<button class="btn-go" onclick="runDiag()" style="background:linear-gradient(135deg,#4f8ef7,#7b5cf0);border:none;color:#fff;padding:12px 20px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;cursor:pointer;">Gerar diagnóstico</button>`:`<button class="btn-next" onclick="goNext()" style="background:rgba(79,142,247,.18);border:1px solid #4f8ef7;color:#4f8ef7;padding:12px 18px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;cursor:pointer;">Continuar →</button>`}
-  </div>`;
+  ${step>0?`<button class="btn-back" onclick="goBack()">← Voltar</button>`:`<span></span>`}
+  ${isLast?`<button class="btn-go" onclick="runDiag()">Gerar diagnóstico</button>`:`<button class="btn-next" onclick="goNext()">Continuar →</button>`}
+</div>`;
 
   app.innerHTML=html;
   if(step===0&&D.cat)updateSubcats();
@@ -764,7 +636,7 @@ function goBack(){saveInputs();step--;render();}
 async function runDiag(){
   saveInputs();
   const ctr=n('ctr'),cvr=n('cvr'),acos=n('acos'),tacos=n('tacos');
-  const bm=getBM(D.cat,D.sub);
+  const bm = D.benchmark || getBM(D.cat,D.sub);
  const bmCtr = Number(D.benchmark?.avg_ctr ?? bm?.avg_ctr ?? 0);
 const bmCvr = Number(D.benchmark?.avg_cvr ?? bm?.avg_cvr ?? 0);
 const bmAcos = Number(D.benchmark?.avg_acos ?? bm?.avg_acos ?? 0);
@@ -788,19 +660,23 @@ const [sOps, sOpsc] = scoreOps();
  const bmBar = `<div class="bm-preview" style="display:block;margin-bottom:16px">
   <div class="bm-row">
     <span class="bm-title">Benchmark Nexora · ${D.sub || D.cat || 'categoria'}</span>
-    <span class="bm-badge">${bm.source || 'subcategoria'}</span>
+    <span class="bm-badge">${(D.benchmark?.source || bm.source || 'subcategoria')}</span>
   </div>
   <div class="bm-cols">
     <div class="bm-col">
       <div class="bm-col-lbl">CTR REF.</div>
-     <div class="bm-col-val">${Number(bm.avg_ctr ?? bm.ctr ?? 0).toFixed(2)}%</div>
-<div class="bm-col-sub">seu: ${ctr.toFixed(2)}%</div>
-
-<div class="bm-col-val">${Number(bm.avg_cvr ?? bm.cvr ?? 0).toFixed(1)}%</div>
-<div class="bm-col-sub">seu: ${cvr.toFixed(1)}%</div>
-
-<div class="bm-col-val">${Number(bm.avg_acos ?? bm.acos ?? 0).toFixed(1)}%</div>
-<div class="bm-col-sub">seu: ${acos.toFixed(1)}%</div>
+      <div class="bm-col-val">${Number(D.benchmark?.avg_ctr ?? bm.avg_ctr ?? bm.ctr ?? 0).toFixed(2)}%</div>
+      <div class="bm-col-sub">seu: ${ctr.toFixed(2)}%</div>
+    </div>
+    <div class="bm-col">
+      <div class="bm-col-lbl">CVR REF.</div>
+      <div class="bm-col-val">${Number(D.benchmark?.avg_cvr ?? bm.avg_cvr ?? bm.cvr ?? 0).toFixed(1)}%</div>
+      <div class="bm-col-sub">seu: ${cvr.toFixed(1)}%</div>
+    </div>
+    <div class="bm-col">
+      <div class="bm-col-lbl">ACOS REF.</div>
+      <div class="bm-col-val">${Number(D.benchmark?.avg_acos ?? bm.avg_acos ?? bm.acos ?? 0).toFixed(1)}%</div>
+      <div class="bm-col-sub">seu: ${acos.toFixed(1)}%</div>
     </div>
   </div>
 </div>`;
@@ -838,20 +714,15 @@ try {
 
   // Save Cérebro 1 output to localStorage for Cérebro 2 and 3
   const nexoraOutput = {
-  cat: D.cat, sub: D.sub, modelo: D.modelo, force: D.force, pos: D.pos,
-  ctr: n('ctr'), cvr: n('cvr'), acos: n('acos'), tacos: n('tacos'), mg: n('mg'),
-  imp: v('imp'), cli: v('cli'), vnd: v('vnd'), rev: v('rev'), rat: v('rat'),
-  fba: v('fba'), bb: v('bb'), est: v('est'), preco: v('preco'),
-  bm: {
-    source: bm.source || 'subcategoria',
-    avg_ctr: Number(bm.avg_ctr ?? bm.ctr ?? 0),
-    avg_cvr: Number(bm.avg_cvr ?? bm.cvr ?? 0),
-    avg_acos: Number(bm.avg_acos ?? bm.acos ?? 0)
-  },
-  scores: {ctr:sCTR, cvr:sCVR, acos:sACOS, tacos:sTACOS, ops:sOps},
-  pilares: priorities().map(p=>p.txt),
-  timestamp: new Date().toISOString()
-};
+    cat: D.cat, sub: D.sub, modelo: D.modelo, force: D.force, pos: D.pos,
+    ctr: n('ctr'), cvr: n('cvr'), acos: n('acos'), tacos: n('tacos'), mg: n('mg'),
+    imp: v('imp'), cli: v('cli'), vnd: v('vnd'), rev: v('rev'), rat: v('rat'),
+    fba: v('fba'), bb: v('bb'), est: v('est'), preco: v('preco'),
+    bm: bm,
+    scores: {ctr:sCTR, cvr:sCVR, acos:sACOS, tacos:sTACOS, ops:sOps},
+    pilares: priorities().map(p=>p.txt),
+    timestamp: new Date().toISOString()
+  };
   try {
   if (nexoraOutput && Object.keys(nexoraOutput).length > 0) {
     console.log('SALVANDO C1:', nexoraOutput);
@@ -863,20 +734,20 @@ try {
   console.error('Erro ao salvar C1', e);
 }
 
- document.getElementById('app').innerHTML=`
-  <div style="padding-top:20px">
-    <p style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--muted2);text-transform:uppercase;margin-bottom:14px">Diagnóstico · ${D.sub||D.cat||'produto'}</p>
-    ${scores}
-    ${bmBar}
-    ${diagHTML}
-    <div class="card"><p class="card-section">Prioridades identificadas</p>${pris}</div>
-    ${aiNote}
-    <div class="result-actions">
-      <button class="btn-restart" onclick="step=0;D={};render()">Novo diagnóstico</button>
-      <button class="btn-next" onclick="window.location.href='pagina.html'" style="text-decoration:none">Cérebro 2 – Análise de página →</button>
-    </div>
-  </div>
-`;
+  document.getElementById('app').innerHTML=`
+    <div style="padding-top:20px">
+      <p style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--muted2);text-transform:uppercase;margin-bottom:14px">Diagnóstico · ${D.sub||D.cat||'produto'}</p>
+      ${scores}
+      ${bmBar}
+      ${diagHTML}
+      <div class="card"><p class="card-section">Prioridades identificadas</p>${pris}</div>
+      ${aiNote}
+      <div class="result-actions">
+        <button class="btn-restart" onclick="step=0;D={};render()">Novo diagnóstico</button>
+        <button class="btn-next" onclick="window.location.href='pagina.html'" style="text-decoration:none">Cérebro 2 — Análise de página →</button>
+      </div>
+    </div>`
+    `;
   updateProgress();
 }
 render();
