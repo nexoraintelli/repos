@@ -626,18 +626,14 @@ const [sOps, sOpsc] = scoreOps();
   <div class="bm-cols">
     <div class="bm-col">
       <div class="bm-col-lbl">CTR REF.</div>
-      <div class="bm-col-val">${Number(bm.avg_ctr ?? 0).toFixed(2)}%</div>
-      <div class="bm-col-sub">seu: ${ctr.toFixed(2)}%</div>
-    </div>
-    <div class="bm-col">
-      <div class="bm-col-lbl">CVR REF.</div>
-      <div class="bm-col-val">${Number(bm.avg_cvr ?? 0).toFixed(1)}%</div>
-      <div class="bm-col-sub">seu: ${cvr.toFixed(1)}%</div>
-    </div>
-    <div class="bm-col">
-      <div class="bm-col-lbl">ACOS REF.</div>
-      <div class="bm-col-val">${Number(bm.avg_acos ?? 0).toFixed(1)}%</div>
-      <div class="bm-col-sub">seu: ${acos.toFixed(1)}%</div>
+     <div class="bm-col-val">${Number(bm.avg_ctr ?? bm.ctr ?? 0).toFixed(2)}%</div>
+<div class="bm-col-sub">seu: ${ctr.toFixed(2)}%</div>
+
+<div class="bm-col-val">${Number(bm.avg_cvr ?? bm.cvr ?? 0).toFixed(1)}%</div>
+<div class="bm-col-sub">seu: ${cvr.toFixed(1)}%</div>
+
+<div class="bm-col-val">${Number(bm.avg_acos ?? bm.acos ?? 0).toFixed(1)}%</div>
+<div class="bm-col-sub">seu: ${acos.toFixed(1)}%</div>
     </div>
   </div>
 </div>`;
