@@ -152,7 +152,11 @@ header{
 .bm-col{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px;padding:12px}
 .bm-col-lbl{font-size:11px;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
 .bm-col-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:var(--text);line-height:1}
-.bm-col-sub{margin-top:6px;font-size:12px;color:var(--muted2)}
+.bm-col-sub{
+  margin-top:6px;
+  font-size:12px;
+  color:var(--muted2);
+}
 
 .score-sub{margin-top:6px;font-size:12px;color:var(--muted2)}
 
@@ -744,7 +748,7 @@ document.getElementById('app').innerHTML = `
     ${aiNote}
     <div class="result-actions">
       <button class="btn-restart" onclick="step=0;D={};render()">Novo diagnóstico</button>
-      <button class="btn-next" onclick="window.location.href='pagina.html'" style="text-decoration:none">Cérebro 2 – Análise de página →</button>
+      <button class="btn-next" onclick="window.location.href='pagina.html'" style="text-decoration:none">Cérebro 2 — Análise de página →</button>
     </div>
   </div>
 `;
