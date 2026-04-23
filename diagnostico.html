@@ -337,18 +337,47 @@ function updateSubcats(){
   updateBMPreview();
 }
 
-function updateBMPreview(){
-  const cat=document.getElementById('f_cat')?.value||'';
-  const sub=document.getElementById('f_sub')?.value||'';
-  if(sub)D.sub=sub;
-  const bm=getBM(cat,sub);
-  const el=document.getElementById('bm-preview');
-  if(!el||!cat)return;
-  el.style.display='block';
-  document.getElementById('bm-src').textContent=bm.source==='subcategoria'?sub:bm.source==='categoria'?'média da categoria':'universal';
-  document.getElementById('bm-ctr').textContent=bm.ctr.toFixed(2)+'%';
-  document.getElementById('bm-cvr').textContent=bm.cvr.toFixed(1)+'%';
-  document.getElementById('bm-acos').textContent=bm.acos.toFixed(1)+'%';
+async function updateBMPreview() {
+  const cat = document.getElementById('f_cat')?.value || '';
+  const sub = document.getElementById('f_sub')?.value || '';
+  if (sub) D.sub = sub;
+
+  const el = document.getElementById('bm-preview');
+  if (!el) return;
+
+  el.style.display = 'block';
+
+  const srcEl = document.getElementById('bm-src');
+  const ctrEl = document.getElementById('bm-ctr');
+  const cvrEl = document.getElementById('bm-cvr');
+  const acosEl = document.getElementById('bm-acos');
+
+  if (!cat || !sub) {
+    if (srcEl) srcEl.textContent = '';
+    if (ctrEl) ctrEl.textContent = '--';
+    if (cvrEl) cvrEl.textContent = '--';
+    if (acosEl) acosEl.textContent = '--';
+    return;
+  }
+
+  const bm = await buscarBenchmark(cat, sub);
+
+  if (!bm) {
+    if (srcEl) srcEl.textContent = 'sem benchmark';
+    if (ctrEl) ctrEl.textContent = '--';
+    if (cvrEl) cvrEl.textContent = '--';
+    if (acosEl) acosEl.textContent = '--';
+    return;
+  }
+
+  D.benchmark = bm;
+
+  if (srcEl) srcEl.textContent = 'subcategoria';
+  if (ctrEl) ctrEl.textContent = `${Number(bm.avg_ctr ?? 0).toFixed(2)}%`;
+  if (cvrEl) cvrEl.textContent = `${Number(bm.avg_cvr ?? 0).toFixed(1)}%`;
+  if (acosEl) acosEl.textContent = `${Number(bm.avg_acos ?? 0).toFixed(1)}%`;
+
+  console.log('Preview benchmark aplicado:', bm);
 }
 
 function saveInputs(){
