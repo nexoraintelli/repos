@@ -661,77 +661,70 @@ async function runDiag(){
   `;
 
   const scores = `
-    <div class="score-grid">
-      <div class="score-card ${sCTR}">
-        <div class="score-name">CTR</div>
-        <div class="score-val">${ctr}%</div>
-      </div>
+  <div class="score-grid">
+    <div class="score-card ${sCTRc}">
+      <div class="score-name">CTR</div>
+      <div class="score-val">${sCTR}</div>
+    </div>
+    <div class="score-card ${sCVRc}">
+      <div class="score-name">CVR</div>
+      <div class="score-val">${sCVR}</div>
+    </div>
+    <div class="score-card ${sACOSc}">
+      <div class="score-name">ACOS</div>
+      <div class="score-val">${sACOS}</div>
+    </div>
+    <div class="score-card ${sTACOSc}">
+      <div class="score-name">TACOS</div>
+      <div class="score-val">${sTACOS}</div>
+    </div>
+    <div class="score-card ${sOpsc}">
+      <div class="score-name">OPERAÇÃO</div>
+      <div class="score-val">${sOps}</div>
+    </div>
+  </div>
+`;
 
-      <div class="score-card ${sCVR}">
-        <div class="score-name">CVR</div>
-        <div class="score-val">${cvr}%</div>
+const bmBar = `
+  <div class="bm-preview" style="display:block;margin-bottom:16px">
+    <div class="bm-row">
+      <span class="bm-title">Benchmark Nexora · ${D.sub || D.cat || 'categoria'}</span>
+      <span class="bm-badge">${bm.source || 'subcategoria'}</span>
+    </div>
+    <div class="bm-cols">
+      <div class="bm-col">
+        <div class="bm-col-lbl">CTR REF.</div>
+        <div class="bm-col-val">${Number(bm.avg_ctr ?? bm.ctr ?? 0).toFixed(2)}%</div>
+        <div class="bm-col-sub">seu: ${ctr.toFixed(2)}%</div>
       </div>
-
-      <div class="score-card ${sACOS}">
-        <div class="score-name">ACOS</div>
-        <div class="score-val">${acos}%</div>
+      <div class="bm-col">
+        <div class="bm-col-lbl">CVR REF.</div>
+        <div class="bm-col-val">${Number(bm.avg_cvr ?? bm.cvr ?? 0).toFixed(1)}%</div>
+        <div class="bm-col-sub">seu: ${cvr.toFixed(1)}%</div>
       </div>
-
-      <div class="score-card ${sTACOS}">
-        <div class="score-name">TACOS</div>
-        <div class="score-val">${tacos}%</div>
-      </div>
-
-      <div class="score-card ${sOPS}">
-        <div class="score-name">OPERAÇÃO</div>
-        <div class="score-val">${sOPS}</div>
+      <div class="bm-col">
+        <div class="bm-col-lbl">ACOS REF.</div>
+        <div class="bm-col-val">${Number(bm.avg_acos ?? bm.acos ?? 0).toFixed(1)}%</div>
+        <div class="bm-col-sub">seu: ${acos.toFixed(1)}%</div>
       </div>
     </div>
-  `;
+  </div>
+`;
 
-  const bmBar = `
-    <div class="bm-preview" style="display:block;margin-bottom:16px">
-      <div class="bm-row">
-        <span class="bm-title">Benchmark Nexora · ${D.sub || D.cat}</span>
-        <span class="bm-badge">${bm.source || 'subcategoria'}</span>
-      </div>
+const pris = priorities().map(p =>
+  `<div class="pri-item"><span class="tag ${p.t}">${p.tag}</span>${p.txt}</div>`
+).join('');
 
-      <div class="bm-cols">
-        <div class="bm-col">
-          <div class="bm-col-lbl">CTR REF.</div>
-          <div class="bm-col-val">${bmCtr.toFixed(2)}%</div>
-          <div class="bm-col-sub">seu: ${ctr.toFixed(2)}%</div>
-        </div>
-
-        <div class="bm-col">
-          <div class="bm-col-lbl">CVR REF.</div>
-          <div class="bm-col-val">${bmCvr.toFixed(1)}%</div>
-          <div class="bm-col-sub">seu: ${cvr.toFixed(1)}%</div>
-        </div>
-
-        <div class="bm-col">
-          <div class="bm-col-lbl">ACOS REF.</div>
-          <div class="bm-col-val">${bmAcos.toFixed(1)}%</div>
-          <div class="bm-col-sub">seu: ${acos.toFixed(1)}%</div>
-        </div>
-      </div>
+const diagHTML = `
+  <div class="card">
+    <p class="card-section">Análise Nexora</p>
+    <div class="diag-text">
+      Diagnóstico baseado na comparação entre métricas reais e benchmarks da categoria.
     </div>
-  `;
+  </div>
+`;
 
-  const pris = prioridades().map(p =>
-    `<div class="pri-item"><span class="tag ${p.t}">${p.tag}</span>${p.txt}</div>`
-  ).join('');
-
-  const diagHTML = `
-    <div class="card">
-      <p class="card-section">Análise Nexora</p>
-      <div class="diag-text">
-        Diagnóstico baseado na comparação entre métricas reais e benchmarks da categoria.
-      </div>
-    </div>
-  `;
-
-  const aiNote = '';
+const aiNote = '';
 
   document.getElementById('app').innerHTML = `
     <div style="padding-top:20px">
