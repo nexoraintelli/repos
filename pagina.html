@@ -657,7 +657,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
+          model: 'claude-sonnet-4-6',
           max_tokens: maxTokens || 1200,
           messages
         })
@@ -676,6 +676,40 @@
       C1 = JSON.parse(localStorage.getItem('nx_c1') || 'null');
     } catch (e) {
       C1 = null;
+    }
+
+    function getBenchmarkContext() {
+      const bm = C1?.bm || C1?.benchmark || {};
+      return {
+        category: C1?.cat || '',
+        subcategory: C1?.sub || '',
+        source: bm.source || 'benchmark Nexora',
+        avg_ctr: Number(bm.avg_ctr ?? bm.ctr ?? 0),
+        avg_cvr: Number(bm.avg_cvr ?? bm.cvr ?? 0),
+        avg_acos: Number(bm.avg_acos ?? bm.acos ?? 0),
+        product_ctr: Number(C1?.ctr ?? 0),
+        product_cvr: Number(C1?.cvr ?? 0),
+        product_acos: Number(C1?.acos ?? 0)
+      };
+    }
+
+    function fmtPct(value, digits = 1) {
+      const n = Number(value);
+      return Number.isFinite(n) && n > 0 ? `${n.toFixed(digits)}%` : 'N/A';
+    }
+
+    function buildBenchmarkContextText() {
+      if (!C1) return 'Sem dados do Cérebro 1 ou benchmark de categoria.';
+      const bm = getBenchmarkContext();
+      return `Contexto de categoria vindo do Cérebro 1:
+` +
+        `- Categoria: ${bm.category || 'N/A'} | Subcategoria: ${bm.subcategory || 'N/A'} | Fonte: ${bm.source}
+` +
+        `- Benchmark Nexora: CTR médio ${fmtPct(bm.avg_ctr, 2)} | CVR médio ${fmtPct(bm.avg_cvr, 1)} | ACOS médio ${fmtPct(bm.avg_acos, 1)}
+` +
+        `- Produto analisado no Cérebro 1: CTR ${fmtPct(bm.product_ctr, 2)} (${C1?.scores?.ctr || 'N/A'}) | CVR ${fmtPct(bm.product_cvr, 1)} (${C1?.scores?.cvr || 'N/A'}) | ACOS ${fmtPct(bm.product_acos, 1)} (${C1?.scores?.acos || 'N/A'})
+` +
+        `- Pilares críticos identificados: ${Array.isArray(C1?.pilares) && C1.pilares.length ? C1.pilares.join(' | ') : 'N/A'}`;
     }
 
     function loadCtx() {
@@ -723,6 +757,12 @@
             <span class="cdot" style="background:${dc(s.acos, 'acos')}"></span>
             ACOS <strong>${s.acos || 'N/A'}</strong>
           </div>
+          ${(() => {
+            const bm = getBenchmarkContext();
+            return bm.avg_ctr || bm.avg_cvr || bm.avg_acos
+              ? `<div class="ctx-pill"><strong>Benchmark:</strong> CTR ${fmtPct(bm.avg_ctr, 2)} · CVR ${fmtPct(bm.avg_cvr, 1)} · ACOS ${fmtPct(bm.avg_acos, 1)}</div>`
+              : '';
+          })()}
           ${C1.sub || C1.cat ? `<div class="ctx-pill"><strong>${C1.sub || C1.cat}</strong></div>` : ''}
         </div>
       `;
@@ -863,17 +903,34 @@
         </div>
       `;
 
-      const ctx1 = C1
-        ? `Cérebro 1: ${C1.cat} > ${C1.sub || 'N/A'} | CTR ${C1.ctr}% (${C1.scores?.ctr}) | CVR ${C1.cvr}% (${C1.scores?.cvr}) | Problema: ${C1.pilares?.[0] || 'N/A'}`
-        : 'Sem dados do Cérebro 1.';
+      const bmContext = getBenchmarkContext();
+      const ctx1 = buildBenchmarkContextText();
 
-      const prompt = `Você é a NEXORA INTELLIGENCE — Cérebro 2: Listing Intelligence Engine. Analise a página dentro do contexto do problema já detectado.
+      const prompt = `Você é a NEXORA INTELLIGENCE — Cérebro 2: Listing Intelligence Engine.
+Sua função é analisar a página do produto considerando o diagnóstico de performance e os benchmarks reais da categoria vindos do Cérebro 1.
+
 ${ctx1}
-Listing: Título: ${titulo || 'N/A'} | Bullets: ${bullets || 'N/A'} | Descrição: ${desc || 'N/A'} | Preço: R$${preco} | Reviews: ${rev} | Rating: ${rat} | Vídeo: ${rbState.video || 'N/A'} | Cupom: ${rbState.cupom || 'N/A'} | ${imgs.length} imagem(ns) enviada(s).
-${C1?.scores?.ctr === 'CRÍTICO' || C1?.scores?.ctr === 'BAIXO' ? '→ CTR baixo: foque em thumbnail, título e preço percebido.' : ''}
-${C1?.scores?.cvr === 'CRÍTICO' || C1?.scores?.cvr === 'BAIXO' ? '→ CVR baixo: foque em clareza, prova social e diferenciação.' : ''}
+
+DADOS DA LISTING:
+- Título: ${titulo || 'N/A'}
+- Bullets: ${bullets || 'N/A'}
+- Descrição/A+ Content: ${desc || 'N/A'}
+- Preço informado na página: R$${preco || 'N/A'}
+- Reviews: ${rev}
+- Rating: ${rat}
+- Vídeo: ${rbState.video || 'N/A'}
+- Cupom: ${rbState.cupom || 'N/A'}
+- Imagens enviadas: ${imgs.length}
+
+REGRAS DE DIAGNÓSTICO:
+- Se o CTR do Cérebro 1 estiver abaixo do benchmark, avalie prioridade máxima em thumbnail, imagem principal, título, preço percebido e diferenciação visual.
+- Se o CVR do Cérebro 1 estiver abaixo do benchmark, avalie clareza da oferta, prova social, bullets, A+ Content, confiança e alinhamento com a promessa do produto.
+- Se o ACOS estiver acima do benchmark, avalie se a página está desperdiçando mídia por baixa conversão ou baixa diferenciação.
+- Não dê recomendações genéricas: conecte cada gap ao impacto em CTR, CVR ou eficiência de mídia.
+- Considere a categoria/subcategoria e o nível de exigência do mercado antes de julgar a página.
+
 Retorne SOMENTE JSON válido sem markdown:
-{"scores":{"ctr_readiness":0,"cvr_readiness":0,"diferenciacao":0,"confianca":0},"problema_principal":"","diagnostico":"","gaps":[{"nivel":"CRÍTICO","descricao":""}],"prioridades":["","",""]}`;
+{"scores":{"ctr_readiness":0,"cvr_readiness":0,"diferenciacao":0,"confianca":0},"problema_principal":"","diagnostico":"","gaps":[{"nivel":"CRÍTICO|ALTO|MÉDIO","descricao":""}],"prioridades":["", "", ""],"benchmark_context":{"categoria":"${bmContext.category || ''}","subcategoria":"${bmContext.subcategory || ''}","avg_ctr":${bmContext.avg_ctr || 0},"avg_cvr":${bmContext.avg_cvr || 0},"avg_acos":${bmContext.avg_acos || 0}}}`;
 
       const msgContent = [];
 
@@ -922,7 +979,27 @@ Retorne SOMENTE JSON válido sem markdown:
       const s = result.scores || {};
 
       try {
-        localStorage.setItem('nx_c2', JSON.stringify({ ...result, ts: new Date().toISOString() }));
+        localStorage.setItem('nx_c2', JSON.stringify({
+          ...result,
+          input: {
+            titulo,
+            bullets,
+            desc,
+            preco,
+            rev,
+            rat,
+            video: rbState.video || '',
+            cupom: rbState.cupom || '',
+            imagens_enviadas: imgs.length
+          },
+          context: {
+            category: C1?.cat || '',
+            subcategory: C1?.sub || '',
+            c1_scores: C1?.scores || {},
+            benchmark: bmContext
+          },
+          ts: new Date().toISOString()
+        }));
       } catch (e) {
         console.warn('Não foi possível salvar nx_c2 no localStorage.', e);
       }
