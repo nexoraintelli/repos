@@ -657,28 +657,14 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
+          model: 'claude-sonnet-4-20250514',
           max_tokens: maxTokens || 1200,
           messages
         })
       });
 
-      const rawText = await res.text();
-      let data = null;
-
-      try {
-        data = rawText ? JSON.parse(rawText) : {};
-      } catch (e) {
-        throw new Error(`API retornou uma resposta inválida (${res.status}). ${rawText.slice(0, 180)}`);
-      }
-
-      if (!res.ok || data.error) {
-        const errorMsg = typeof data.error === 'string'
-          ? data.error
-          : JSON.stringify(data.error || data);
-        throw new Error(`API ${res.status}: ${errorMsg}`);
-      }
-
+      const data = await res.json();
+      if (data.error) throw new Error(JSON.stringify(data.error));
       return data.content?.map(c => c.text || '').join('') || '';
     }
 
@@ -877,43 +863,17 @@
         </div>
       `;
 
-      const bm = C1?.bm || C1?.benchmark || {};
       const ctx1 = C1
-        ? `Cérebro 1 / Benchmark contextual:
-- Categoria: ${C1.cat || 'N/A'} > ${C1.sub || 'N/A'}
-- CTR atual: ${C1.ctr || 'N/A'}% | status: ${C1.scores?.ctr || 'N/A'} | benchmark CTR: ${bm.avg_ctr ?? bm.ctr ?? 'N/A'}%
-- CVR atual: ${C1.cvr || 'N/A'}% | status: ${C1.scores?.cvr || 'N/A'} | benchmark CVR: ${bm.avg_cvr ?? bm.cvr ?? 'N/A'}%
-- ACOS atual: ${C1.acos || 'N/A'}% | status: ${C1.scores?.acos || 'N/A'} | benchmark ACOS: ${bm.avg_acos ?? bm.acos ?? 'N/A'}%
-- TACOS atual: ${C1.tacos || 'N/A'}% | status: ${C1.scores?.tacos || 'N/A'}
-- Margem: ${C1.mg || 'N/A'}% | FBA/FBM: ${C1.fba || 'N/A'} | BuyBox: ${C1.bb || 'N/A'} | Estoque: ${C1.est || 'N/A'}
-- Prioridades C1: ${Array.isArray(C1.pilares) ? C1.pilares.join(' | ') : 'N/A'}`
-        : `Sem dados do Cérebro 1. Faça uma análise independente da página, mas sinalize baixa confiança por ausência de benchmark contextual.`;
+        ? `Cérebro 1: ${C1.cat} > ${C1.sub || 'N/A'} | CTR ${C1.ctr}% (${C1.scores?.ctr}) | CVR ${C1.cvr}% (${C1.scores?.cvr}) | Problema: ${C1.pilares?.[0] || 'N/A'}`
+        : 'Sem dados do Cérebro 1.';
 
-      const prompt = `Você é a NEXORA INTELLIGENCE — Cérebro 2: Listing Intelligence Engine.
-Sua função é analisar a página do produto com base no benchmark e no diagnóstico do Cérebro 1.
-
+      const prompt = `Você é a NEXORA INTELLIGENCE — Cérebro 2: Listing Intelligence Engine. Analise a página dentro do contexto do problema já detectado.
 ${ctx1}
-
-DADOS DA LISTING:
-- Título: ${titulo || 'N/A'}
-- Bullets: ${bullets || 'N/A'}
-- Descrição/A+: ${desc || 'N/A'}
-- Preço: R$${preco || 'N/A'}
-- Reviews: ${rev}
-- Rating: ${rat}
-- Vídeo: ${rbState.video || 'N/A'}
-- Cupom: ${rbState.cupom || 'N/A'}
-- Imagens enviadas: ${imgs.length}
-
-REGRAS DE ANÁLISE:
-1. Se CTR do Cérebro 1 estiver baixo/crítico, priorize thumbnail, título, preço percebido e diferenciação visual.
-2. Se CVR do Cérebro 1 estiver baixo/crítico, priorize prova social, clareza de oferta, imagens de benefício, bullets, A+ e confiança.
-3. Compare a página com o benchmark da categoria/subcategoria; não avalie a página de forma genérica.
-4. Identifique causa raiz de página, não apenas sintomas.
-5. Retorne apenas JSON válido, sem markdown, sem texto fora do JSON.
-
-FORMATO OBRIGATÓRIO:
-{"scores":{"ctr_readiness":0,"cvr_readiness":0,"diferenciacao":0,"confianca":0},"problema_principal":"","diagnostico":"","gaps":[{"nivel":"CRÍTICO|ALTO|MÉDIO","descricao":""}],"prioridades":["","",""]}`;
+Listing: Título: ${titulo || 'N/A'} | Bullets: ${bullets || 'N/A'} | Descrição: ${desc || 'N/A'} | Preço: R$${preco} | Reviews: ${rev} | Rating: ${rat} | Vídeo: ${rbState.video || 'N/A'} | Cupom: ${rbState.cupom || 'N/A'} | ${imgs.length} imagem(ns) enviada(s).
+${C1?.scores?.ctr === 'CRÍTICO' || C1?.scores?.ctr === 'BAIXO' ? '→ CTR baixo: foque em thumbnail, título e preço percebido.' : ''}
+${C1?.scores?.cvr === 'CRÍTICO' || C1?.scores?.cvr === 'BAIXO' ? '→ CVR baixo: foque em clareza, prova social e diferenciação.' : ''}
+Retorne SOMENTE JSON válido sem markdown:
+{"scores":{"ctr_readiness":0,"cvr_readiness":0,"diferenciacao":0,"confianca":0},"problema_principal":"","diagnostico":"","gaps":[{"nivel":"CRÍTICO","descricao":""}],"prioridades":["","",""]}`;
 
       const msgContent = [];
 
@@ -949,11 +909,11 @@ FORMATO OBRIGATÓRIO:
           problema_principal: rv < 50
             ? 'Reviews insuficientes para sustentar conversão'
             : 'Análise baseada nos dados fornecidos',
-          diagnostico: 'IA indisponível ou resposta inválida: ' + e.message,
+          diagnostico: 'IA indisponível: ' + e.message,
           gaps: [{ nivel: 'ALTO', descricao: 'Adicione a API key para análise completa' }],
           prioridades: [
-            'Verifique a rota /api/chat e o modelo da IA',
-            'Reenvie as imagens se a chamada exceder o tempo',
+            'Configure a API key no Vercel',
+            'Reenvie as imagens após configuração',
             'Preencha todos os campos do formulário'
           ]
         };
