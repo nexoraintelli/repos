@@ -650,9 +650,18 @@
       <p class="ft">© 2025 Nexora Intelligence</p>
     </footer>
   </div>
-
+  
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
   <script>
+    
+    const supabaseUrl = 'https://ctvhnqnzgmtotxzbtfov.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0dmhucW56Z210b3R4emJ0Zm92Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDUxODQsImV4cCI6MjA5MjI4MTE4NH0.i_m-l-XdNcYZO0B48quyPXO1CLmFcTN8pKLzj8iF5Hs';
+
+const sb = window.supabase.createClient(supabaseUrl, supabaseKey);
+    
     async function callAI(messages, maxTokens) {
+    }
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 55000);
 
@@ -968,11 +977,45 @@ Retorne SOMENTE JSON válido sem markdown:
 
       const s = result.scores || {};
 
-      try {
-        localStorage.setItem('nx_c2', JSON.stringify({ ...result, ts: new Date().toISOString() }));
-      } catch (e) {
-        console.warn('Não foi possível salvar nx_c2 no localStorage.', e);
-      }
+     try {
+  localStorage.setItem('nx_c2', JSON.stringify({
+    ...result,
+    ts: new Date().toISOString()
+  }));
+
+  const { data, error } = await sb
+    .from('brain_results')
+    .insert({
+      brain: 'cerebro_2',
+      category: C1?.cat || null,
+      subcategory: C1?.sub || null,
+      input_data: {
+        c1: C1,
+        listing: {
+          titulo,
+          bullets,
+          desc,
+          preco,
+          rev,
+          rat,
+          video: rbState.video || null,
+          cupom: rbState.cupom || null,
+          imagens_qtd: imgs.length
+        }
+      },
+      result_data: result,
+      created_at: new Date().toISOString()
+    });
+
+  if (error) {
+    console.error('Erro ao salvar Cérebro 2 no Supabase:', error);
+  } else {
+    console.log('Cérebro 2 salvo no Supabase:', data);
+  }
+
+} catch (e) {
+  console.error('Erro ao salvar Cérebro 2:', e);
+}
 
       const gapTag = n => n === 'CRÍTICO' ? 'tcr' : n === 'ALTO' ? 'twn' : 'tpu';
 
