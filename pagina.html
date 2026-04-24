@@ -663,8 +663,22 @@
         })
       });
 
-      const data = await res.json();
-      if (data.error) throw new Error(JSON.stringify(data.error));
+      const rawText = await res.text();
+      let data = null;
+
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch (e) {
+        throw new Error(`API retornou uma resposta inválida (${res.status}). ${rawText.slice(0, 180)}`);
+      }
+
+      if (!res.ok || data.error) {
+        const errorMsg = typeof data.error === 'string'
+          ? data.error
+          : JSON.stringify(data.error || data);
+        throw new Error(`API ${res.status}: ${errorMsg}`);
+      }
+
       return data.content?.map(c => c.text || '').join('') || '';
     }
 
@@ -676,40 +690,6 @@
       C1 = JSON.parse(localStorage.getItem('nx_c1') || 'null');
     } catch (e) {
       C1 = null;
-    }
-
-    function getBenchmarkContext() {
-      const bm = C1?.bm || C1?.benchmark || {};
-      return {
-        category: C1?.cat || '',
-        subcategory: C1?.sub || '',
-        source: bm.source || 'benchmark Nexora',
-        avg_ctr: Number(bm.avg_ctr ?? bm.ctr ?? 0),
-        avg_cvr: Number(bm.avg_cvr ?? bm.cvr ?? 0),
-        avg_acos: Number(bm.avg_acos ?? bm.acos ?? 0),
-        product_ctr: Number(C1?.ctr ?? 0),
-        product_cvr: Number(C1?.cvr ?? 0),
-        product_acos: Number(C1?.acos ?? 0)
-      };
-    }
-
-    function fmtPct(value, digits = 1) {
-      const n = Number(value);
-      return Number.isFinite(n) && n > 0 ? `${n.toFixed(digits)}%` : 'N/A';
-    }
-
-    function buildBenchmarkContextText() {
-      if (!C1) return 'Sem dados do Cérebro 1 ou benchmark de categoria.';
-      const bm = getBenchmarkContext();
-      return `Contexto de categoria vindo do Cérebro 1:
-` +
-        `- Categoria: ${bm.category || 'N/A'} | Subcategoria: ${bm.subcategory || 'N/A'} | Fonte: ${bm.source}
-` +
-        `- Benchmark Nexora: CTR médio ${fmtPct(bm.avg_ctr, 2)} | CVR médio ${fmtPct(bm.avg_cvr, 1)} | ACOS médio ${fmtPct(bm.avg_acos, 1)}
-` +
-        `- Produto analisado no Cérebro 1: CTR ${fmtPct(bm.product_ctr, 2)} (${C1?.scores?.ctr || 'N/A'}) | CVR ${fmtPct(bm.product_cvr, 1)} (${C1?.scores?.cvr || 'N/A'}) | ACOS ${fmtPct(bm.product_acos, 1)} (${C1?.scores?.acos || 'N/A'})
-` +
-        `- Pilares críticos identificados: ${Array.isArray(C1?.pilares) && C1.pilares.length ? C1.pilares.join(' | ') : 'N/A'}`;
     }
 
     function loadCtx() {
@@ -757,12 +737,6 @@
             <span class="cdot" style="background:${dc(s.acos, 'acos')}"></span>
             ACOS <strong>${s.acos || 'N/A'}</strong>
           </div>
-          ${(() => {
-            const bm = getBenchmarkContext();
-            return bm.avg_ctr || bm.avg_cvr || bm.avg_acos
-              ? `<div class="ctx-pill"><strong>Benchmark:</strong> CTR ${fmtPct(bm.avg_ctr, 2)} · CVR ${fmtPct(bm.avg_cvr, 1)} · ACOS ${fmtPct(bm.avg_acos, 1)}</div>`
-              : '';
-          })()}
           ${C1.sub || C1.cat ? `<div class="ctx-pill"><strong>${C1.sub || C1.cat}</strong></div>` : ''}
         </div>
       `;
@@ -903,34 +877,43 @@
         </div>
       `;
 
-      const bmContext = getBenchmarkContext();
-      const ctx1 = buildBenchmarkContextText();
+      const bm = C1?.bm || C1?.benchmark || {};
+      const ctx1 = C1
+        ? `Cérebro 1 / Benchmark contextual:
+- Categoria: ${C1.cat || 'N/A'} > ${C1.sub || 'N/A'}
+- CTR atual: ${C1.ctr || 'N/A'}% | status: ${C1.scores?.ctr || 'N/A'} | benchmark CTR: ${bm.avg_ctr ?? bm.ctr ?? 'N/A'}%
+- CVR atual: ${C1.cvr || 'N/A'}% | status: ${C1.scores?.cvr || 'N/A'} | benchmark CVR: ${bm.avg_cvr ?? bm.cvr ?? 'N/A'}%
+- ACOS atual: ${C1.acos || 'N/A'}% | status: ${C1.scores?.acos || 'N/A'} | benchmark ACOS: ${bm.avg_acos ?? bm.acos ?? 'N/A'}%
+- TACOS atual: ${C1.tacos || 'N/A'}% | status: ${C1.scores?.tacos || 'N/A'}
+- Margem: ${C1.mg || 'N/A'}% | FBA/FBM: ${C1.fba || 'N/A'} | BuyBox: ${C1.bb || 'N/A'} | Estoque: ${C1.est || 'N/A'}
+- Prioridades C1: ${Array.isArray(C1.pilares) ? C1.pilares.join(' | ') : 'N/A'}`
+        : `Sem dados do Cérebro 1. Faça uma análise independente da página, mas sinalize baixa confiança por ausência de benchmark contextual.`;
 
       const prompt = `Você é a NEXORA INTELLIGENCE — Cérebro 2: Listing Intelligence Engine.
-Sua função é analisar a página do produto considerando o diagnóstico de performance e os benchmarks reais da categoria vindos do Cérebro 1.
+Sua função é analisar a página do produto com base no benchmark e no diagnóstico do Cérebro 1.
 
 ${ctx1}
 
 DADOS DA LISTING:
 - Título: ${titulo || 'N/A'}
 - Bullets: ${bullets || 'N/A'}
-- Descrição/A+ Content: ${desc || 'N/A'}
-- Preço informado na página: R$${preco || 'N/A'}
+- Descrição/A+: ${desc || 'N/A'}
+- Preço: R$${preco || 'N/A'}
 - Reviews: ${rev}
 - Rating: ${rat}
 - Vídeo: ${rbState.video || 'N/A'}
 - Cupom: ${rbState.cupom || 'N/A'}
 - Imagens enviadas: ${imgs.length}
 
-REGRAS DE DIAGNÓSTICO:
-- Se o CTR do Cérebro 1 estiver abaixo do benchmark, avalie prioridade máxima em thumbnail, imagem principal, título, preço percebido e diferenciação visual.
-- Se o CVR do Cérebro 1 estiver abaixo do benchmark, avalie clareza da oferta, prova social, bullets, A+ Content, confiança e alinhamento com a promessa do produto.
-- Se o ACOS estiver acima do benchmark, avalie se a página está desperdiçando mídia por baixa conversão ou baixa diferenciação.
-- Não dê recomendações genéricas: conecte cada gap ao impacto em CTR, CVR ou eficiência de mídia.
-- Considere a categoria/subcategoria e o nível de exigência do mercado antes de julgar a página.
+REGRAS DE ANÁLISE:
+1. Se CTR do Cérebro 1 estiver baixo/crítico, priorize thumbnail, título, preço percebido e diferenciação visual.
+2. Se CVR do Cérebro 1 estiver baixo/crítico, priorize prova social, clareza de oferta, imagens de benefício, bullets, A+ e confiança.
+3. Compare a página com o benchmark da categoria/subcategoria; não avalie a página de forma genérica.
+4. Identifique causa raiz de página, não apenas sintomas.
+5. Retorne apenas JSON válido, sem markdown, sem texto fora do JSON.
 
-Retorne SOMENTE JSON válido sem markdown:
-{"scores":{"ctr_readiness":0,"cvr_readiness":0,"diferenciacao":0,"confianca":0},"problema_principal":"","diagnostico":"","gaps":[{"nivel":"CRÍTICO|ALTO|MÉDIO","descricao":""}],"prioridades":["", "", ""],"benchmark_context":{"categoria":"${bmContext.category || ''}","subcategoria":"${bmContext.subcategory || ''}","avg_ctr":${bmContext.avg_ctr || 0},"avg_cvr":${bmContext.avg_cvr || 0},"avg_acos":${bmContext.avg_acos || 0}}}`;
+FORMATO OBRIGATÓRIO:
+{"scores":{"ctr_readiness":0,"cvr_readiness":0,"diferenciacao":0,"confianca":0},"problema_principal":"","diagnostico":"","gaps":[{"nivel":"CRÍTICO|ALTO|MÉDIO","descricao":""}],"prioridades":["","",""]}`;
 
       const msgContent = [];
 
@@ -966,11 +949,11 @@ Retorne SOMENTE JSON válido sem markdown:
           problema_principal: rv < 50
             ? 'Reviews insuficientes para sustentar conversão'
             : 'Análise baseada nos dados fornecidos',
-          diagnostico: 'IA indisponível: ' + e.message,
+          diagnostico: 'IA indisponível ou resposta inválida: ' + e.message,
           gaps: [{ nivel: 'ALTO', descricao: 'Adicione a API key para análise completa' }],
           prioridades: [
-            'Configure a API key no Vercel',
-            'Reenvie as imagens após configuração',
+            'Verifique a rota /api/chat e o modelo da IA',
+            'Reenvie as imagens se a chamada exceder o tempo',
             'Preencha todos os campos do formulário'
           ]
         };
@@ -979,27 +962,7 @@ Retorne SOMENTE JSON válido sem markdown:
       const s = result.scores || {};
 
       try {
-        localStorage.setItem('nx_c2', JSON.stringify({
-          ...result,
-          input: {
-            titulo,
-            bullets,
-            desc,
-            preco,
-            rev,
-            rat,
-            video: rbState.video || '',
-            cupom: rbState.cupom || '',
-            imagens_enviadas: imgs.length
-          },
-          context: {
-            category: C1?.cat || '',
-            subcategory: C1?.sub || '',
-            c1_scores: C1?.scores || {},
-            benchmark: bmContext
-          },
-          ts: new Date().toISOString()
-        }));
+        localStorage.setItem('nx_c2', JSON.stringify({ ...result, ts: new Date().toISOString() }));
       } catch (e) {
         console.warn('Não foi possível salvar nx_c2 no localStorage.', e);
       }
