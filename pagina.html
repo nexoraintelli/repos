@@ -981,7 +981,9 @@ Retorne SOMENTE JSON válido sem markdown:
     ...result,
     ts: new Date().toISOString()
   }));
-
+} catch (e) {
+  console.warn('Não foi possível salvar nx_c2 no localStorage.', e);
+}
  sb
   .from('brain_results')
   .insert({
