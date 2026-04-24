@@ -986,10 +986,12 @@ Retorne SOMENTE JSON válido sem markdown:
 }
  sb
   .from('brain_results')
-  .insert({
-    brain: 'cerebro_2',
-    category: C1?.cat || null,
-    subcategory: C1?.sub || null,
+ .insert({
+  brain_code: 'c2',
+  brain_name: 'Cérebro 2 - Página',
+  score: result?.scores?.cvr_readiness || 0,
+  diagnostic_id: null
+})
     input_data: {
       c1: C1,
       listing: {
