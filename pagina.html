@@ -983,39 +983,39 @@ Retorne SOMENTE JSON válido sem markdown:
     ts: new Date().toISOString()
   }));
 
-  const { data, error } = await sb
-    .from('brain_results')
-    .insert({
-      brain: 'cerebro_2',
-      category: C1?.cat || null,
-      subcategory: C1?.sub || null,
-      input_data: {
-        c1: C1,
-        listing: {
-          titulo,
-          bullets,
-          desc,
-          preco,
-          rev,
-          rat,
-          video: rbState.video || null,
-          cupom: rbState.cupom || null,
-          imagens_qtd: imgs.length
-        }
-      },
-      result_data: result,
-      created_at: new Date().toISOString()
-    });
-
-  if (error) {
-    console.error('Erro ao salvar Cérebro 2 no Supabase:', error);
-  } else {
-    console.log('Cérebro 2 salvo no Supabase:', data);
-  }
-
-} catch (e) {
-  console.error('Erro ao salvar Cérebro 2:', e);
-}
+ sb
+  .from('brain_results')
+  .insert({
+    brain: 'cerebro_2',
+    category: C1?.cat || null,
+    subcategory: C1?.sub || null,
+    input_data: {
+      c1: C1,
+      listing: {
+        titulo,
+        bullets,
+        desc,
+        preco,
+        rev,
+        rat,
+        video: rbState.video || null,
+        cupom: rbState.cupom || null,
+        imagens_qtd: imgs.length
+      }
+    },
+    result_data: result,
+    created_at: new Date().toISOString()
+  })
+  .then(({ data, error }) => {
+    if (error) {
+      console.error('Erro ao salvar Cérebro 2 no Supabase:', error);
+    } else {
+      console.log('Cérebro 2 salvo no Supabase:', data);
+    }
+  })
+  .catch((e) => {
+    console.error('Falha geral ao salvar Cérebro 2:', e);
+  });
 
       const gapTag = n => n === 'CRÍTICO' ? 'tcr' : n === 'ALTO' ? 'twn' : 'tpu';
 
