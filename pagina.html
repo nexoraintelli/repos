@@ -660,13 +660,12 @@
 
 const sb = window.supabase.createClient(supabaseUrl, supabaseKey);
     
-    async function callAI(messages, maxTokens) {
-    }
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 55000);
+  async function callAI(messages, maxTokens) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 55000);
 
-      try {
-        const res = await fetch('/api/chat', {
+  try {
+    const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           signal: controller.signal,
