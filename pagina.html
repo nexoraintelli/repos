@@ -653,19 +653,54 @@
 
   <script>
     async function callAI(messages, maxTokens) {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: maxTokens || 1200,
-          messages
-        })
-      });
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 55000);
 
-      const data = await res.json();
-      if (data.error) throw new Error(JSON.stringify(data.error));
-      return data.content?.map(c => c.text || '').join('') || '';
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
+          body: JSON.stringify({
+            // Mesmo padrão/modelo usado no Cérebro 1, que já está funcionando.
+            model: 'claude-sonnet-4-6',
+            max_tokens: maxTokens || 1200,
+            messages
+          })
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok || data.error) {
+          throw new Error(
+            typeof data?.error === 'string'
+              ? data.error
+              : JSON.stringify(data?.error || data || { status: res.status })
+          );
+        }
+
+        return data.content?.map(c => c.text || '').join('') || data.text || data.result || data.output || '';
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+
+    function compressImageDataUrl(dataUrl, maxWidth = 900, quality = 0.72) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const ratio = Math.min(1, maxWidth / img.width);
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(img.width * ratio);
+          canvas.height = Math.round(img.height * ratio);
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = () => resolve(dataUrl);
+        img.src = dataUrl;
+      });
     }
 
     let C1 = null;
@@ -877,9 +912,13 @@ Retorne SOMENTE JSON válido sem markdown:
 
       const msgContent = [];
 
-      imgs.forEach(img => {
-        const b64 = img.data.split(',')[1];
-        const mime = img.data.split(';')[0].split(':')[1];
+      const imagensParaIA = await Promise.all(
+        imgs.slice(0, 4).map(img => compressImageDataUrl(img.data))
+      );
+
+      imagensParaIA.forEach(dataUrl => {
+        const b64 = dataUrl.split(',')[1];
+        const mime = dataUrl.split(';')[0].split(':')[1] || 'image/jpeg';
         msgContent.push({
           type: 'image',
           source: {
@@ -895,7 +934,15 @@ Retorne SOMENTE JSON válido sem markdown:
       let result;
 
       try {
-        const raw = await callAI([{ role: 'user', content: msgContent }], 1500);
+        let raw = '';
+
+        try {
+          raw = await callAI([{ role: 'user', content: msgContent }], 1500);
+        } catch (imageError) {
+          console.warn('Falha na IA com imagens. Tentando análise somente com texto.', imageError);
+          raw = await callAI([{ role: 'user', content: prompt + '\n\nObservação técnica: as imagens foram enviadas pelo usuário, mas a chamada visual falhou. Faça a análise pelos campos textuais e pelo Cérebro 1.' }], 1500);
+        }
+
         result = JSON.parse(raw.replace(/```json|```/g, '').trim());
       } catch (e) {
         const rv = parseInt(rev, 10) || 0;
@@ -909,11 +956,11 @@ Retorne SOMENTE JSON válido sem markdown:
           problema_principal: rv < 50
             ? 'Reviews insuficientes para sustentar conversão'
             : 'Análise baseada nos dados fornecidos',
-          diagnostico: 'IA indisponível: ' + e.message,
-          gaps: [{ nivel: 'ALTO', descricao: 'Adicione a API key para análise completa' }],
+          diagnostico: 'IA indisponível nesta tentativa: ' + e.message,
+          gaps: [{ nivel: 'ALTO', descricao: 'A chamada da IA falhou nesta tentativa. Tente com menos imagens ou imagens mais leves.' }],
           prioridades: [
-            'Configure a API key no Vercel',
-            'Reenvie as imagens após configuração',
+            'Tente novamente com até 4 imagens leves',
+            'Confira se o endpoint /api/chat respondeu no console',
             'Preencha todos os campos do formulário'
           ]
         };
