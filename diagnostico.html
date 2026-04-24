@@ -768,7 +768,50 @@ const txt =
   console.error('Erro IA:', e);
   aiNote = `<div class="ai-note">${String(e.message || e)}</div>`;
 }
+const nexoraOutput = {
+  cat: D.cat,
+  sub: D.sub,
+  modelo: D.modelo,
+  force: D.force,
+  pos: D.pos,
 
+  ctr: n('ctr'),
+  cvr: n('cvr'),
+  acos: n('acos'),
+  tacos: n('tacos'),
+  mg: n('mg'),
+
+  imp: v('imp'),
+  cli: v('cli'),
+  vnd: v('vnd'),
+  rev: v('rev'),
+  rat: v('rat'),
+
+  fba: v('fba'),
+  bb: v('bb'),
+  est: v('est'),
+  preco: v('preco'),
+
+  bm: bm,
+  scores: {
+    ctr: sCTR,
+    cvr: sCVR,
+    acos: sACOS,
+    tacos: sTACOS,
+    ops: sOps
+  },
+
+  pilares: priorities().map(p => p.txt),
+  diagnostico_ia: txt || '',
+  timestamp: new Date().toISOString()
+};
+
+try {
+  localStorage.setItem('nx_c1', JSON.stringify(nexoraOutput));
+  console.log('C1 SALVO:', nexoraOutput);
+} catch (e) {
+  console.error('Erro ao salvar C1:', e);
+}
   document.getElementById('app').innerHTML = `
     <div style="padding-top:20px">
 
