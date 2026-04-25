@@ -825,6 +825,26 @@ try {
 } catch (e) {
   console.error('Falha ao criar diagnostics:', e);
 }
+  sb
+  .from('brain_results')
+  .upsert({
+    diagnostic_id: nexoraOutput.diagnostic_id || localStorage.getItem('nx_diagnostic_id') || null,
+    brain_code: 'c1',
+    brain_name: 'Cérebro 1 - Diagnóstico de Performance',
+    score: nexoraOutput?.scores?.ops === 'CRÍTICO' ? 30 : 70,
+    result_data: nexoraOutput
+  }, { onConflict: 'diagnostic_id,brain_code' })
+  .then(({ data, error }) => {
+    if (error) {
+      console.error('Erro ao salvar Cérebro 1 no Supabase:', error);
+    } else {
+      console.log('Cérebro 1 salvo no Supabase:', data);
+    }
+  })
+  .catch((e) => {
+    console.error('Falha geral ao salvar Cérebro 1:', e);
+  });
+  
 try {
   localStorage.setItem('nx_c1', JSON.stringify(nexoraOutput));
   console.log('C1 SALVO:', nexoraOutput);
