@@ -810,10 +810,8 @@ try {
   const { data: diagData, error: diagError } = await sb
     .from('diagnostics')
     .insert({
-      category: D.cat,
-      subcategory: D.sub || null,
-      status: 'started'
-    })
+  status: 'draft'
+})
     .select()
     .single();
 
