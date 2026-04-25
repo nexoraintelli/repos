@@ -588,9 +588,15 @@ try { synthesisResult = JSON.parse(localStorage.getItem('nexora_sintese_result')
     return;
   }
 
-  const c2Db = data.find(r => r.brain_code === 'c2');
-  const c3Db = data.find(r => r.brain_code === 'c3');
-
+const c1Db = data.find(r => r.brain_code === 'c1');
+const c2Db = data.find(r => r.brain_code === 'c2');
+const c3Db = data.find(r => r.brain_code === 'c3');
+    
+if (c1Db?.result_data) {
+  C1 = c1Db.result_data;
+  localStorage.setItem('nx_c1', JSON.stringify(C1));
+}
+    
   if (c2Db?.result_data) {
     C2 = c2Db.result_data;
     localStorage.setItem('nx_c2', JSON.stringify(C2));
