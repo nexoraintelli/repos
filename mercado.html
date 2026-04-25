@@ -821,6 +821,26 @@ Retorne SOMENTE JSON sem markdown: {"forca_dominante":"","forca_explicacao":"","
     result={forca_dominante:C1?.force||'REVIEWS',forca_explicacao:'Análise baseada nos dados fornecidos.',quadrante:C1?.pos||'NICHE_PLAYER',quadrante_explicacao:'Posicionamento estimado.',review_barrier:rb,preco_medio:pm,diagnostico:'IA indisponível: '+e.message,riscos:[{nivel:'ALTO',descricao:'Configure a API key no Vercel para análise completa'}],gap_competitivo:'Análise manual necessária.',reposicionamento:'Configure a API key para recomendações.',prioridades:['Configurar API key no Vercel','Adicionar dados de concorrentes','Reexecutar análise']};
   }
   try{localStorage.setItem('nx_c3',JSON.stringify({...result,ts:new Date().toISOString()}));}catch(e){}
+  // 🔥 SALVAR NO SUPABASE
+sb
+  .from('brain_results')
+  .insert({
+    diagnostic_id: C1?.diagnostic_id || localStorage.getItem('nx_diagnostic_id') || null,
+    brain_code: 'c3',
+    brain_name: 'Cérebro 3 - Análise de Mercado',
+    score: result?.review_barrier || 0,
+    result_data: result
+  })
+  .then(({ data, error }) => {
+    if (error) {
+      console.error('Erro ao salvar Cérebro 3 no Supabase:', error);
+    } else {
+      console.log('Cérebro 3 salvo no Supabase:', data);
+    }
+  })
+  .catch((e) => {
+    console.error('Falha geral ao salvar Cérebro 3:', e);
+  });
   const mp2=parseFloat(document.getElementById('f_mp')?.value)||0;
   const mr2=parseInt(document.getElementById('f_mr')?.value)||0;
   const prPos={CATEGORY_LEADER:{x:65,y:30},PREMIUM_BRAND:{x:72,y:35},NICHE_PLAYER:{x:35,y:32},PRICE_FIGHTER:{x:40,y:68}};
