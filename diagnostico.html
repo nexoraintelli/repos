@@ -805,7 +805,28 @@ const nexoraOutput = {
  diagnostico_ia: diagHTML || aiNote || '',
   timestamp: new Date().toISOString()
 };
+  
+try {
+  const { data: diagData, error: diagError } = await sb
+    .from('diagnostics')
+    .insert({
+      category: D.cat,
+      subcategory: D.sub || null,
+      status: 'started'
+    })
+    .select()
+    .single();
 
+  if (!diagError && diagData?.id) {
+    nexoraOutput.diagnostic_id = diagData.id;
+    localStorage.setItem('nx_diagnostic_id', diagData.id);
+    console.log('Diagnostic ID criado:', diagData.id);
+  } else {
+    console.error('Erro ao criar diagnostics:', diagError);
+  }
+} catch (e) {
+  console.error('Falha ao criar diagnostics:', e);
+}
 try {
   localStorage.setItem('nx_c1', JSON.stringify(nexoraOutput));
   console.log('C1 SALVO:', nexoraOutput);
