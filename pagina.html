@@ -984,31 +984,14 @@ Retorne SOMENTE JSON válido sem markdown:
 } catch (e) {
   console.warn('Não foi possível salvar nx_c2 no localStorage.', e);
 }
- sb
+sb
   .from('brain_results')
-.insert({
-  brain_code: 'c2',
-  brain_name: 'Cérebro 2 - Análise de Página',
-  score: result?.scores?.cvr_readiness || 0,
-  diagnostic_id: null,
-  result_data: result
-})
-    input_data: {
-      c1: C1,
-      listing: {
-        titulo,
-        bullets,
-        desc,
-        preco,
-        rev,
-        rat,
-        video: rbState.video || null,
-        cupom: rbState.cupom || null,
-        imagens_qtd: imgs.length
-      }
-    },
-    result_data: result,
-    created_at: new Date().toISOString()
+  .insert({
+    brain_code: 'c2',
+    brain_name: 'Cérebro 2 - Análise de Página',
+    score: result?.scores?.cvr_readiness || 0,
+    diagnostic_id: null,
+    result_data: result
   })
   .then(({ data, error }) => {
     if (error) {
