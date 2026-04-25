@@ -834,6 +834,8 @@ try {
     score: nexoraOutput?.scores?.ops === 'CRÍTICO' ? 30 : 70,
     result_data: nexoraOutput
   }, { onConflict: 'diagnostic_id,brain_code' })
+  .select()
+  .single()
   .then(({ data, error }) => {
     if (error) {
       console.error('Erro ao salvar Cérebro 1 no Supabase:', error);
