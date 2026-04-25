@@ -993,15 +993,13 @@ sb
     diagnostic_id: null,
     result_data: result
   })
+  .select() // 🔥 ESSENCIAL
   .then(({ data, error }) => {
     if (error) {
       console.error('Erro ao salvar Cérebro 2 no Supabase:', error);
     } else {
       console.log('Cérebro 2 salvo no Supabase:', data);
     }
-  })
-  .catch((e) => {
-    console.error('Falha geral ao salvar Cérebro 2:', e);
   });
 
       const gapTag = n => n === 'CRÍTICO' ? 'tcr' : n === 'ALTO' ? 'twn' : 'tpu';
