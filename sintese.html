@@ -538,8 +538,15 @@
     Gerar PDF
   </button>
 </div>
-
+  
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
 <script>
+  
+const supabaseUrl = 'https://ctvhnqnzgmtotxzbtfov.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0dmhucW56Z210b3R4emJ0Zm92Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDUxODQsImV4cCI6MjA5MjI4MTE4NH0.i_m-l-XdNcYZO0B48quyPXO1CLmFcTN8pKLzj8iF5Hs';
+const sb = window.supabase.createClient(supabaseUrl, supabaseKey);
+  
 async function callAI(messages, maxTokens) {
   const res = await fetch('/api/chat', {
     method: 'POST',
@@ -559,6 +566,43 @@ try { C1 = JSON.parse(localStorage.getItem('nx_c1') || 'null'); } catch (e) {}
 try { C2 = JSON.parse(localStorage.getItem('nx_c2') || 'null'); } catch (e) {}
 try { C3 = JSON.parse(localStorage.getItem('nx_c3') || 'null'); } catch (e) {}
 try { synthesisResult = JSON.parse(localStorage.getItem('nexora_sintese_result') || 'null'); } catch (e) {}
+
+  async function carregarResultadosDoBanco() {
+  const diagnosticId =
+    C1?.diagnostic_id ||
+    localStorage.getItem('nx_diagnostic_id') ||
+    null;
+
+  if (!diagnosticId) {
+    console.warn('Nenhum diagnostic_id encontrado para buscar resultados.');
+    return;
+  }
+
+  const { data, error } = await sb
+    .from('brain_results')
+    .select('*')
+    .eq('diagnostic_id', diagnosticId);
+
+  if (error) {
+    console.error('Erro ao buscar brain_results:', error);
+    return;
+  }
+
+  const c2Db = data.find(r => r.brain_code === 'c2');
+  const c3Db = data.find(r => r.brain_code === 'c3');
+
+  if (c2Db?.result_data) {
+    C2 = c2Db.result_data;
+    localStorage.setItem('nx_c2', JSON.stringify(C2));
+  }
+
+  if (c3Db?.result_data) {
+    C3 = c3Db.result_data;
+    localStorage.setItem('nx_c3', JSON.stringify(C3));
+  }
+
+  console.log('Resultados carregados do Supabase:', { diagnosticId, C2, C3 });
+}
 
 function escapeHtml(value) {
   return String(value ?? '')
@@ -801,7 +845,9 @@ if (synthesisResult) {
   saveSynthesisResult(synthesisResult);
 }
 
-render();
+carregarResultadosDoBanco().then(() => {
+  render();
+});
 </script>
 </body>
 </html>
