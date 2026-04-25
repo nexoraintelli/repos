@@ -824,23 +824,14 @@ Retorne SOMENTE JSON sem markdown: {"forca_dominante":"","forca_explicacao":"","
   // 🔥 SALVAR NO SUPABASE
 sb
   .from('brain_results')
-  .insert({
+  .upsert({
     diagnostic_id: C1?.diagnostic_id || localStorage.getItem('nx_diagnostic_id') || null,
     brain_code: 'c3',
     brain_name: 'Cérebro 3 - Análise de Mercado',
     score: result?.review_barrier || 0,
     result_data: result
-  })
-  .then(({ data, error }) => {
-    if (error) {
-      console.error('Erro ao salvar Cérebro 3 no Supabase:', error);
-    } else {
-      console.log('Cérebro 3 salvo no Supabase:', data);
-    }
-  })
-  .catch((e) => {
-    console.error('Falha geral ao salvar Cérebro 3:', e);
-  });
+  }, { onConflict: 'diagnostic_id,brain_code' })
+  
   const mp2=parseFloat(document.getElementById('f_mp')?.value)||0;
   const mr2=parseInt(document.getElementById('f_mr')?.value)||0;
   const prPos={CATEGORY_LEADER:{x:65,y:30},PREMIUM_BRAND:{x:72,y:35},NICHE_PLAYER:{x:35,y:32},PRICE_FIGHTER:{x:40,y:68}};
