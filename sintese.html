@@ -819,7 +819,7 @@ Retorne SOMENTE JSON sem markdown:
   let result;
 
   try {
-    const raw = await callAI([{ role: 'user', content: prompt }], 2000);
+    const raw = await callAI([{ role: 'user', content: prompt }], 1200);
     result = JSON.parse(raw.replace(/```json|```/g, '').trim());
   } catch (e) {
     let sc = 70;
