@@ -819,9 +819,21 @@ Retorne SOMENTE JSON sem markdown:
   let result;
 
   try {
-    const raw = await callAI([{ role: 'user', content: prompt }], 1200);
-    result = JSON.parse(raw.replace(/```json|```/g, '').trim());
-  } catch (e) {
+  const raw = await callAI([{ role: 'user', content: prompt }], 1200);
+
+  const clean = raw
+    .replace(/```json|```/g, '')
+    .trim();
+
+  const jsonMatch = clean.match(/\{[\s\S]*\}/);
+
+  if (!jsonMatch) {
+    throw new Error('JSON inválido da IA: ' + clean.slice(0, 120));
+  }
+
+  result = JSON.parse(jsonMatch[0]);
+} catch (e) {
+    
     let sc = 70;
     if (C1?.scores?.ctr === 'CRÍTICO') sc -= 15; else if (C1?.scores?.ctr === 'BAIXO') sc -= 8;
     if (C1?.scores?.cvr === 'CRÍTICO') sc -= 15; else if (C1?.scores?.cvr === 'BAIXO') sc -= 8;
