@@ -639,9 +639,34 @@ function saveSynthesisResult(result) {
   synthesisResult = result;
   window.result = result;
   localStorage.setItem('nexora_sintese_result', JSON.stringify(result));
-  document.getElementById('btn-gerar-pdf').style.display = 'inline-flex';
-}
+ const diagnosticId =
+  localStorage.getItem('nx_diagnostic_id') ||
+  C1?.diagnostic_id ||
+  null;
 
+if (diagnosticId) {
+  sb
+    .from('brain_results')
+    .upsert({
+      diagnostic_id: diagnosticId,
+      brain_code: 'synth',
+      brain_name: 'Síntese Estratégica Final',
+      score: result?.score_geral || 0,
+      result_data: result
+    }, { onConflict: 'diagnostic_id,brain_code' })
+    .select()
+    .single()
+    .then(({ data, error }) => {
+      if (error) {
+        console.error('Erro ao salvar Síntese no Supabase:', error);
+      } else {
+        console.log('Síntese salva no Supabase:', data);
+      }
+    })
+    .catch((e) => {
+      console.error('Falha geral ao salvar Síntese:', e);
+    });
+}
 function buildReportPayload(result) {
   return {
     clientName: getClientName(),
