@@ -804,8 +804,86 @@ function render() {
 
   document.getElementById('btn-gerar-pdf').style.display = 'none';
 }
+  
+function parseJsonDaIA(raw) {
+  const clean = raw.replace(/```json|```/g, '').trim();
+  const jsonMatch = clean.match(/\{[\s\S]*\}/);
+
+  if (!jsonMatch) {
+    throw new Error('A IA não retornou JSON.');
+  }
+
+  return JSON.parse(jsonMatch[0]);
+}
 
 async function generate() {
+  document.getElementById('btn-gerar-pdf').style.display = 'none';
+  document.getElementById('app').innerHTML =
+    '<div class="loading"><div class="spinner"></div><p>Cruzando os 3 cérebros...</p></div>';
+
+  const prompt = `Você é a NEXORA INTELLIGENCE — Strategy Synthesizer.
+Cruze todos os dados e gere o diagnóstico executivo final.
+
+CÉREBRO 1: ${C1 ? JSON.stringify(C1) : 'não disponível'}
+CÉREBRO 2: ${C2 ? JSON.stringify(C2) : 'não disponível'}
+CÉREBRO 3: ${C3 ? JSON.stringify(C3) : 'não disponível'}
+
+Retorne SOMENTE JSON válido, sem markdown, sem explicação.
+
+{
+"score_geral": 0,
+"confianca": "ALTA|MÉDIA|BAIXA",
+"problema_raiz": "",
+"diagnostico_executivo": "",
+"pilares": {
+  "atracao": { "status": "", "resumo": "" },
+  "conversao": { "status": "", "resumo": "" },
+  "mercado": { "status": "", "resumo": "" },
+  "operacao": { "status": "", "resumo": "" }
+}
+}`;
+
+  let result;
+
+  try {
+    const raw = await callAI([{ role: 'user', content: prompt }], 1200);
+
+    try {
+      result = parseJsonDAIA(raw);
+    } catch (parseError) {
+      console.warn('JSON veio quebrado. Tentando corrigir...', parseError, raw);
+
+      const rawCorrigido = await callAI([
+        {
+          role: 'user',
+          content:
+            'Corrija o texto abaixo e retorne SOMENTE um JSON válido, sem markdown, sem explicação:\n\n' +
+            raw
+        }
+      ], 800);
+
+      result = parseJsonDAIA(rawCorrigido);
+    }
+
+  } catch (err) {
+    console.error('Erro na IA:', err);
+
+    document.getElementById('app').innerHTML = `
+      <div class="card">
+        <p style="color:red;">Erro ao gerar síntese com IA</p>
+        <p>${err.message}</p>
+      </div>
+    `;
+    return;
+  }
+
+  saveSynthesisResult(result);
+  localStorage.setItem('nexora_relatorio_pronto', JSON.stringify(result));
+  localStorage.setItem('nexora_relatorio_mapeado', JSON.stringify(buildReportPayload(result)));
+
+  renderResult(result);
+}
+  
   document.getElementById('btn-gerar-pdf').style.display = 'none';
   document.getElementById('app').innerHTML = '<div class="loading"><div class="spinner"></div><p>Cruzando os 3 cérebros...</p></div>';
 
