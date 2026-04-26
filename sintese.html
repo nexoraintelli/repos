@@ -806,15 +806,22 @@ function render() {
   document.getElementById('btn-gerar-pdf').style.display = 'none';
 }
 
-function parseJsonDaIA(raw) {
-  const clean = String(raw || '').replace(/```json|```/g, '').trim();
-  const jsonMatch = clean.match(/\{[\s\S]*\}/);
+function parseJsonDAIA(raw) {
+  const clean = String(raw || '')
+    .replace(/```json/g, '')
+    .replace(/```/g, '')
+    .trim();
 
-  if (!jsonMatch) {
+  const start = clean.indexOf('{');
+  const end = clean.lastIndexOf('}');
+
+  if (start === -1 || end === -1 || end <= start) {
     throw new Error('A IA não retornou JSON.');
   }
 
-  return JSON.parse(jsonMatch[0]);
+  const jsonText = clean.slice(start, end + 1);
+
+  return JSON.parse(jsonText);
 }
 
 async function generate() {
