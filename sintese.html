@@ -835,57 +835,157 @@ function parseJsonDaIA(raw) {
 
 async function generate() {
   document.getElementById('btn-gerar-pdf').style.display = 'none';
-  document.getElementById('app').innerHTML = '<div class="loading"><div class="spinner"></div><p>Cruzando os 3 cérebros...</p></div>';
+  document.getElementById('app').innerHTML =
+    '<div class="loading"><div class="spinner"></div><p>Cruzando os 3 cérebros...</p></div>';
 
-  const prompt = `Você é a NEXORA INTELLIGENCE — Strategy Synthesizer. Cruze todos os dados e gere o diagnóstico executivo final.
-CÉREBRO 1: ${C1 ? JSON.stringify({cat:C1.cat,sub:C1.sub,modelo:C1.modelo,force:C1.force,pos:C1.pos,ctr:C1.ctr,cvr:C1.cvr,acos:C1.acos,scores:C1.scores,bm:C1.bm,pilares:C1.pilares,brand:C1.brand,cliente:C1.cliente,asin:C1.asin,produto:C1.produto}) : 'não disponível'}
-CÉREBRO 2: ${C2 ? JSON.stringify({scores:C2.scores,problema_principal:C2.problema_principal,gaps:C2.gaps?.slice(0,3)}) : 'não disponível'}
-CÉREBRO 3: ${C3 ? JSON.stringify({forca_dominante:C3.forca_dominante,quadrante:C3.quadrante,review_barrier:C3.review_barrier,preco_medio:C3.preco_medio,riscos:C3.riscos?.slice(0,3),gap_competitivo:C3.gap_competitivo}) : 'não disponível'}
-Retorne SOMENTE JSON válido, sem markdown, sem explicação, sem texto antes ou depois. Use exatamente esta estrutura:
-{"score_geral":75,"confianca":"ALTA|MÉDIA|BAIXA","problema_raiz":"",""diagnostico_executivo":"máximo 500 caracteres"":"","pilares":{"atracao":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""},"conversao":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""},"mercado":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""},"operacao":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""}},"plano_acao":[{"prioridade":"URGENTE|IMPORTANTE|ESTRATÉGICO","titulo":"",""detalhe":"máximo 180 caracteres"":"","impacto":""}],"veredicto":""}`;
+  const prompt = `Você é a NEXORA INTELLIGENCE — Strategy Synthesizer.
+Cruze os dados dos 3 cérebros e gere uma síntese executiva curta, objetiva e estratégica.
+
+CÉREBRO 1:
+${C1 ? JSON.stringify({
+  cat: C1.cat,
+  sub: C1.sub,
+  modelo: C1.modelo,
+  force: C1.force,
+  pos: C1.pos,
+  ctr: C1.ctr,
+  cvr: C1.cvr,
+  acos: C1.acos,
+  scores: C1.scores,
+  bm: C1.bm,
+  pilares: C1.pilares,
+  brand: C1.brand,
+  cliente: C1.cliente,
+  asin: C1.asin,
+  produto: C1.produto
+}) : 'não disponível'}
+
+CÉREBRO 2:
+${C2 ? JSON.stringify({
+  scores: C2.scores,
+  problema_principal: C2.problema_principal,
+  gaps: C2.gaps?.slice(0, 3)
+}) : 'não disponível'}
+
+CÉREBRO 3:
+${C3 ? JSON.stringify({
+  forca_dominante: C3.forca_dominante,
+  quadrante: C3.quadrante,
+  review_barrier: C3.review_barrier,
+  preco_medio: C3.preco_medio,
+  riscos: C3.riscos?.slice(0, 3),
+  gap_competitivo: C3.gap_competitivo
+}) : 'não disponível'}
+
+Responda SOMENTE com JSON válido.
+Não use markdown.
+Não escreva texto antes ou depois.
+Não quebre strings.
+Não use aspas dentro dos textos.
+
+Use exatamente esta estrutura:
+
+{
+  "score_geral": 75,
+  "confianca": "ALTA",
+  "problema_raiz": "texto curto",
+  "diagnostico_executivo": "texto com no máximo 500 caracteres",
+  "pilares": {
+    "atracao": {
+      "status": "OK",
+      "resumo": "texto curto"
+    },
+    "conversao": {
+      "status": "OK",
+      "resumo": "texto curto"
+    },
+    "mercado": {
+      "status": "ATENÇÃO",
+      "resumo": "texto curto"
+    },
+    "operacao": {
+      "status": "CRÍTICO",
+      "resumo": "texto curto"
+    }
+  },
+  "plano_acao": [
+    {
+      "prioridade": "URGENTE",
+      "titulo": "texto curto",
+      "detalhe": "texto com no máximo 180 caracteres",
+      "impacto": "texto curto"
+    },
+    {
+      "prioridade": "IMPORTANTE",
+      "titulo": "texto curto",
+      "detalhe": "texto com no máximo 180 caracteres",
+      "impacto": "texto curto"
+    },
+    {
+      "prioridade": "ESTRATÉGICO",
+      "titulo": "texto curto",
+      "detalhe": "texto com no máximo 180 caracteres",
+      "impacto": "texto curto"
+    }
+  ],
+  "veredicto": "texto curto"
+}`;
 
   let result;
 
   try {
-    const raw = await callAI([{ role: 'user', content: prompt }], 900);
-
-    try {
-      result = parseJsonDaIA(raw);
-    } catch (parseError) {
-      console.warn('JSON veio quebrado. Tentando corrigir...', parseError, raw);
-
-      const rawCorrigido = await callAI([
-        {
-          role: 'user',
-          content:
-            'Corrija o texto abaixo e retorne SOMENTE um JSON válido, sem markdown, sem explicação, sem texto antes ou depois:\n\n' + raw
-        }
-      ], 300);
-
-      result = parseJsonDaIA(rawCorrigido);
-    }
+    const raw = await callAI([{ role: 'user', content: prompt }], 1200);
+    console.log('Resposta da IA:', raw);
+    result = parseJsonDaIA(raw);
   } catch (e) {
+    console.error('Erro ao gerar síntese com IA:', e);
+
     let sc = 70;
-    if (C1?.scores?.ctr === 'CRÍTICO') sc -= 15; else if (C1?.scores?.ctr === 'BAIXO') sc -= 8;
-    if (C1?.scores?.cvr === 'CRÍTICO') sc -= 15; else if (C1?.scores?.cvr === 'BAIXO') sc -= 8;
+    if (C1?.scores?.ctr === 'CRÍTICO') sc -= 15;
+    else if (C1?.scores?.ctr === 'BAIXO') sc -= 8;
+
+    if (C1?.scores?.cvr === 'CRÍTICO') sc -= 15;
+    else if (C1?.scores?.cvr === 'BAIXO') sc -= 8;
+
     if (C1?.scores?.ops === 'CRÍTICO') sc -= 12;
     if ((C2?.scores?.ctr_readiness ?? 100) < 50) sc -= 8;
     if ((C2?.scores?.cvr_readiness ?? 100) < 50) sc -= 8;
+
     sc = Math.max(5, Math.min(100, Math.round(sc)));
 
     result = {
       score_geral: sc,
       confianca: C1 && C2 && C3 ? 'ALTA' : C1 ? 'MÉDIA' : 'BAIXA',
-      problema_raiz: Array.isArray(C1?.pilares) ? (C1.pilares[0] || 'Configure a API key para análise completa') : (C1?.problema_raiz || 'Configure a API key para análise completa'),
-      diagnostico_executivo: 'IA indisponível: ' + e.message + '\n\nConfigure a variável ANTHROPIC_API_KEY no painel do Vercel em Settings → Environment Variables.',
+      problema_raiz: C1?.problema_raiz || C2?.problema_principal || 'Causa raiz não identificada automaticamente.',
+      diagnostico_executivo:
+        'A IA respondeu fora do formato esperado ou demorou demais. O diagnóstico parcial foi gerado com base nos dados disponíveis dos cérebros.',
       pilares: {
-        atracao: { status: C1?.scores?.ctr === 'CRÍTICO' ? 'CRÍTICO' : C1?.scores?.ctr === 'BAIXO' ? 'ATENÇÃO' : 'OK', resumo: 'CTR ' + (C1?.ctr || '—') + '%' },
-        conversao: { status: C1?.scores?.cvr === 'CRÍTICO' ? 'CRÍTICO' : C1?.scores?.cvr === 'BAIXO' ? 'ATENÇÃO' : 'OK', resumo: 'CVR ' + (C1?.cvr || '—') + '%' },
-        mercado: { status: C3?.riscos?.[0]?.nivel === 'CRÍTICO' ? 'CRÍTICO' : 'ATENÇÃO', resumo: C3?.forca_dominante || 'Não analisado' },
-        operacao: { status: C1?.scores?.ops || 'OK', resumo: (C1?.fba || '—') + ' · BuyBox: ' + (C1?.bb || '—') }
+        atracao: {
+          status: C1?.scores?.ctr === 'CRÍTICO' ? 'CRÍTICO' : C1?.scores?.ctr === 'BAIXO' ? 'ATENÇÃO' : 'OK',
+          resumo: 'CTR ' + (C1?.ctr || '—') + '%'
+        },
+        conversao: {
+          status: C1?.scores?.cvr === 'CRÍTICO' ? 'CRÍTICO' : C1?.scores?.cvr === 'BAIXO' ? 'ATENÇÃO' : 'OK',
+          resumo: 'CVR ' + (C1?.cvr || '—') + '%'
+        },
+        mercado: {
+          status: C3?.riscos?.[0]?.nivel === 'CRÍTICO' ? 'CRÍTICO' : 'ATENÇÃO',
+          resumo: C3?.forca_dominante || 'Mercado não analisado'
+        },
+        operacao: {
+          status: C1?.scores?.ops || 'OK',
+          resumo: (C1?.fba || '—') + ' · BuyBox: ' + (C1?.bb || '—')
+        }
       },
-      plano_acao: [{ prioridade: 'URGENTE', titulo: 'Configurar API key no Vercel', detalhe: 'Vá em Settings → Environment Variables e adicione ANTHROPIC_API_KEY com sua chave sk-ant-...', impacto: 'Ativa diagnóstico completo com IA' }],
-      veredicto: 'Configure a API key para obter o veredicto estratégico completo.'
+      plano_acao: [
+        {
+          prioridade: 'URGENTE',
+          titulo: 'Revisar causa raiz principal',
+          detalhe: C2?.problema_principal || 'Validar página, oferta, BuyBox e posicionamento antes de escalar tráfego.',
+          impacto: 'Evita desperdício de investimento'
+        }
+      ],
+      veredicto: 'Síntese parcial gerada com fallback seguro.'
     };
   }
 
