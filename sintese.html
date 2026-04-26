@@ -842,12 +842,12 @@ CÉREBRO 1: ${C1 ? JSON.stringify({cat:C1.cat,sub:C1.sub,modelo:C1.modelo,force:
 CÉREBRO 2: ${C2 ? JSON.stringify({scores:C2.scores,problema_principal:C2.problema_principal,gaps:C2.gaps?.slice(0,3)}) : 'não disponível'}
 CÉREBRO 3: ${C3 ? JSON.stringify({forca_dominante:C3.forca_dominante,quadrante:C3.quadrante,review_barrier:C3.review_barrier,preco_medio:C3.preco_medio,riscos:C3.riscos?.slice(0,3),gap_competitivo:C3.gap_competitivo}) : 'não disponível'}
 Retorne SOMENTE JSON válido, sem markdown, sem explicação, sem texto antes ou depois. Use exatamente esta estrutura:
-{"score_geral":75,"confianca":"ALTA|MÉDIA|BAIXA","problema_raiz":"","diagnostico_executivo":"","pilares":{"atracao":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""},"conversao":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""},"mercado":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""},"operacao":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""}},"plano_acao":[{"prioridade":"URGENTE|IMPORTANTE|ESTRATÉGICO","titulo":"","detalhe":"","impacto":""}],"veredicto":""}`;
+{"score_geral":75,"confianca":"ALTA|MÉDIA|BAIXA","problema_raiz":"",""diagnostico_executivo":"máximo 500 caracteres"":"","pilares":{"atracao":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""},"conversao":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""},"mercado":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""},"operacao":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""}},"plano_acao":[{"prioridade":"URGENTE|IMPORTANTE|ESTRATÉGICO","titulo":"",""detalhe":"máximo 180 caracteres"":"","impacto":""}],"veredicto":""}`;
 
   let result;
 
   try {
-    const raw = await callAI([{ role: 'user', content: prompt }], 2500);
+    const raw = await callAI([{ role: 'user', content: prompt }], 900);
 
     try {
       result = parseJsonDaIA(raw);
