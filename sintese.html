@@ -831,7 +831,7 @@ Retorne SOMENTE JSON válido, sem markdown, sem explicação, sem texto antes ou
   let result;
 
   try {
-    const raw = await callAI([{ role: 'user', content: prompt }], 1200);
+    const raw = await callAI([{ role: 'user', content: prompt }], 700);
 
     try {
       result = parseJsonDaIA(raw);
