@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -607,7 +608,7 @@ if (c1Db?.result_data) {
     localStorage.setItem('nx_c3', JSON.stringify(C3));
   }
 
-  console.log('Resultados carregados do Supabase:', { diagnosticId, C2, C3 });
+  console.log('Resultados carregados do Supabase:', { diagnosticId, C1, C2, C3 });
 }
 
 function escapeHtml(value) {
@@ -804,9 +805,9 @@ function render() {
 
   document.getElementById('btn-gerar-pdf').style.display = 'none';
 }
-  
+
 function parseJsonDaIA(raw) {
-  const clean = raw.replace(/```json|```/g, '').trim();
+  const clean = String(raw || '').replace(/```json|```/g, '').trim();
   const jsonMatch = clean.match(/\{[\s\S]*\}/);
 
   if (!jsonMatch) {
@@ -818,30 +819,14 @@ function parseJsonDaIA(raw) {
 
 async function generate() {
   document.getElementById('btn-gerar-pdf').style.display = 'none';
-  document.getElementById('app').innerHTML =
-    '<div class="loading"><div class="spinner"></div><p>Cruzando os 3 cérebros...</p></div>';
+  document.getElementById('app').innerHTML = '<div class="loading"><div class="spinner"></div><p>Cruzando os 3 cérebros...</p></div>';
 
-  const prompt = `Você é a NEXORA INTELLIGENCE — Strategy Synthesizer.
-Cruze todos os dados e gere o diagnóstico executivo final.
-
-CÉREBRO 1: ${C1 ? JSON.stringify(C1) : 'não disponível'}
-CÉREBRO 2: ${C2 ? JSON.stringify(C2) : 'não disponível'}
-CÉREBRO 3: ${C3 ? JSON.stringify(C3) : 'não disponível'}
-
-Retorne SOMENTE JSON válido, sem markdown, sem explicação.
-
-{
-"score_geral": 0,
-"confianca": "ALTA|MÉDIA|BAIXA",
-"problema_raiz": "",
-"diagnostico_executivo": "",
-"pilares": {
-  "atracao": { "status": "", "resumo": "" },
-  "conversao": { "status": "", "resumo": "" },
-  "mercado": { "status": "", "resumo": "" },
-  "operacao": { "status": "", "resumo": "" }
-}
-}`;
+  const prompt = `Você é a NEXORA INTELLIGENCE — Strategy Synthesizer. Cruze todos os dados e gere o diagnóstico executivo final.
+CÉREBRO 1: ${C1 ? JSON.stringify({cat:C1.cat,sub:C1.sub,modelo:C1.modelo,force:C1.force,pos:C1.pos,ctr:C1.ctr,cvr:C1.cvr,acos:C1.acos,scores:C1.scores,bm:C1.bm,pilares:C1.pilares,brand:C1.brand,cliente:C1.cliente,asin:C1.asin,produto:C1.produto}) : 'não disponível'}
+CÉREBRO 2: ${C2 ? JSON.stringify({scores:C2.scores,problema_principal:C2.problema_principal,gaps:C2.gaps?.slice(0,3)}) : 'não disponível'}
+CÉREBRO 3: ${C3 ? JSON.stringify({forca_dominante:C3.forca_dominante,quadrante:C3.quadrante,review_barrier:C3.review_barrier,preco_medio:C3.preco_medio,riscos:C3.riscos?.slice(0,3),gap_competitivo:C3.gap_competitivo}) : 'não disponível'}
+Retorne SOMENTE JSON válido, sem markdown, sem explicação, sem texto antes ou depois. Use exatamente esta estrutura:
+{"score_geral":75,"confianca":"ALTA|MÉDIA|BAIXA","problema_raiz":"","diagnostico_executivo":"","pilares":{"atracao":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""},"conversao":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""},"mercado":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""},"operacao":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""}},"plano_acao":[{"prioridade":"URGENTE|IMPORTANTE|ESTRATÉGICO","titulo":"","detalhe":"","impacto":""}],"veredicto":""}`;
 
   let result;
 
@@ -849,7 +834,7 @@ Retorne SOMENTE JSON válido, sem markdown, sem explicação.
     const raw = await callAI([{ role: 'user', content: prompt }], 1200);
 
     try {
-      result = parseJsonDAIA(raw);
+      result = parseJsonDaIA(raw);
     } catch (parseError) {
       console.warn('JSON veio quebrado. Tentando corrigir...', parseError, raw);
 
@@ -857,61 +842,13 @@ Retorne SOMENTE JSON válido, sem markdown, sem explicação.
         {
           role: 'user',
           content:
-            'Corrija o texto abaixo e retorne SOMENTE um JSON válido, sem markdown, sem explicação:\n\n' +
-            raw
+            'Corrija o texto abaixo e retorne SOMENTE um JSON válido, sem markdown, sem explicação, sem texto antes ou depois:\n\n' + raw
         }
       ], 800);
 
-      result = parseJsonDAIA(rawCorrigido);
+      result = parseJsonDaIA(rawCorrigido);
     }
-
-  } catch (err) {
-    console.error('Erro na IA:', err);
-
-    document.getElementById('app').innerHTML = `
-      <div class="card">
-        <p style="color:red;">Erro ao gerar síntese com IA</p>
-        <p>${err.message}</p>
-      </div>
-    `;
-    return;
-  }
-
-  saveSynthesisResult(result);
-  localStorage.setItem('nexora_relatorio_pronto', JSON.stringify(result));
-  localStorage.setItem('nexora_relatorio_mapeado', JSON.stringify(buildReportPayload(result)));
-
-  renderResult(result);
-}
-  
-  document.getElementById('btn-gerar-pdf').style.display = 'none';
-  document.getElementById('app').innerHTML = '<div class="loading"><div class="spinner"></div><p>Cruzando os 3 cérebros...</p></div>';
-
-  const prompt = `Você é a NEXORA INTELLIGENCE — Strategy Synthesizer. Cruze todos os dados e gere o diagnóstico executivo final.
-CÉREBRO 1: ${C1 ? JSON.stringify({cat:C1.cat,sub:C1.sub,modelo:C1.modelo,force:C1.force,pos:C1.pos,ctr:C1.ctr,cvr:C1.cvr,acos:C1.acos,scores:C1.scores,bm:C1.bm,pilares:C1.pilares,brand:C1.brand,cliente:C1.cliente,asin:C1.asin,produto:C1.produto}) : 'não disponível'}
-CÉREBRO 2: ${C2 ? JSON.stringify({scores:C2.scores,problema_principal:C2.problema_principal,gaps:C2.gaps?.slice(0,3)}) : 'não disponível'}
-CÉREBRO 3: ${C3 ? JSON.stringify({forca_dominante:C3.forca_dominante,quadrante:C3.quadrante,review_barrier:C3.review_barrier,preco_medio:C3.preco_medio,riscos:C3.riscos?.slice(0,3),gap_competitivo:C3.gap_competitivo}) : 'não disponível'}
-Retorne SOMENTE JSON sem markdown:
-{"score_geral":75,"confianca":"ALTA|MÉDIA|BAIXA","problema_raiz":"","diagnostico_executivo":"","pilares":{"atracao":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""},"conversao":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""},"mercado":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""},"operacao":{"status":"OK|ATENÇÃO|CRÍTICO","resumo":""}},"plano_acao":[{"prioridade":"URGENTE|IMPORTANTE|ESTRATÉGICO","titulo":"","detalhe":"","impacto":""}],"veredicto":""}`;
-
-  let result;
-
-  try {
-  const raw = await callAI([{ role: 'user', content: prompt }], 1200);
-
-  const clean = raw
-    .replace(/```json|```/g, '')
-    .trim();
-
-  const jsonMatch = clean.match(/\{[\s\S]*\}/);
-
-  if (!jsonMatch) {
-    throw new Error('JSON inválido da IA: ' + clean.slice(0, 120));
-  }
-
-  result = JSON.parse(jsonMatch[0]);
-} catch (e) {
-    
+  } catch (e) {
     let sc = 70;
     if (C1?.scores?.ctr === 'CRÍTICO') sc -= 15; else if (C1?.scores?.ctr === 'BAIXO') sc -= 8;
     if (C1?.scores?.cvr === 'CRÍTICO') sc -= 15; else if (C1?.scores?.cvr === 'BAIXO') sc -= 8;
