@@ -812,16 +812,25 @@ function parseJsonDaIA(raw) {
     .replace(/```/g, '')
     .trim();
 
-  const start = clean.indexOf('{');
-  const end = clean.lastIndexOf('}');
+  // tentativa 1: parse direto
+  try {
+    return JSON.parse(clean);
+  } catch (e) {}
 
-  if (start === -1 || end === -1 || end <= start) {
+  // tentativa 2: pegar bloco JSON
+  const match = clean.match(/\{[\s\S]*\}/);
+
+  if (!match) {
+    console.error("Resposta da IA:", clean);
     throw new Error('A IA não retornou JSON.');
   }
 
-  const jsonText = clean.slice(start, end + 1);
-
-  return JSON.parse(jsonText);
+  try {
+    return JSON.parse(match[0]);
+  } catch (e) {
+    console.error("JSON inválido:", match[0]);
+    throw new Error('JSON inválido mesmo após extração.');
+  }
 }
 
 async function generate() {
