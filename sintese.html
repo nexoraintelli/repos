@@ -831,7 +831,7 @@ Retorne SOMENTE JSON válido, sem markdown, sem explicação, sem texto antes ou
   let result;
 
   try {
-    const raw = await callAI([{ role: 'user', content: prompt }], 700);
+    const raw = await callAI([{ role: 'user', content: prompt }], 400);
 
     try {
       result = parseJsonDaIA(raw);
@@ -844,7 +844,7 @@ Retorne SOMENTE JSON válido, sem markdown, sem explicação, sem texto antes ou
           content:
             'Corrija o texto abaixo e retorne SOMENTE um JSON válido, sem markdown, sem explicação, sem texto antes ou depois:\n\n' + raw
         }
-      ], 800);
+      ], 300);
 
       result = parseJsonDaIA(rawCorrigido);
     }
