@@ -871,20 +871,80 @@ try {
 
       ${aiNote}
 
-      <div class="result-actions">
-        <button class="btn-restart" onclick="step=0;D={};render()">Novo diagnóstico</button>
-        <button class="btn-next" onclick="window.location.href='pagina.html'">
-          Cérebro 2 — Análise de página →
-        </button>
-      </div>
+    <div class="result-actions">
+  <button class="btn-restart" onclick="step=0;D={};render()">Novo diagnóstico</button>
 
-    </div>
+  <button class="btn-deepen" onclick="gerarRelatorioC1()">
+    Gerar PDF
+  </button>
+
+  <button class="btn-next" onclick="window.location.href='pagina.html'">
+    Cérebro 2 — Análise de página →
+  </button>
+</div>
   `;
 
   updateProgress();
 }
 
 render();
+  function gerarRelatorioC1() {
+  try {
+    const c1 = JSON.parse(localStorage.getItem('nx_c1'));
+
+    if (!c1) {
+      alert('Nenhum diagnóstico encontrado.');
+      return;
+    }
+
+    const payload = {
+      clientName: c1.cliente || 'Cliente',
+      productName: c1.produto || 'Produto',
+      asin: c1.asin || '-',
+      reportDate: new Date().toLocaleDateString('pt-BR'),
+
+      executiveSummary: 'Diagnóstico baseado em performance (Cérebro 1).',
+
+      metrics: [
+        {
+          label: 'CTR',
+          value: c1.ctr + '%',
+          status: c1.scores?.ctr
+        },
+        {
+          label: 'CVR',
+          value: c1.cvr + '%',
+          status: c1.scores?.cvr
+        },
+        {
+          label: 'ACOS',
+          value: c1.acos + '%',
+          status: c1.scores?.acos
+        },
+        {
+          label: 'TACOS',
+          value: c1.tacos + '%',
+          status: c1.scores?.tacos
+        }
+      ],
+
+      actions: (c1.pilares || []).slice(0, 4).map((p, i) => ({
+        prioridade: i === 0 ? 'URGENTE' : i === 1 ? 'IMPORTANTE' : 'ESTRATÉGICO',
+        texto: p
+      })),
+
+      partial: true
+    };
+
+    localStorage.setItem('nexora_relatorio_mapeado', JSON.stringify(payload));
+
+    window.open('relatorio_v3.html', '_blank');
+
+  } catch (e) {
+    console.error('Erro ao gerar relatório:', e);
+    alert('Erro ao gerar relatório.');
+  }
+}
 </script>
 </body>
 </html>
