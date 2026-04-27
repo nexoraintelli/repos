@@ -943,11 +943,11 @@ function gerarRelatorioC3() {
 
       actions: [
         ...(c3.riscos || []).slice(0, 4).map((r, i) => ({
-          title: `${r.nivel || 'Risco'} · Risco ${i + 1}`,
+         title: (r.nivel || 'Risco') + ' · Risco ' + (i + 1),
           description: r.descricao || String(r)
         })),
         ...(c3.prioridades || []).slice(0, 3).map((p, i) => ({
-          title: `Prioridade ${i + 1}`,
+          title: 'Prioridade ' + (i + 1),
           description: p
         }))
       ]
