@@ -1049,7 +1049,18 @@ Falta clareza de benefício, diferenciação e elementos de confiança, resultan
       description: 'Aumentar confiança com reviews, validação e elementos visuais.'
     }
   ]
+    // ===== FINAL DO PAYLOAD =====
 };
+
+localStorage.setItem('nexora_relatorio_mapeado', JSON.stringify(payload));
+
+window.open('/relatorio/relatorio_v3.html', '_blank');
+
+} catch (e) {
+  console.error('Erro ao gerar relatório:', e);
+  alert('Erro ao gerar relatório.');
+}
+}
 </script>
 </body>
 </html>
