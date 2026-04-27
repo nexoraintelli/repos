@@ -839,7 +839,35 @@ async function generate() {
     '<div class="loading"><div class="spinner"></div><p>Cruzando os 3 cérebros...</p></div>';
 
   const prompt = `Você é a NEXORA INTELLIGENCE — Strategy Synthesizer.
-Cruze os dados dos 3 cérebros e gere uma síntese executiva curta, objetiva e estratégica.
+Sua função é identificar a CAUSA RAIZ do problema do produto analisado e transformar os dados dos 3 cérebros em uma decisão estratégica clara.
+
+REGRA CENTRAL:
+A síntese NÃO deve ser uma análise de concorrente.
+A síntese deve explicar o que está travando o produto analisado.
+
+HIERARQUIA DE ANÁLISE:
+1. CÉREBRO 1 é a base principal da causa raiz.
+   Use performance, CTR, CVR, ACOS, TACOS, BuyBox, FBA, força e pilares para entender se o problema é atração, conversão, operação ou mídia.
+2. CÉREBRO 2 valida a qualidade da página.
+   Use para confirmar se o problema está em imagem, oferta, confiança, copy, A+, preço percebido ou estrutura da página.
+3. CÉREBRO 3 é contexto de mercado.
+   Use mercado para explicar pressão competitiva, barreira de reviews, preço médio, saturação e força dominante.
+   NÃO transforme concorrentes em protagonistas.
+
+QUANDO O MERCADO PODE SER CAUSA RAIZ:
+Somente considere mercado como causa raiz principal se houver evidência clara de:
+- preço muito fora do padrão;
+- barreira forte de reviews;
+- dominância clara de marca;
+- categoria extremamente saturada;
+- produto sem diferenciação suficiente para competir.
+
+CASO CONTRÁRIO:
+O mercado deve ser tratado como fator que intensifica o problema, mas não como causa principal.
+A causa principal deve ser interna ao produto: atração, conversão, operação, oferta, página ou mídia.
+
+OBJETIVO:
+Gerar uma síntese executiva curta, objetiva e estratégica, focada no produto analisado.
 
 CÉREBRO 1:
 ${C1 ? JSON.stringify({
@@ -882,14 +910,16 @@ Não use markdown.
 Não escreva texto antes ou depois.
 Não quebre strings.
 Não use aspas dentro dos textos.
+Não cite concorrentes individuais como foco principal.
+A causa raiz deve ser centrada no produto analisado.
 
 Use exatamente esta estrutura:
 
 {
   "score_geral": 75,
   "confianca": "ALTA",
-  "problema_raiz": "texto curto",
-  "diagnostico_executivo": "texto com no máximo 500 caracteres",
+  "problema_raiz": "texto curto centrado no produto",
+  "diagnostico_executivo": "texto com no máximo 500 caracteres explicando o problema do produto e como o mercado influencia",
   "pilares": {
     "atracao": {
       "status": "OK",
@@ -901,7 +931,7 @@ Use exatamente esta estrutura:
     },
     "mercado": {
       "status": "ATENÇÃO",
-      "resumo": "texto curto"
+      "resumo": "contexto competitivo, não causa principal salvo exceção"
     },
     "operacao": {
       "status": "CRÍTICO",
@@ -911,24 +941,24 @@ Use exatamente esta estrutura:
   "plano_acao": [
     {
       "prioridade": "URGENTE",
-      "titulo": "texto curto",
+      "titulo": "ação interna prioritária",
       "detalhe": "texto com no máximo 180 caracteres",
       "impacto": "texto curto"
     },
     {
       "prioridade": "IMPORTANTE",
-      "titulo": "texto curto",
+      "titulo": "ação de melhoria da página ou oferta",
       "detalhe": "texto com no máximo 180 caracteres",
       "impacto": "texto curto"
     },
     {
       "prioridade": "ESTRATÉGICO",
-      "titulo": "texto curto",
+      "titulo": "ação de posicionamento competitivo",
       "detalhe": "texto com no máximo 180 caracteres",
       "impacto": "texto curto"
     }
   ],
-  "veredicto": "texto curto"
+  "veredicto": "frase final estratégica centrada no produto"
 }`;
 
   let result;
