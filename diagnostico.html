@@ -897,47 +897,76 @@ render();
       return;
     }
 
-    const payload = {
-      clientName: c1.cliente || 'Cliente',
-      productName: c1.produto || 'Produto',
-      asin: c1.asin || '-',
-      reportDate: new Date().toLocaleDateString('pt-BR'),
+    const levelFromStatus = (status) => {
+      const s = String(status || '').toLowerCase();
 
-      executiveSummary: 'Diagnóstico baseado em performance (Cérebro 1).',
+      if (
+        s.includes('crítico') ||
+        s.includes('critico') ||
+        s.includes('alto')
+      ) return 'bad';
+
+      if (
+        s.includes('baixo') ||
+        s.includes('atenção') ||
+        s.includes('atencao') ||
+        s.includes('aceitável') ||
+        s.includes('aceitavel')
+      ) return 'warn';
+
+      return 'good';
+    };
+
+    const metricDescription = (metricName, value, status) => {
+      return `${metricName} atual: ${value}. Status Nexora: ${status || 'não classificado'}.`;
+    };
+
+    const payload = {
+      headline: 'Relatório Nexora — Cérebro 1',
+      coverSub: `Diagnóstico parcial de performance · ${c1.sub || c1.cat || 'Categoria não informada'}`,
+
+      executiveSummary:
+        'Este relatório parcial apresenta a leitura inicial de performance do produto com base em benchmarks de categoria, métricas de tráfego, conversão, mídia e operação.',
+
+      rootCause:
+        (c1.pilares && c1.pilares.length)
+          ? c1.pilares[0]
+          : 'Causa raiz ainda não consolidada. A síntese final será gerada após os três cérebros.',
 
       metrics: [
         {
-          label: 'CTR',
-          value: c1.ctr + '%',
-          status: c1.scores?.ctr
+          title: 'CTR',
+          score: `${c1.ctr ?? '-'}%`,
+          level: levelFromStatus(c1.scores?.ctr),
+          description: metricDescription('CTR', `${c1.ctr ?? '-'}%`, c1.scores?.ctr)
         },
         {
-          label: 'CVR',
-          value: c1.cvr + '%',
-          status: c1.scores?.cvr
+          title: 'CVR',
+          score: `${c1.cvr ?? '-'}%`,
+          level: levelFromStatus(c1.scores?.cvr),
+          description: metricDescription('CVR', `${c1.cvr ?? '-'}%`, c1.scores?.cvr)
         },
         {
-          label: 'ACOS',
-          value: c1.acos + '%',
-          status: c1.scores?.acos
+          title: 'ACOS',
+          score: `${c1.acos ?? '-'}%`,
+          level: levelFromStatus(c1.scores?.acos),
+          description: metricDescription('ACOS', `${c1.acos ?? '-'}%`, c1.scores?.acos)
         },
         {
-          label: 'TACOS',
-          value: c1.tacos + '%',
-          status: c1.scores?.tacos
+          title: 'TACOS',
+          score: `${c1.tacos ?? '-'}%`,
+          level: levelFromStatus(c1.scores?.tacos),
+          description: metricDescription('TACOS', `${c1.tacos ?? '-'}%`, c1.scores?.tacos)
         }
       ],
 
       actions: (c1.pilares || []).slice(0, 4).map((p, i) => ({
-        prioridade: i === 0 ? 'URGENTE' : i === 1 ? 'IMPORTANTE' : 'ESTRATÉGICO',
-        texto: p
-      })),
-
-      partial: true
+        title: i === 0 ? 'Prioridade crítica' : i === 1 ? 'Ajuste importante' : 'Otimização estratégica',
+        description: p
+      }))
     };
 
     localStorage.setItem('nexora_relatorio_mapeado', JSON.stringify(payload));
-
     window.open('/relatorio/relatorio_v3.html', '_blank');
 
   } catch (e) {
