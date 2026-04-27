@@ -512,7 +512,28 @@
     }
   </style>
 </head>
+  
 <body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const authSupabaseUrl = 'https://ctvhnqnzgmtotxzbtfov.supabase.co';
+  const authSupabaseKey = 'SUA_ANON_KEY_AQUI';
+
+  const authSb = window.supabase.createClient(authSupabaseUrl, authSupabaseKey);
+
+  async function protegerPagina() {
+    const { data } = await authSb.auth.getSession();
+
+    if (!data.session) {
+      window.location.href = 'login.html';
+    }
+  }
+
+  protegerPagina();
+  
+</script>
+  
 <div class="wrap">
   <div class="tnav">
     <span class="cr" onclick="location.href='index.html'">Início</span><span class="sep">›</span>
