@@ -888,7 +888,7 @@ try {
 }
 
 render();
-  function gerarRelatorioC1() {
+ function gerarRelatorioC1() {
   try {
     const c1 = JSON.parse(localStorage.getItem('nx_c1'));
 
@@ -897,71 +897,94 @@ render();
       return;
     }
 
-    const levelFromStatus = (status) => {
-      const s = String(status || '').toLowerCase();
-
-      if (
-        s.includes('crítico') ||
-        s.includes('critico') ||
-        s.includes('alto')
-      ) return 'bad';
-
-      if (
-        s.includes('baixo') ||
-        s.includes('atenção') ||
-        s.includes('atencao') ||
-        s.includes('aceitável') ||
-        s.includes('aceitavel')
-      ) return 'warn';
-
+    const level = (s) => {
+      const t = String(s || '').toLowerCase();
+      if (t.includes('crítico') || t.includes('alto')) return 'bad';
+      if (t.includes('baixo') || t.includes('atenção') || t.includes('aceitável')) return 'warn';
       return 'good';
     };
 
-    const metricDescription = (metricName, value, status) => {
-      return `${metricName} atual: ${value}. Status Nexora: ${status || 'não classificado'}.`;
-    };
+    // 🔥 INTERPRETAÇÃO (AQUI ESTÁ O VALOR)
+    let problema = '';
+    let resumo = '';
+    let plano = [];
+
+    if (c1.scores?.ctr === 'CRÍTICO') {
+      problema = 'Baixa atração (CTR)';
+      resumo = 'O produto não está chamando atenção no marketplace, reduzindo drasticamente o volume de tráfego qualificado.';
+      plano.push(
+        'Revisar imagem principal (thumbnail) com foco em contraste e clareza',
+        'Reposicionar proposta visual frente à categoria',
+        'Testar variações de título com foco em clique'
+      );
+    }
+
+    if (c1.scores?.cvr === 'CRÍTICO') {
+      problema = 'Baixa conversão (CVR)';
+      resumo = 'O tráfego chega, mas não converte. Isso indica falha de oferta, confiança ou percepção de valor.';
+      plano.push(
+        'Reestruturar imagens secundárias com prova de uso e benefício',
+        'Melhorar copy e bullets com foco em dor e solução',
+        'Reforçar prova social (reviews, diferenciação)'
+      );
+    }
+
+    if (c1.scores?.acos === 'CRÍTICO') {
+      problema = 'Ineficiência em mídia (ACOS)';
+      resumo = 'O produto depende de anúncios com baixa eficiência, comprometendo a rentabilidade.';
+      plano.push(
+        'Reduzir bids em campanhas com baixo retorno',
+        'Negativar termos irrelevantes',
+        'Aumentar investimento apenas nos termos com conversão'
+      );
+    }
+
+    if (!problema) {
+      problema = 'Estrutura estável';
+      resumo = 'O produto apresenta métricas dentro do esperado, com oportunidade de otimização e escala.';
+      plano.push(
+        'Escalar campanhas com bom desempenho',
+        'Aumentar presença orgânica',
+        'Testar novos posicionamentos'
+      );
+    }
 
     const payload = {
-      headline: 'Relatório Nexora — Cérebro 1',
-      coverSub: `Diagnóstico parcial de performance · ${c1.sub || c1.cat || 'Categoria não informada'}`,
+      headline: 'Diagnóstico Nexora — Performance',
+      coverSub: `${c1.sub || c1.cat || 'Produto analisado'}`,
 
-      executiveSummary:
-        'Este relatório parcial apresenta a leitura inicial de performance do produto com base em benchmarks de categoria, métricas de tráfego, conversão, mídia e operação.',
-
-      rootCause:
-        (c1.pilares && c1.pilares.length)
-          ? c1.pilares[0]
-          : 'Causa raiz ainda não consolidada. A síntese final será gerada após os três cérebros.',
+      executiveSummary: resumo,
+      rootCause: problema,
 
       metrics: [
         {
           title: 'CTR',
-          score: `${c1.ctr ?? '-'}%`,
-          level: levelFromStatus(c1.scores?.ctr),
-          description: metricDescription('CTR', `${c1.ctr ?? '-'}%`, c1.scores?.ctr)
+          score: `${c1.ctr}%`,
+          level: level(c1.scores?.ctr),
+          description: `Capacidade de gerar clique (${c1.scores?.ctr})`
         },
         {
           title: 'CVR',
-          score: `${c1.cvr ?? '-'}%`,
-          level: levelFromStatus(c1.scores?.cvr),
-          description: metricDescription('CVR', `${c1.cvr ?? '-'}%`, c1.scores?.cvr)
+          score: `${c1.cvr}%`,
+          level: level(c1.scores?.cvr),
+          description: `Capacidade de conversão (${c1.scores?.cvr})`
         },
         {
           title: 'ACOS',
-          score: `${c1.acos ?? '-'}%`,
-          level: levelFromStatus(c1.scores?.acos),
-          description: metricDescription('ACOS', `${c1.acos ?? '-'}%`, c1.scores?.acos)
+          score: `${c1.acos}%`,
+          level: level(c1.scores?.acos),
+          description: `Eficiência de mídia (${c1.scores?.acos})`
         },
         {
           title: 'TACOS',
-          score: `${c1.tacos ?? '-'}%`,
-          level: levelFromStatus(c1.scores?.tacos),
-          description: metricDescription('TACOS', `${c1.tacos ?? '-'}%`, c1.scores?.tacos)
+          score: `${c1.tacos}%`,
+          level: level(c1.scores?.tacos),
+          description: `Dependência de anúncios`
         }
       ],
 
-      actions: (c1.pilares || []).slice(0, 4).map((p, i) => ({
-        title: i === 0 ? 'Prioridade crítica' : i === 1 ? 'Ajuste importante' : 'Otimização estratégica',
+      actions: plano.map((p, i) => ({
+        title: `Ação ${i + 1}`,
         description: p
       }))
     };
@@ -970,7 +993,7 @@ render();
     window.open('/relatorio/relatorio_v3.html', '_blank');
 
   } catch (e) {
-    console.error('Erro ao gerar relatório:', e);
+    console.error(e);
     alert('Erro ao gerar relatório.');
   }
 }
