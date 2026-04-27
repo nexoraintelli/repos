@@ -618,6 +618,17 @@
         grid-template-columns: 1fr 1fr;
       }
     }
+    .btn-pdf {
+  background: linear-gradient(135deg, #b01e1e, #6f1d1d);
+  border: 1px solid rgba(255,255,255,.14);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 12px 22px;
+  border-radius: 12px;
+  cursor: pointer;
+}
   </style>
 </head>
 <body>
@@ -632,6 +643,8 @@
       <span class="cr" onclick="location.href='mercado.html'">Cérebro 3</span>
       <span class="sep">›</span>
       <span class="cr" onclick="location.href='sintese.html'">Síntese</span>
+
+      <button class="btn-pdf" onclick="gerarRelatorioC2()">Gerar PDF</button>
     </div>
 
     <header>
