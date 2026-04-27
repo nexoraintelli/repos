@@ -701,7 +701,7 @@ const sb = window.supabase.createClient(supabaseUrl, supabaseKey);
           signal: controller.signal,
           body: JSON.stringify({
             // Mesmo padrão/modelo usado no Cérebro 1, que já está funcionando.
-            model: 'claude-sonnet-4-6',
+            model: 'claude-3-5-haiku-latest',
             max_tokens: maxTokens || 1200,
             messages
           })
