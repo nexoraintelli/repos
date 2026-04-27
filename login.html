@@ -1,1 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexora Intelligence · Login</title>
 
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg-base: #0b0b0c;
+      --surface: rgba(18,18,18,.88);
+      --surface-strong: rgba(24,24,31,.95);
+      --border: rgba(255,255,255,.12);
+      --text: #ffffff;
+      --text-muted: #e5e4e2;
+      --muted: #8888a0;
+      --accent: #8b1e1e;
+      --accent-purple: #7b5cf0;
+      --accent-purple-soft: rgba(123,92,240,.12);
+      --accent-purple-border: rgba(123,92,240,.28);
+      --red: #f25858;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-base);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(128,0,0,.45) 0%, transparent 30%),
+        radial-gradient(circle at 75% 25%, rgba(111,29,29,.40) 0%, transparent 28%),
+        radial-gradient(circle at 60% 80%, rgba(214,31,31,.22) 0%, transparent 22%),
+        linear-gradient(135deg, #0b0b0c 0%, #121212 35%, #1a0000 100%);
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(255,0,0,0) 0px,
+        rgba(255,0,0,0) 3px,
+        rgba(255,0,0,.05) 4px,
+        rgba(255,0,0,0) 7px
+      );
+      opacity: .35;
+      z-index: 0;
+    }
+
+    .login-wrap {
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .brand h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 34px;
+      letter-spacing: .12em;
+      font-weight: 700;
+    }
+
+    .brand p {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.35);
+    }
+
+    .eyebrow {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      background: var(--surface-strong);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 13px 14px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      margin-bottom: 16px;
+    }
+
+    input:focus {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 0 3px rgba(123,92,240,.12);
+    }
+
+    button {
+      width: 100%;
+      padding: 13px 16px;
+      border-radius: var(--radius-md);
+      border: 0;
+      cursor: pointer;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .btn-primary {
+      background: var(--accent-purple);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: var(--accent-purple-soft);
+      border: 1px solid var(--accent-purple-border);
+      color: var(--text);
+    }
+
+    .msg {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      min-height: 20px;
+    }
+
+    .msg.error {
+      color: var(--red);
+    }
+
+    .back {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .back:hover {
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+
+<body>
+  <main class="login-wrap">
+    <div class="brand">
+      <h1>NEXORA</h1>
+      <p>Intelligence System</p>
+    </div>
+
+    <section class="card">
+      <p class="eyebrow">Área logada</p>
+      <h2>Entrar</h2>
+      <p class="subtitle">
+        Acesse o painel da Nexora para iniciar diagnósticos, gerar relatórios e acompanhar análises.
+      </p>
+
+      <label for="email">E-mail</label>
+      <input id="email" type="email" placeholder="seu@email.com" autocomplete="email">
+
+      <label for="password">Senha</label>
+      <input id="password" type="password" placeholder="Sua senha" autocomplete="current-password">
+
+      <button class="btn-primary" onclick="login()">Entrar</button>
+      <button class="btn-secondary" onclick="signup()">Criar conta</button>
+
+      <p id="msg" class="msg"></p>
+    </section>
+
+    <p class="back" onclick="location.href='index.html'">← Voltar para o início</p>
+  </main>
+
+  <script>
+    const supabaseUrl = 'https://ctvhnqnzgmtotxzbtfov.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0dmhucW56Z210b3R4emJ0Zm92Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDUxODQsImV4cCI6MjA5MjI4MTE4NH0.i_m-l-XdNcYZO0B48quyPXO1CLmFcTN8pKLzj8iF5Hs';
+
+    const sb = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function login() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const msg = document.getElementById('msg');
+
+      msg.className = 'msg';
+      msg.innerText = 'Entrando...';
+
+      const { data, error } = await sb.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        msg.className = 'msg error';
+        msg.innerText = error.message;
+        return;
+      }
+
+      window.location.href = 'dashboard.html';
+    }
+
+    async function signup() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const msg = document.getElementById('msg');
+
+      msg.className = 'msg';
+      msg.innerText = 'Criando conta...';
+
+      const { data, error } = await sb.auth.signUp({
+        email,
+        password
+      });
+
+      if (error) {
+        msg.className = 'msg error';
+        msg.innerText = error.message;
+        return;
+      }
+
+      msg.innerText = 'Conta criada. Agora faça login para acessar o painel.';
+    }
+
+    async function checkSession() {
+      const { data } = await sb.auth.getSession();
+
+      if (data.session) {
+        window.location.href = 'dashboard.html';
+      }
+    }
+
+    checkSession();
+  </script>
+</body>
+</html>
