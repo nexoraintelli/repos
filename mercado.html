@@ -648,6 +648,17 @@
         grid-template-columns: 1fr;
       }
     }
+    .btn-pdf {
+  font-size: 12px;
+  padding: 9px 16px;
+  cursor: pointer;
+  color: var(--accent-purple);
+  background: var(--accent-purple-soft);
+  border: 1px solid var(--accent-purple-border);
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+}
   </style>
 </head><body>
 <div class="wrap">
@@ -867,7 +878,88 @@ sb
       <p style="font-size:13px;color:var(--muted)">${result.reposicionamento}</p>
     </div>
     <div class="card"><p class="clbl">Prioridades estratégicas</p>${result.prioridades.map((p,i)=>'<div class="gitem"><span class="tag ttl">'+(i+1)+'</span>'+p+'</div>').join('')}</div>
-    <div class="ra"><button class="brs" onclick="renderForm()">Nova análise</button><button class="badv" onclick="location.href='sintese.html'">Síntese estratégica →</button></div>`;
+    <div class="ra">
+  <button class="brs" onclick="renderForm()">Nova análise</button>
+  <button class="btn-pdf" onclick="gerarRelatorioC3()">Gerar PDF</button>
+  <button class="badv" onclick="location.href='sintese.html'">Síntese estratégica →</button>
+</div>
+}
+
+function gerarRelatorioC3() {
+  try {
+    const c3 = JSON.parse(localStorage.getItem('nx_c3'));
+
+    if (!c3) {
+      alert('Nenhuma análise do Cérebro 3 encontrada.');
+      return;
+    }
+
+    const level = (nivel) => {
+      const t = String(nivel || '').toLowerCase();
+      if (t.includes('crítico') || t.includes('critico')) return 'bad';
+      if (t.includes('alto') || t.includes('médio') || t.includes('medio')) return 'warn';
+      return 'good';
+    };
+
+    const payload = {
+      headline: 'Diagnóstico Nexora — Mercado',
+      coverSub: 'Cérebro 3 · Categoria, concorrência e barreiras competitivas',
+
+      executiveSummary:
+        c3.diagnostico ||
+        'A análise de mercado identificou forças competitivas, barreiras de entrada e riscos estruturais da categoria.',
+
+      rootCause:
+        c3.gap_competitivo ||
+        c3.reposicionamento ||
+        'O produto precisa ser avaliado dentro do contexto competitivo da categoria.',
+
+      metrics: [
+        {
+          title: 'Força dominante',
+          score: c3.forca_dominante || 'N/A',
+          level: 'warn',
+          description: c3.forca_explicacao || 'Principal força que influencia a decisão de compra na categoria.'
+        },
+        {
+          title: 'Quadrante',
+          score: c3.quadrante || 'N/A',
+          level: 'warn',
+          description: c3.quadrante_explicacao || 'Posicionamento competitivo estimado do produto.'
+        },
+        {
+          title: 'Review barrier',
+          score: c3.review_barrier ?? 'N/A',
+          level: Number(c3.review_barrier || 0) > 100 ? 'bad' : 'warn',
+          description: 'Volume médio de reviews necessário para competir com segurança.'
+        },
+        {
+          title: 'Preço médio',
+          score: c3.preco_medio ? 'R$' + c3.preco_medio : 'N/A',
+          level: 'good',
+          description: 'Referência de preço observada entre os principais concorrentes.'
+        }
+      ],
+
+      actions: [
+        ...(c3.riscos || []).slice(0, 4).map((r, i) => ({
+          title: `${r.nivel || 'Risco'} · Risco ${i + 1}`,
+          description: r.descricao || String(r)
+        })),
+        ...(c3.prioridades || []).slice(0, 3).map((p, i) => ({
+          title: `Prioridade ${i + 1}`,
+          description: p
+        }))
+      ]
+    };
+
+    localStorage.setItem('nexora_relatorio_mapeado', JSON.stringify(payload));
+    window.open('/relatorio/relatorio_v3.html', '_blank');
+
+  } catch (e) {
+    console.error('Erro ao gerar relatório C3:', e);
+    alert('Erro ao gerar relatório C3.');
+  }
 }
 
 loadCtx();
