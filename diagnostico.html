@@ -904,49 +904,88 @@ render();
       return 'good';
     };
 
-    // 🔥 INTERPRETAÇÃO (AQUI ESTÁ O VALOR)
+    // ===== INTERPRETAÇÃO ESTRATÉGICA =====
     let problema = '';
     let resumo = '';
     let plano = [];
 
-    if (c1.scores?.ctr === 'CRÍTICO') {
-      problema = 'Baixa atração (CTR)';
-      resumo = 'O produto não está chamando atenção no marketplace, reduzindo drasticamente o volume de tráfego qualificado.';
-      plano.push(
-        'Revisar imagem principal (thumbnail) com foco em contraste e clareza',
-        'Reposicionar proposta visual frente à categoria',
-        'Testar variações de título com foco em clique'
-      );
-    }
+    // 🎯 CTR
+    const ctrDesc = c1.scores?.ctr === 'CRÍTICO'
+      ? 'O produto não gera clique suficiente. Isso limita todo o funil antes mesmo da conversão.'
+      : 'A atração está dentro do esperado para a categoria.';
 
+    // 🎯 CVR
+    const cvrDesc = c1.scores?.cvr === 'CRÍTICO'
+      ? 'O produto recebe tráfego, mas não converte. Indica falha de percepção de valor, confiança ou oferta.'
+      : 'A conversão está dentro do esperado.';
+
+    // 🎯 ACOS
+    const acosDesc = c1.scores?.acos === 'CRÍTICO'
+      ? 'Os anúncios estão consumindo investimento sem retorno proporcional.'
+      : 'A eficiência de mídia está controlada.';
+
+    // ===== CAUSA RAIZ =====
     if (c1.scores?.cvr === 'CRÍTICO') {
-      problema = 'Baixa conversão (CVR)';
-      resumo = 'O tráfego chega, mas não converte. Isso indica falha de oferta, confiança ou percepção de valor.';
-      plano.push(
-        'Reestruturar imagens secundárias com prova de uso e benefício',
-        'Melhorar copy e bullets com foco em dor e solução',
-        'Reforçar prova social (reviews, diferenciação)'
-      );
+      problema = 'Falha estrutural de conversão';
+      resumo = 'O produto atrai tráfego, mas não transforma interesse em compra. Isso indica problema direto na página, não no tráfego.';
+    } 
+    else if (c1.scores?.ctr === 'CRÍTICO') {
+      problema = 'Baixa capacidade de atração';
+      resumo = 'O produto não chama atenção no marketplace, limitando entrada de tráfego e crescimento.';
+    } 
+    else {
+      problema = 'Performance equilibrada com oportunidade de escala';
+      resumo = 'O produto apresenta base funcional, com potencial de otimização para crescimento.';
     }
 
-    if (c1.scores?.acos === 'CRÍTICO') {
-      problema = 'Ineficiência em mídia (ACOS)';
-      resumo = 'O produto depende de anúncios com baixa eficiência, comprometendo a rentabilidade.';
-      plano.push(
-        'Reduzir bids em campanhas com baixo retorno',
-        'Negativar termos irrelevantes',
-        'Aumentar investimento apenas nos termos com conversão'
-      );
-    }
-
-    if (!problema) {
-      problema = 'Estrutura estável';
-      resumo = 'O produto apresenta métricas dentro do esperado, com oportunidade de otimização e escala.';
-      plano.push(
-        'Escalar campanhas com bom desempenho',
-        'Aumentar presença orgânica',
-        'Testar novos posicionamentos'
-      );
+    // ===== PLANO ESTRATÉGICO =====
+    if (c1.scores?.cvr === 'CRÍTICO') {
+      plano = [
+        {
+          title: 'Reconstruir percepção de valor da página',
+          description: 'Reestruturar imagens e conteúdo para comunicar claramente benefício, uso e diferenciação. Sem isso, o usuário não tem motivo para converter.',
+        },
+        {
+          title: 'Fortalecer prova social',
+          description: 'Aumentar confiança com reviews, avaliações e elementos visuais que validem a decisão de compra.',
+        },
+        {
+          title: 'Revisar oferta e posicionamento',
+          description: 'Ajustar preço, proposta e comunicação para alinhar com expectativa do mercado.',
+        }
+      ];
+    } 
+    else if (c1.scores?.ctr === 'CRÍTICO') {
+      plano = [
+        {
+          title: 'Revisar thumbnail e imagem principal',
+          description: 'A primeira impressão está falhando. Ajustar contraste, clareza e destaque visual frente à concorrência.',
+        },
+        {
+          title: 'Reposicionar título para clique',
+          description: 'O título precisa gerar interesse imediato e destacar benefício principal.',
+        },
+        {
+          title: 'Ajustar proposta visual',
+          description: 'Alinhar imagem com padrão da categoria para aumentar taxa de clique.',
+        }
+      ];
+    } 
+    else {
+      plano = [
+        {
+          title: 'Escalar campanhas eficientes',
+          description: 'Aumentar investimento nos pontos onde já há retorno comprovado.',
+        },
+        {
+          title: 'Expandir presença orgânica',
+          description: 'Trabalhar SEO e posicionamento para reduzir dependência de mídia paga.',
+        },
+        {
+          title: 'Testar novas variações de oferta',
+          description: 'Explorar melhorias incrementais para ganho de performance.',
+        }
+      ];
     }
 
     const payload = {
@@ -961,32 +1000,29 @@ render();
           title: 'CTR',
           score: `${c1.ctr}%`,
           level: level(c1.scores?.ctr),
-          description: `Capacidade de gerar clique (${c1.scores?.ctr})`
+          description: ctrDesc
         },
         {
           title: 'CVR',
           score: `${c1.cvr}%`,
           level: level(c1.scores?.cvr),
-          description: `Capacidade de conversão (${c1.scores?.cvr})`
+          description: cvrDesc
         },
         {
           title: 'ACOS',
           score: `${c1.acos}%`,
           level: level(c1.scores?.acos),
-          description: `Eficiência de mídia (${c1.scores?.acos})`
+          description: acosDesc
         },
         {
           title: 'TACOS',
           score: `${c1.tacos}%`,
           level: level(c1.scores?.tacos),
-          description: `Dependência de anúncios`
+          description: 'Mostra o nível de dependência de mídia para gerar vendas.'
         }
       ],
 
-      actions: plano.map((p, i) => ({
-        title: `Ação ${i + 1}`,
-        description: p
-      }))
+      actions: plano
     };
 
     localStorage.setItem('nexora_relatorio_mapeado', JSON.stringify(payload));
