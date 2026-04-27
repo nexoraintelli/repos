@@ -295,8 +295,21 @@ async function buscarBenchmark(category, subcategory) {
   const subNorm = normalizarTexto(subcategory)
 
  const match = data.find(row => {
-  const rowCat = normalizarTexto(row.category);
-  const rowSub = normalizarTexto(row.subcategory);
+  const rowCat = normalizarTexto(
+  row.category ||
+  row.categoria ||
+  row.main_category ||
+  row.categoria_nome ||
+  row.nome_categoria
+);
+
+const rowSub = normalizarTexto(
+  row.subcategory ||
+  row.subcategoria ||
+  row.sub_category ||
+  row.subcategoria_nome ||
+  row.nome_subcategoria
+);
 
   const catOk =
     rowCat === catNorm ||
