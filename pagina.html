@@ -1079,7 +1079,83 @@ sb
         </div>
       `;
     }
+function gerarRelatorioC2() {
+  try {
+    const c2 = JSON.parse(localStorage.getItem('nx_c2'));
 
+    if (!c2) {
+      alert('Nenhuma análise do Cérebro 2 encontrada.');
+      return;
+    }
+
+    const level = (n) => {
+      const score = Number(n || 0);
+      if (score < 50) return 'bad';
+      if (score < 75) return 'warn';
+      return 'good';
+    };
+
+    const s = c2.scores || {};
+
+    const payload = {
+      headline: 'Diagnóstico Nexora — Página',
+      coverSub: 'Cérebro 2 · Análise de listing, confiança e conversão',
+
+      executiveSummary:
+        c2.diagnostico ||
+        'A página foi analisada para identificar barreiras de clique, conversão, diferenciação e confiança.',
+
+      rootCause:
+        c2.problema_principal ||
+        'A página apresenta pontos de fricção que podem comprometer a decisão de compra.',
+
+      metrics: [
+        {
+          title: 'CTR-readiness',
+          score: s.ctr_readiness ?? 'N/A',
+          level: level(s.ctr_readiness),
+          description: 'Mede se a página possui elementos fortes para sustentar atração e clique.'
+        },
+        {
+          title: 'CVR-readiness',
+          score: s.cvr_readiness ?? 'N/A',
+          level: level(s.cvr_readiness),
+          description: 'Mede se a página tem clareza, confiança e oferta suficiente para converter.'
+        },
+        {
+          title: 'Diferenciação',
+          score: s.diferenciacao ?? 'N/A',
+          level: level(s.diferenciacao),
+          description: 'Avalia se o produto comunica por que deve ser escolhido frente à concorrência.'
+        },
+        {
+          title: 'Confiança',
+          score: s.confianca ?? 'N/A',
+          level: level(s.confianca),
+          description: 'Avalia prova social, reviews, rating, vídeo e segurança percebida.'
+        }
+      ],
+
+      actions: [
+        ...(c2.gaps || []).slice(0, 4).map((g, i) => ({
+          title: `${g.nivel || 'Ajuste'} · Gap ${i + 1}`,
+          description: g.descricao || String(g)
+        })),
+        ...(c2.prioridades || []).slice(0, 3).map((p, i) => ({
+          title: `Prioridade ${i + 1}`,
+          description: p
+        }))
+      ]
+    };
+
+    localStorage.setItem('nexora_relatorio_mapeado', JSON.stringify(payload));
+    window.open('/relatorio/relatorio_v3.html', '_blank');
+
+  } catch (e) {
+    console.error('Erro ao gerar relatório C2:', e);
+    alert('Erro ao gerar relatório C2.');
+  }
+}
     loadCtx();
     renderForm();
   </script>
