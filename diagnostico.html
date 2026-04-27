@@ -271,58 +271,89 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const sb = window.supabase.createClient(supabaseUrl, supabaseKey)
 
 async function buscarBenchmark(category, subcategory) {
-  console.log('BUSCANDO:', { category, subcategory })
-
-  const { data, error } = await sb
-    .from('benchmarks')
-    .select('*')
-
-  console.log('RETORNO RAW:', { data, error })
-
-  if (error) {
-    console.error('Erro ao buscar benchmark:', error)
-    return null
-  }
+  console.log('BUSCANDO:', { category, subcategory });
 
   const normalizarTexto = (txt) =>
-    (txt || '')
+    String(txt || '')
       .trim()
       .toLowerCase()
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[\u0300-\u036f]/g, '');
 
-  const catNorm = normalizarTexto(category)
-  const subNorm = normalizarTexto(subcategory)
+  const catNorm = normalizarTexto(category);
+  const subNorm = normalizarTexto(subcategory);
 
- const match = data.find(row => {
-  const rowCat = normalizarTexto(
-  row.category ||
-  row.categoria ||
-  row.main_category ||
-  row.categoria_nome ||
-  row.nome_categoria
-);
+  let data = [];
+  let error = null;
 
-const rowSub = normalizarTexto(
-  row.subcategory ||
-  row.subcategoria ||
-  row.sub_category ||
-  row.subcategoria_nome ||
-  row.nome_subcategoria
-);
+  try {
+    const response = await sb
+      .from('benchmarks')
+      .select('*');
 
-  const catOk =
-    rowCat === catNorm ||
-    rowCat.includes(catNorm) ||
-    catNorm.includes(rowCat);
+    data = response.data || [];
+    error = response.error;
 
-  const subOk =
-    rowSub === subNorm ||
-    rowSub.includes(subNorm) ||
-    subNorm.includes(rowSub);
+    console.log('RETORNO RAW SUPABASE:', { data, error });
+  } catch (e) {
+    console.error('Erro ao consultar Supabase:', e);
+  }
 
-  return catOk && subOk;
-});
+  if (error) {
+    console.error('Erro ao buscar benchmark no Supabase:', error);
+  }
+
+  if (data && data.length > 0) {
+    const match = data.find(row => {
+      const rowCat = normalizarTexto(
+        row.category ||
+        row.categoria ||
+        row.main_category ||
+        row.categoria_nome ||
+        row.nome_categoria
+      );
+
+      const rowSub = normalizarTexto(
+        row.subcategory ||
+        row.subcategoria ||
+        row.sub_category ||
+        row.subcategoria_nome ||
+        row.nome_subcategoria
+      );
+
+      const catOk =
+        rowCat === catNorm ||
+        rowCat.includes(catNorm) ||
+        catNorm.includes(rowCat);
+
+      const subOk =
+        rowSub === subNorm ||
+        rowSub.includes(subNorm) ||
+        subNorm.includes(rowSub);
+
+      return catOk && subOk;
+    });
+
+    console.log('MATCH SUPABASE:', match);
+
+    if (match) {
+      return match;
+    }
+  }
+
+  console.warn('Supabase vazio ou sem match. Usando benchmark local BM.');
+
+  const local = getBM(category, subcategory);
+
+  return {
+    category,
+    subcategory,
+    avg_ctr: local.ctr,
+    avg_cvr: local.cvr,
+    avg_acos: local.acos,
+    source: local.source || 'benchmark local'
+  };
+}
 
   console.log('MATCH ENCONTRADO:', match)
   return match || null
