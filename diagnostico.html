@@ -988,51 +988,68 @@ render();
       ];
     }
 
-    const payload = {
-      headline: 'Diagnóstico Nexora — Performance',
-      coverSub: `${c1.sub || c1.cat || 'Produto analisado'}`,
+   const payload = {
+  headline: `Produto com ${c1.scores?.ctr} em atração e ${c1.scores?.cvr} em conversão`,
 
-      executiveSummary: resumo,
-      rootCause: problema,
+  coverSub: `${c1.sub || c1.cat}`,
 
-      metrics: [
-        {
-          title: 'CTR',
-          score: `${c1.ctr}%`,
-          level: level(c1.scores?.ctr),
-          description: ctrDesc
-        },
-        {
-          title: 'CVR',
-          score: `${c1.cvr}%`,
-          level: level(c1.scores?.cvr),
-          description: cvrDesc
-        },
-        {
-          title: 'ACOS',
-          score: `${c1.acos}%`,
-          level: level(c1.scores?.acos),
-          description: acosDesc
-        },
-        {
-          title: 'TACOS',
-          score: `${c1.tacos}%`,
-          level: level(c1.scores?.tacos),
-          description: 'Mostra o nível de dependência de mídia para gerar vendas.'
-        }
-      ],
+  executiveSummary: `
+O produto apresenta CTR de ${c1.ctr}% (${c1.scores?.ctr}), indicando ${c1.scores?.ctr === 'CRÍTICO' ? 'baixa capacidade de atração' : 'boa entrada de tráfego'}.
+Porém, a conversão de ${c1.cvr}% (${c1.scores?.cvr}) demonstra que o tráfego não está sendo convertido em vendas.
+O problema principal está na estrutura da página, não no tráfego.
+`,
 
-      actions: plano
-    };
+  rootCause: `
+A página do produto não sustenta a decisão de compra.
+Falta clareza de benefício, diferenciação e elementos de confiança, resultando em abandono mesmo com tráfego qualificado.
+`,
 
-    localStorage.setItem('nexora_relatorio_mapeado', JSON.stringify(payload));
-    window.open('/relatorio/relatorio_v3.html', '_blank');
+  metrics: [
+    {
+      title: 'CTR',
+      score: `${c1.ctr}%`,
+      level: level(c1.scores?.ctr),
+      description: c1.scores?.ctr === 'CRÍTICO'
+        ? 'Baixa taxa de clique. O produto não chama atenção no marketplace.'
+        : 'Boa capacidade de atração.'
+    },
+    {
+      title: 'CVR',
+      score: `${c1.cvr}%`,
+      level: level(c1.scores?.cvr),
+      description: c1.scores?.cvr === 'CRÍTICO'
+        ? 'Tráfego não está convertendo. Problema direto na página.'
+        : 'Conversão saudável.'
+    },
+    {
+      title: 'ACOS',
+      score: `${c1.acos}%`,
+      level: level(c1.scores?.acos),
+      description: 'Eficiência de mídia baseada no retorno de vendas.'
+    },
+    {
+      title: 'TACOS',
+      score: `${c1.tacos}%`,
+      level: level(c1.scores?.tacos),
+      description: 'Dependência de anúncios para gerar receita.'
+    }
+  ],
 
-  } catch (e) {
-    console.error(e);
-    alert('Erro ao gerar relatório.');
-  }
-}
+  actions: [
+    {
+      title: 'Reestruturar imagem principal',
+      description: 'Melhorar contraste, clareza e posicionamento visual para aumentar CTR.'
+    },
+    {
+      title: 'Melhorar comunicação da página',
+      description: 'Reescrever título e bullets com foco em benefício e diferenciação.'
+    },
+    {
+      title: 'Adicionar prova social',
+      description: 'Aumentar confiança com reviews, validação e elementos visuais.'
+    }
+  ]
+};
 </script>
 </body>
 </html>
