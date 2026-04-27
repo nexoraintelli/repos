@@ -294,10 +294,22 @@ async function buscarBenchmark(category, subcategory) {
   const catNorm = normalizarTexto(category)
   const subNorm = normalizarTexto(subcategory)
 
-  const match = data.find(row =>
-    normalizarTexto(row.category) === catNorm &&
-    normalizarTexto(row.subcategory) === subNorm
-  )
+ const match = data.find(row => {
+  const rowCat = normalizarTexto(row.category);
+  const rowSub = normalizarTexto(row.subcategory);
+
+  const catOk =
+    rowCat === catNorm ||
+    rowCat.includes(catNorm) ||
+    catNorm.includes(rowCat);
+
+  const subOk =
+    rowSub === subNorm ||
+    rowSub.includes(subNorm) ||
+    subNorm.includes(rowSub);
+
+  return catOk && subOk;
+});
 
   console.log('MATCH ENCONTRADO:', match)
   return match || null
