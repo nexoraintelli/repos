@@ -699,13 +699,16 @@ const sb = window.supabase.createClient(supabaseUrl, supabaseKey);
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           signal: controller.signal,
-          body: JSON.stringify({
-            // Mesmo padrão/modelo usado no Cérebro 1, que já está funcionando.
-           model: 'claude-sonnet-4-6',
-            max_tokens: maxTokens || 1200,
-            messages
-          })
-        });
+          const res = await fetch('/api/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  signal: controller.signal,
+  body: JSON.stringify({
+    model: 'claude-sonnet-4-6',
+    max_tokens: maxTokens || 900,
+    messages: messages
+  })
+});
 
         const data = await res.json().catch(() => ({}));
 
