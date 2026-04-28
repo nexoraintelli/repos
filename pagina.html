@@ -1021,7 +1021,7 @@ try {
   try {
     result = JSON.parse(jsonString);
   } catch (parseError) {
-    console.error('Erro ao fazer parse do JSON da IA:', jsonString);
+    console.warn('A IA respondeu em formato parcialmente inválido. Conteúdo preservado.');
 
     result = {
       scores: {
