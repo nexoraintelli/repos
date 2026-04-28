@@ -962,8 +962,33 @@ ${ctx1}
 Listing: Título: ${titulo || 'N/A'} | Bullets: ${bullets || 'N/A'} | Descrição: ${desc || 'N/A'} | Preço: R$${preco} | Reviews: ${rev} | Rating: ${rat} | Vídeo: ${rbState.video || 'N/A'} | Cupom: ${rbState.cupom || 'N/A'} | ${imgs.length} imagem(ns) enviada(s).
 ${C1?.scores?.ctr === 'CRÍTICO' || C1?.scores?.ctr === 'BAIXO' ? '→ CTR baixo: foque em thumbnail, título e preço percebido.' : ''}
 ${C1?.scores?.cvr === 'CRÍTICO' || C1?.scores?.cvr === 'BAIXO' ? '→ CVR baixo: foque em clareza, prova social e diferenciação.' : ''}
-Retorne SOMENTE JSON válido sem markdown:
-{"scores":{"ctr_readiness":0,"cvr_readiness":0,"diferenciacao":0,"confianca":0},"problema_principal":"","diagnostico":"","gaps":[{"nivel":"CRÍTICO","descricao":""}],"prioridades":["","",""]}`;
+RESPONDA APENAS EM JSON VÁLIDO.
+
+REGRAS OBRIGATÓRIAS:
+- NÃO escreva nenhum texto fora do JSON
+- NÃO use markdown (```json)
+- NÃO explique nada
+- NÃO adicione comentários
+- NÃO use texto antes ou depois
+
+RETORNE EXATAMENTE ESTE FORMATO:
+
+{
+  "scores": {
+    "ctr_readiness": number,
+    "cvr_readiness": number,
+    "diferenciacao": number,
+    "confianca": number
+  },
+  "problema_principal": "string",
+  "diagnostico": "string",
+  "gaps": [
+    {
+      "nivel": "CRÍTICO | ALTO | MÉDIO",
+      "descricao": "string"
+    }
+  ]
+}
 
       const msgContent = [];
 
