@@ -986,26 +986,69 @@ Retorne SOMENTE JSON válido sem markdown:
 
       msgContent.push({ type: 'text', text: prompt });
 
-    let result;
+   let result;
 
 try {
-  const raw = data?.content?.[0]?.text || "";
+  let raw = '';
 
-  // pega só o JSON dentro do texto
-  const jsonStart = raw.indexOf("{");
-  const jsonEnd = raw.lastIndexOf("}");
+  try {
+    raw = await callAI([{ role: 'user', content: msgContent }], 1500);
+  } catch (imageError) {
+    console.warn('Falha na IA com imagens. Tentando somente texto.', imageError);
 
-  if (jsonStart === -1 || jsonEnd === -1) {
-    throw new Error("IA não retornou JSON válido");
+    raw = await callAI([
+      {
+        role: 'user',
+        content: prompt + '\n\nObservação técnica: as imagens foram enviadas pelo usuário, mas a chamada visual falhou. Faça a análise pelos campos textuais e pelo Cérebro 1.'
+      }
+    ], 1500);
   }
 
-  const jsonString = raw.slice(jsonStart, jsonEnd + 1);
+  const cleanRaw = String(raw || '')
+    .replace(/```json/g, '')
+    .replace(/```/g, '')
+    .trim();
 
-  result = JSON.parse(jsonString);
+  const jsonStart = cleanRaw.indexOf('{');
+  const jsonEnd = cleanRaw.lastIndexOf('}');
+
+  if (jsonStart === -1 || jsonEnd === -1) {
+    throw new Error('IA não retornou JSON válido');
+  }
+
+  const jsonString = cleanRaw.slice(jsonStart, jsonEnd + 1);
+
+  try {
+    result = JSON.parse(jsonString);
+  } catch (parseError) {
+    console.error('Erro ao fazer parse do JSON da IA:', jsonString);
+
+    result = {
+      scores: {
+        ctr_readiness: 40,
+        cvr_readiness: 40,
+        diferenciacao: 40,
+        confianca: 40
+      },
+      problema_principal: 'Análise baseada nos dados fornecidos',
+      diagnostico: cleanRaw,
+      gaps: [
+        {
+          nivel: 'ALTO',
+          descricao: 'A IA respondeu em formato parcialmente inválido, mas a análise foi preservada.'
+        }
+      ],
+      prioridades: [
+        'Revisar clareza da oferta',
+        'Melhorar diferenciação da página',
+        'Fortalecer confiança e prova social'
+      ]
+    };
+  }
 
 } catch (err) {
-  console.error("Erro ao fazer parse do JSON da IA:", err);
-  
+  console.error('Erro geral na análise da IA:', err);
+
   result = {
     scores: {
       ctr_readiness: 40,
@@ -1013,8 +1056,8 @@ try {
       diferenciacao: 40,
       confianca: 40
     },
-    problema_principal: "Erro ao interpretar resposta da IA",
-    diagnostico: "A resposta retornada não estava em JSON válido.",
+    problema_principal: 'Erro ao interpretar resposta da IA',
+    diagnostico: 'A resposta retornada não estava em JSON válido.',
     gaps: [],
     prioridades: []
   };
