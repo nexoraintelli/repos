@@ -986,98 +986,39 @@ Retorne SOMENTE JSON válido sem markdown:
 
       msgContent.push({ type: 'text', text: prompt });
 
-     let result;
+    let result;
 
 try {
-  let raw = '';
+  const raw = data?.content?.[0]?.text || "";
 
-  try {
-    raw = await callAI([{ role: 'user', content: msgContent }], 1500);
-  } catch (imageError) {
-    console.warn('Falha na IA com imagens. Tentando análise somente com texto.', imageError);
-
-    raw = await callAI([
-      {
-        role: 'user',
-        content: prompt + '\n\nObservação técnica: as imagens foram enviadas pelo usuário, mas a chamada visual falhou. Faça a análise pelos campos textuais e pelo Cérebro 1.'
-      }
-    ], 1500);
-  }
-
-  const cleanRaw = String(raw || '')
-    .replace(/```json|```/g, '')
-    .trim();
-
-  const jsonStart = cleanRaw.indexOf('{');
-  const jsonEnd = cleanRaw.lastIndexOf('}');
+  // pega só o JSON dentro do texto
+  const jsonStart = raw.indexOf("{");
+  const jsonEnd = raw.lastIndexOf("}");
 
   if (jsonStart === -1 || jsonEnd === -1) {
-    throw new Error('IA não retornou JSON válido: ' + cleanRaw.slice(0, 200));
+    throw new Error("IA não retornou JSON válido");
   }
 
-  const jsonText = cleanRaw.slice(jsonStart, jsonEnd + 1);
+  const jsonString = raw.slice(jsonStart, jsonEnd + 1);
 
-  try {
-    result = JSON.parse(jsonText);
-  } catch (parseError) {
-    console.error('Erro ao fazer parse do JSON da IA:', jsonText);
+  result = JSON.parse(jsonString);
 
-    const getScore = (key, fallback) => {
-      const match = jsonText.match(new RegExp(`"${key}"\\s*:\\s*(\\d+)`));
-      return match ? Number(match[1]) : fallback;
-    };
-
-    result = {
-      scores: {
-        ctr_readiness: getScore('ctr_readiness', 65),
-        cvr_readiness: getScore('cvr_readiness', 65),
-        diferenciacao: getScore('diferenciacao', 55),
-        confianca: getScore('confianca', 68)
-      },
-      problema_principal: 'Análise baseada nos dados fornecidos',
-      diagnostico: jsonText,
-      gaps: [
-        {
-          nivel: 'ALTO',
-          descricao: 'A IA retornou análise em formato parcialmente inválido, mas o conteúdo foi preservado.'
-        }
-      ],
-      prioridades: [
-        'Revisar clareza da oferta',
-        'Melhorar diferenciação da página',
-        'Fortalecer confiança e prova social'
-      ]
-    };
-  }
-
-} catch (e) {
-  const rv = parseInt(rev, 10) || 0;
-
+} catch (err) {
+  console.error("Erro ao fazer parse do JSON da IA:", err);
+  
   result = {
     scores: {
-      ctr_readiness: rv >= 50 ? 65 : rv >= 20 ? 50 : 35,
-      cvr_readiness: rv >= 100 ? 65 : rv >= 50 ? 52 : 38,
-      diferenciacao: 55,
-      confianca: rv >= 100 ? 68 : rv >= 50 ? 52 : 36
+      ctr_readiness: 40,
+      cvr_readiness: 40,
+      diferenciacao: 40,
+      confianca: 40
     },
-    problema_principal: rv < 50
-      ? 'Reviews insuficientes para sustentar conversão'
-      : 'Análise baseada nos dados fornecidos',
-    diagnostico: 'IA indisponível nesta tentativa: ' + e.message,
-    gaps: [
-      {
-        nivel: 'ALTO',
-        descricao: 'A chamada da IA falhou nesta tentativa. Tente novamente com menos imagens ou imagens mais leves.'
-      }
-    ],
-    prioridades: [
-      'Tente novamente com até 4 imagens leves',
-      'Confira se o endpoint /api/chat respondeu no console',
-      'Preencha todos os campos do formulário'
-    ]
+    problema_principal: "Erro ao interpretar resposta da IA",
+    diagnostico: "A resposta retornada não estava em JSON válido.",
+    gaps: [],
+    prioridades: []
   };
 }
-
       const s = result.scores || {};
 
      try {
