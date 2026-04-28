@@ -833,25 +833,91 @@ function parseJsonDaIA(raw) {
     .replace(/```/g, '')
     .trim();
 
-  // tentativa 1: parse direto
   try {
     return JSON.parse(clean);
   } catch (e) {}
 
-  // tentativa 2: pegar bloco JSON
-  const match = clean.match(/\{[\s\S]*\}/);
-
+  const match = clean.match(/\{[\s\S]*/);
   if (!match) {
-    console.error("Resposta da IA:", clean);
     throw new Error('A IA não retornou JSON.');
   }
 
-  try {
-    return JSON.parse(match[0]);
-  } catch (e) {
-    console.error("JSON inválido:", match[0]);
-    throw new Error('JSON inválido mesmo após extração.');
+  let txt = match[0]
+    .replace(/,\s*}/g, '}')
+    .replace(/,\s*]/g, ']')
+    .trim();
+
+  function pickString(key, fallback = '') {
+    const re = new RegExp(`"${key}"\\s*:\\s*"([\\s\\S]*?)"(?=\\s*,\\s*"|\\s*\\})`);
+    const m = txt.match(re);
+    return m ? m[1].replace(/\\"/g, '"') : fallback;
   }
+
+  function pickNumber(key, fallback = 0) {
+    const re = new RegExp(`"${key}"\\s*:\\s*(\\d+)`);
+    const m = txt.match(re);
+    return m ? Number(m[1]) : fallback;
+  }
+
+  function pickPilar(nome, statusFallback, resumoFallback) {
+    const re = new RegExp(`"${nome}"\\s*:\\s*\\{([\\s\\S]*?)(?=\\n\\s*\\}\\s*,\\s*"|\\n\\s*\\}\\s*\\})`);
+    const bloco = txt.match(re)?.[1] || '';
+
+    const status = (bloco.match(/"status"\s*:\s*"([^"]*)"/)?.[1]) || statusFallback;
+    const resumo = (bloco.match(/"resumo"\s*:\s*"([\s\S]*?)"/)?.[1]) || resumoFallback;
+
+    return { status, resumo };
+  }
+
+  const plano = [];
+  const itemRegex = /\{\s*"prioridade"\s*:\s*"([^"]*)"\s*,\s*"titulo"\s*:\s*"([^"]*)"\s*,\s*"detalhe"\s*:\s*"([\s\S]*?)"\s*,\s*"impacto"\s*:\s*"([^"]*)"/g;
+  let m;
+
+  while ((m = itemRegex.exec(txt)) !== null) {
+    plano.push({
+      prioridade: m[1] || 'IMPORTANTE',
+      titulo: m[2] || 'Ação estratégica',
+      detalhe: m[3] || '',
+      impacto: m[4] || ''
+    });
+  }
+
+  return {
+    score_geral: pickNumber('score_geral', 50),
+    confianca: pickString('confianca', 'MÉDIA'),
+    problema_raiz: pickString('problema_raiz', C2?.problema_principal || 'Causa raiz não identificada automaticamente.'),
+    diagnostico_executivo: pickString(
+      'diagnostico_executivo',
+      clean.slice(0, 1600)
+    ),
+    pilares: {
+      atracao: pickPilar('atracao', C1?.scores?.ctr === 'CRÍTICO' ? 'CRÍTICO' : 'ATENÇÃO', `CTR ${C1?.ctr || '—'}%`),
+      conversao: pickPilar('conversao', C1?.scores?.cvr === 'CRÍTICO' ? 'CRÍTICO' : 'ATENÇÃO', `CVR ${C1?.cvr || '—'}%`),
+      mercado: pickPilar('mercado', 'ATENÇÃO', C3?.forca_dominante || 'Mercado não analisado'),
+      operacao: pickPilar('operacao', C1?.scores?.ops || 'ATENÇÃO', `${C1?.fba || '—'} · BuyBox: ${C1?.bb || '—'}`)
+    },
+    plano_acao: plano.length ? plano : [
+      {
+        prioridade: 'URGENTE',
+        titulo: 'Corrigir causa raiz principal',
+        detalhe: C2?.problema_principal || 'Revisar oferta, página, mercado e operação antes de escalar tráfego.',
+        impacto: 'Evita desperdício de investimento'
+      },
+      {
+        prioridade: 'IMPORTANTE',
+        titulo: 'Reforçar estrutura de conversão',
+        detalhe: 'Melhorar imagens, descrição, prova social, clareza da oferta e confiança percebida.',
+        impacto: 'Aumenta conversão'
+      },
+      {
+        prioridade: 'ESTRATÉGICO',
+        titulo: 'Reposicionar frente ao mercado',
+        detalhe: C3?.gap_competitivo || 'Ajustar posicionamento, preço percebido e diferenciação competitiva.',
+        impacto: 'Melhora competitividade'
+      }
+    ],
+    veredicto: pickString('veredicto', 'Síntese gerada com leitura parcial segura da IA.')
+  };
 }
 
 async function generate() {
@@ -986,7 +1052,7 @@ Use exatamente esta estrutura:
   let result;
 
   try {
-    const raw = await callAI([{ role: 'user', content: prompt }], 3500);
+ const raw = await callAI([{ role: 'user', content: prompt }], 2200);
     console.log('Resposta da IA:', raw);
     result = parseJsonDaIA(raw);
   } catch (e) {
