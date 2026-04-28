@@ -701,7 +701,11 @@ const safeMessages = [
     content: [
       {
         type: "text",
-        text: String(messages?.[0]?.content || "")
+        ttext: String(
+  Array.isArray(messages?.[0]?.content)
+    ? messages[0].content.find(c => c.type === 'text')?.text || ''
+    : messages?.[0]?.content || ''
+)
           .replace(/"/g, '\\"')
           .replace(/\n/g, " ")
           .slice(0, 3000)
@@ -994,7 +998,19 @@ Retorne SOMENTE JSON válido sem markdown:
           raw = await callAI([{ role: 'user', content: prompt + '\n\nObservação técnica: as imagens foram enviadas pelo usuário, mas a chamada visual falhou. Faça a análise pelos campos textuais e pelo Cérebro 1.' }], 1500);
         }
 
-        result = JSON.parse(raw.replace(/```json|```/g, '').trim());
+       const cleanRaw = String(raw || '')
+  .replace(/```json|```/g, '')
+  .trim();
+
+const jsonStart = cleanRaw.indexOf('{');
+const jsonEnd = cleanRaw.lastIndexOf('}');
+
+if (jsonStart === -1 || jsonEnd === -1) {
+  throw new Error('A IA não retornou JSON válido: ' + cleanRaw.slice(0, 200));
+}
+
+const jsonText = cleanRaw.slice(jsonStart, jsonEnd + 1);
+result = JSON.parse(jsonText);
       } catch (e) {
         const rv = parseInt(rev, 10) || 0;
         result = {
