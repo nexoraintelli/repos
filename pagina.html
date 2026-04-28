@@ -962,33 +962,37 @@ ${ctx1}
 Listing: Título: ${titulo || 'N/A'} | Bullets: ${bullets || 'N/A'} | Descrição: ${desc || 'N/A'} | Preço: R$${preco} | Reviews: ${rev} | Rating: ${rat} | Vídeo: ${rbState.video || 'N/A'} | Cupom: ${rbState.cupom || 'N/A'} | ${imgs.length} imagem(ns) enviada(s).
 ${C1?.scores?.ctr === 'CRÍTICO' || C1?.scores?.ctr === 'BAIXO' ? '→ CTR baixo: foque em thumbnail, título e preço percebido.' : ''}
 ${C1?.scores?.cvr === 'CRÍTICO' || C1?.scores?.cvr === 'BAIXO' ? '→ CVR baixo: foque em clareza, prova social e diferenciação.' : ''}
-RESPONDA APENAS EM JSON VÁLIDO.
+RESPONDA APENAS COM UM OBJETO JSON VÁLIDO.
 
 REGRAS OBRIGATÓRIAS:
-- NÃO escreva nenhum texto fora do JSON
-- NÃO use markdown (```json)
-- NÃO explique nada
-- NÃO adicione comentários
-- NÃO use texto antes ou depois
+- Não escreva texto antes do JSON.
+- Não escreva texto depois do JSON.
+- Não use markdown.
+- Não use crase.
+- Não use comentários.
+- Não quebre aspas.
+- Não use vírgula sobrando.
+- Use aspas duplas em todas as chaves e textos.
+- O retorno deve começar com { e terminar com }.
 
-RETORNE EXATAMENTE ESTE FORMATO:
-
+FORMATO EXATO:
 {
   "scores": {
-    "ctr_readiness": number,
-    "cvr_readiness": number,
-    "diferenciacao": number,
-    "confianca": number
+    "ctr_readiness": 0,
+    "cvr_readiness": 0,
+    "diferenciacao": 0,
+    "confianca": 0
   },
-  "problema_principal": "string",
-  "diagnostico": "string",
+  "problema_principal": "",
+  "diagnostico": "",
   "gaps": [
     {
-      "nivel": "CRÍTICO | ALTO | MÉDIO",
-      "descricao": "string"
+      "nivel": "CRÍTICO",
+      "descricao": ""
     }
-  ]
-}
+  ],
+  "prioridades": ["", "", ""]
+}`;
 
       const msgContent = [];
 
@@ -1011,68 +1015,100 @@ RETORNE EXATAMENTE ESTE FORMATO:
 
       msgContent.push({ type: 'text', text: prompt });
 
-   let result;
+let result;
 
-try {
-  let raw = '';
-
-  try {
-    raw = await callAI([{ role: 'user', content: msgContent }], 1500);
-  } catch (imageError) {
-    console.warn('Falha na IA com imagens. Tentando somente texto.', imageError);
-
-    raw = await callAI([
-      {
-        role: 'user',
-        content: prompt + '\n\nObservação técnica: as imagens foram enviadas pelo usuário, mas a chamada visual falhou. Faça a análise pelos campos textuais e pelo Cérebro 1.'
-      }
-    ], 1500);
-  }
-
-  const cleanRaw = String(raw || '')
+function extrairJSON(texto) {
+  const clean = String(texto || '')
     .replace(/```json/g, '')
     .replace(/```/g, '')
     .trim();
 
-  const jsonStart = cleanRaw.indexOf('{');
-  const jsonEnd = cleanRaw.lastIndexOf('}');
+  const inicio = clean.indexOf('{');
+  const fim = clean.lastIndexOf('}');
 
-  if (jsonStart === -1 || jsonEnd === -1) {
-    throw new Error('IA não retornou JSON válido');
+  if (inicio === -1 || fim === -1) {
+    throw new Error('Nenhum JSON encontrado na resposta da IA.');
   }
 
-  const jsonString = cleanRaw.slice(jsonStart, jsonEnd + 1);
+  return clean.slice(inicio, fim + 1)
+    .replace(/,\s*}/g, '}')
+    .replace(/,\s*]/g, ']');
+}
+
+function validarResultado(obj) {
+  return {
+    scores: {
+      ctr_readiness: Number(obj?.scores?.ctr_readiness ?? 40),
+      cvr_readiness: Number(obj?.scores?.cvr_readiness ?? 40),
+      diferenciacao: Number(obj?.scores?.diferenciacao ?? 40),
+      confianca: Number(obj?.scores?.confianca ?? 40)
+    },
+    problema_principal: String(obj?.problema_principal || 'Análise baseada nos dados fornecidos'),
+    diagnostico: String(obj?.diagnostico || 'A IA retornou uma análise sem diagnóstico textual estruturado.'),
+    gaps: Array.isArray(obj?.gaps) ? obj.gaps : [],
+    prioridades: Array.isArray(obj?.prioridades) ? obj.prioridades : [
+      'Revisar clareza da oferta',
+      'Melhorar diferenciação da página',
+      'Fortalecer confiança e prova social'
+    ]
+  };
+}
+
+async function tentarAnaliseIA() {
+  const raw = await callAI([{ role: 'user', content: msgContent }], 1500);
 
   try {
-    result = JSON.parse(jsonString);
-  } catch (parseError) {
-    console.warn('A IA respondeu em formato parcialmente inválido. Conteúdo preservado.');
+    const jsonString = extrairJSON(raw);
+    return validarResultado(JSON.parse(jsonString));
+  } catch (erroParse) {
+    console.warn('Primeira resposta da IA veio fora do padrão. Tentando corrigir JSON.');
 
-    result = {
-      scores: {
-        ctr_readiness: 40,
-        cvr_readiness: 40,
-        diferenciacao: 40,
-        confianca: 40
-      },
-      problema_principal: 'Análise baseada nos dados fornecidos',
-      diagnostico: cleanRaw,
-      gaps: [
-        {
-          nivel: 'ALTO',
-          descricao: 'A IA respondeu em formato parcialmente inválido, mas a análise foi preservada.'
-        }
-      ],
-      prioridades: [
-        'Revisar clareza da oferta',
-        'Melhorar diferenciação da página',
-        'Fortalecer confiança e prova social'
-      ]
-    };
+    const retryPrompt = `
+A resposta abaixo deveria ser JSON válido, mas veio quebrada.
+
+Converta para UM ÚNICO OBJETO JSON VÁLIDO.
+Não adicione texto antes ou depois.
+Não use markdown.
+
+Resposta original:
+${String(raw || '').slice(0, 5000)}
+
+Formato obrigatório:
+{
+  "scores": {
+    "ctr_readiness": 0,
+    "cvr_readiness": 0,
+    "diferenciacao": 0,
+    "confianca": 0
+  },
+  "problema_principal": "",
+  "diagnostico": "",
+  "gaps": [
+    {
+      "nivel": "CRÍTICO",
+      "descricao": ""
+    }
+  ],
+  "prioridades": ["", "", ""]
+}
+`;
+
+    const rawCorrigido = await callAI([
+      {
+        role: 'user',
+        content: retryPrompt
+      }
+    ], 900);
+
+    const jsonStringCorrigido = extrairJSON(rawCorrigido);
+    return validarResultado(JSON.parse(jsonStringCorrigido));
   }
+}
 
+try {
+  result = await tentarAnaliseIA();
 } catch (err) {
-  console.error('Erro geral na análise da IA:', err);
+  console.error('IA falhou mesmo após retry:', err);
 
   result = {
     scores: {
@@ -1082,9 +1118,18 @@ try {
       confianca: 40
     },
     problema_principal: 'Erro ao interpretar resposta da IA',
-    diagnostico: 'A resposta retornada não estava em JSON válido.',
-    gaps: [],
-    prioridades: []
+    diagnostico: 'A IA não retornou uma resposta estruturada nesta tentativa.',
+    gaps: [
+      {
+        nivel: 'ALTO',
+        descricao: 'A análise não pôde ser estruturada automaticamente. Tente novamente com menos texto ou imagens.'
+      }
+    ],
+    prioridades: [
+      'Tentar novamente com menos imagens',
+      'Reduzir textos muito longos no formulário',
+      'Validar se o endpoint /api/chat está respondendo'
+    ]
   };
 }
       const s = result.scores || {};
