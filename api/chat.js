@@ -37,7 +37,7 @@ export default async function handler(req) {
     const body = await req.json();
 
     const safeBody = {
-      model: body.model || 'claude-3-5-haiku-latest',
+    model: body.model || 'claude-sonnet-4-6',
       max_tokens: Math.min(body.max_tokens || 500, 700),
       messages: body.messages || [],
     };
