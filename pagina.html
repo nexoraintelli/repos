@@ -1015,29 +1015,34 @@ try {
   result = JSON.parse(jsonText);
 } catch (e) {
   console.error('Erro ao fazer parse do JSON da IA:', jsonText);
-  throw e;
-}
-        } catch (e) {
-        const rv = parseInt(rev, 10) || 0;
-        result = {
-          scores: {
-            ctr_readiness: rv >= 50 ? 65 : rv >= 20 ? 50 : 35,
-            cvr_readiness: rv >= 100 ? 65 : rv >= 50 ? 52 : 38,
-            diferenciacao: 55,
-            confianca: rv >= 100 ? 68 : rv >= 50 ? 52 : 36
-          },
-          problema_principal: rv < 50
-            ? 'Reviews insuficientes para sustentar conversão'
-            : 'Análise baseada nos dados fornecidos',
-          diagnostico: 'IA indisponível nesta tentativa: ' + e.message,
-          gaps: [{ nivel: 'ALTO', descricao: 'A chamada da IA falhou nesta tentativa. Tente com menos imagens ou imagens mais leves.' }],
-          prioridades: [
-            'Tente novamente com até 4 imagens leves',
-            'Confira se o endpoint /api/chat respondeu no console',
-            'Preencha todos os campos do formulário'
-          ]
-        };
+
+  const getScore = (key, fallback) => {
+    const match = jsonText.match(new RegExp(`"${key}"\\s*:\\s*(\\d+)`));
+    return match ? Number(match[1]) : fallback;
+  };
+
+  result = {
+    scores: {
+      ctr_readiness: getScore('ctr_readiness', 65),
+      cvr_readiness: getScore('cvr_readiness', 65),
+      diferenciacao: getScore('diferenciacao', 55),
+      confianca: getScore('confianca', 68)
+    },
+    problema_principal: 'Análise baseada nos dados fornecidos',
+    diagnostico: jsonText,
+    gaps: [
+      {
+        nivel: 'ALTO',
+        descricao: 'A IA retornou análise em formato parcialmente inválido, mas o conteúdo foi preservado.'
       }
+    ],
+    prioridades: [
+      'Revisar clareza da oferta',
+      'Melhorar diferenciação da página',
+      'Fortalecer confiança e prova social'
+    ]
+  };
+}
 
       const s = result.scores || {};
 
