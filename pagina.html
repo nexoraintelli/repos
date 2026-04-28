@@ -986,60 +986,94 @@ Retorne SOMENTE JSON válido sem markdown:
 
       msgContent.push({ type: 'text', text: prompt });
 
-      let result;
-
-      try {
-        let raw = '';
-
-        try {
-          raw = await callAI([{ role: 'user', content: msgContent }], 1500);
-        } catch (imageError) {
-          console.warn('Falha na IA com imagens. Tentando análise somente com texto.', imageError);
-          raw = await callAI([{ role: 'user', content: prompt + '\n\nObservação técnica: as imagens foram enviadas pelo usuário, mas a chamada visual falhou. Faça a análise pelos campos textuais e pelo Cérebro 1.' }], 1500);
-        }
-
-     const cleanRaw = String(raw || '')
-  .replace(/```json|```/g, '')
-  .trim();
-
-const jsonStart = cleanRaw.indexOf('{');
-const jsonEnd = cleanRaw.lastIndexOf('}');
-
-if (jsonStart === -1 || jsonEnd === -1) {
-  throw new Error('IA não retornou JSON válido: ' + cleanRaw.slice(0, 200));
-}
-
-const jsonText = cleanRaw.slice(jsonStart, jsonEnd + 1);
+     let result;
 
 try {
-  result = JSON.parse(jsonText);
-} catch (e) {
-  console.error('Erro ao fazer parse do JSON da IA:', jsonText);
+  let raw = '';
 
-  const getScore = (key, fallback) => {
-    const match = jsonText.match(new RegExp(`"${key}"\\s*:\\s*(\\d+)`));
-    return match ? Number(match[1]) : fallback;
-  };
+  try {
+    raw = await callAI([{ role: 'user', content: msgContent }], 1500);
+  } catch (imageError) {
+    console.warn('Falha na IA com imagens. Tentando análise somente com texto.', imageError);
+
+    raw = await callAI([
+      {
+        role: 'user',
+        content: prompt + '\n\nObservação técnica: as imagens foram enviadas pelo usuário, mas a chamada visual falhou. Faça a análise pelos campos textuais e pelo Cérebro 1.'
+      }
+    ], 1500);
+  }
+
+  const cleanRaw = String(raw || '')
+    .replace(/```json|```/g, '')
+    .trim();
+
+  const jsonStart = cleanRaw.indexOf('{');
+  const jsonEnd = cleanRaw.lastIndexOf('}');
+
+  if (jsonStart === -1 || jsonEnd === -1) {
+    throw new Error('IA não retornou JSON válido: ' + cleanRaw.slice(0, 200));
+  }
+
+  const jsonText = cleanRaw.slice(jsonStart, jsonEnd + 1);
+
+  try {
+    result = JSON.parse(jsonText);
+  } catch (parseError) {
+    console.error('Erro ao fazer parse do JSON da IA:', jsonText);
+
+    const getScore = (key, fallback) => {
+      const match = jsonText.match(new RegExp(`"${key}"\\s*:\\s*(\\d+)`));
+      return match ? Number(match[1]) : fallback;
+    };
+
+    result = {
+      scores: {
+        ctr_readiness: getScore('ctr_readiness', 65),
+        cvr_readiness: getScore('cvr_readiness', 65),
+        diferenciacao: getScore('diferenciacao', 55),
+        confianca: getScore('confianca', 68)
+      },
+      problema_principal: 'Análise baseada nos dados fornecidos',
+      diagnostico: jsonText,
+      gaps: [
+        {
+          nivel: 'ALTO',
+          descricao: 'A IA retornou análise em formato parcialmente inválido, mas o conteúdo foi preservado.'
+        }
+      ],
+      prioridades: [
+        'Revisar clareza da oferta',
+        'Melhorar diferenciação da página',
+        'Fortalecer confiança e prova social'
+      ]
+    };
+  }
+
+} catch (e) {
+  const rv = parseInt(rev, 10) || 0;
 
   result = {
     scores: {
-      ctr_readiness: getScore('ctr_readiness', 65),
-      cvr_readiness: getScore('cvr_readiness', 65),
-      diferenciacao: getScore('diferenciacao', 55),
-      confianca: getScore('confianca', 68)
+      ctr_readiness: rv >= 50 ? 65 : rv >= 20 ? 50 : 35,
+      cvr_readiness: rv >= 100 ? 65 : rv >= 50 ? 52 : 38,
+      diferenciacao: 55,
+      confianca: rv >= 100 ? 68 : rv >= 50 ? 52 : 36
     },
-    problema_principal: 'Análise baseada nos dados fornecidos',
-    diagnostico: jsonText,
+    problema_principal: rv < 50
+      ? 'Reviews insuficientes para sustentar conversão'
+      : 'Análise baseada nos dados fornecidos',
+    diagnostico: 'IA indisponível nesta tentativa: ' + e.message,
     gaps: [
       {
         nivel: 'ALTO',
-        descricao: 'A IA retornou análise em formato parcialmente inválido, mas o conteúdo foi preservado.'
+        descricao: 'A chamada da IA falhou nesta tentativa. Tente novamente com menos imagens ou imagens mais leves.'
       }
     ],
     prioridades: [
-      'Revisar clareza da oferta',
-      'Melhorar diferenciação da página',
-      'Fortalecer confiança e prova social'
+      'Tente novamente com até 4 imagens leves',
+      'Confira se o endpoint /api/chat respondeu no console',
+      'Preencha todos os campos do formulário'
     ]
   };
 }
