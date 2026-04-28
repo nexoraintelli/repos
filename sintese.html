@@ -888,8 +888,7 @@ O mercado deve ser tratado como fator que intensifica o problema, mas não como 
 A causa principal deve ser interna ao produto: atração, conversão, operação, oferta, página ou mídia.
 
 OBJETIVO:
-Gerar uma síntese executiva curta, objetiva e estratégica, focada no produto analisado.
-
+Gerar uma síntese executiva completa, estratégica e consultiva, com profundidade suficiente para orientar uma decisão real de negócio.
 CÉREBRO 1:
 ${C1 ? JSON.stringify({
   cat: C1.cat,
@@ -913,7 +912,9 @@ CÉREBRO 2:
 ${C2 ? JSON.stringify({
   scores: C2.scores,
   problema_principal: C2.problema_principal,
-  gaps: C2.gaps?.slice(0, 3)
+  diagnostico: C2.diagnostico,
+  gaps: C2.gaps?.slice(0, 5),
+  prioridades: C2.prioridades
 }) : 'não disponível'}
 
 CÉREBRO 3:
@@ -940,7 +941,7 @@ Use exatamente esta estrutura:
   "score_geral": 75,
   "confianca": "ALTA",
   "problema_raiz": "texto curto centrado no produto",
-  "diagnostico_executivo": "texto com no máximo 500 caracteres explicando o problema do produto e como o mercado influencia",
+ "diagnostico_executivo": "texto completo entre 1200 e 1800 caracteres explicando a causa raiz, impacto comercial, leitura dos 3 cérebros e prioridade estratégica",
   "pilares": {
     "atracao": {
       "status": "OK",
@@ -985,7 +986,7 @@ Use exatamente esta estrutura:
   let result;
 
   try {
-    const raw = await callAI([{ role: 'user', content: prompt }], 1200);
+    const raw = await callAI([{ role: 'user', content: prompt }], 3500);
     console.log('Resposta da IA:', raw);
     result = parseJsonDaIA(raw);
   } catch (e) {
