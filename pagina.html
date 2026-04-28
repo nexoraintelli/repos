@@ -706,9 +706,8 @@ const safeMessages = [
     ? messages[0].content.find(c => c.type === 'text')?.text || ''
     : messages?.[0]?.content || ''
 )
-          .replace(/"/g, '\\"')
-          .replace(/\n/g, " ")
-          .slice(0, 3000)
+  .replace(/\n/g, " ")
+  .slice(0, 8000)
       }
     ]
   }
@@ -1023,7 +1022,7 @@ function extrairScore(texto, chave, fallback) {
 }
 
 try {
-  let raw = await callAI([{ role: 'user', content: msgContent }], 1500);
+ let raw = await callAI([{ role: 'user', content: msgContent }], 3000);
 
   const cleanRaw = String(raw || '')
     .replace(/```json/g, '')
