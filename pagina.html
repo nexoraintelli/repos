@@ -695,17 +695,31 @@ const sb = window.supabase.createClient(supabaseUrl, supabaseKey);
   const timeout = setTimeout(() => controller.abort(), 55000);
 
   try {
-   const res = await fetch('/api/chat', {
+const safeMessages = [
+  {
+    role: "user",
+    content: [
+      {
+        type: "text",
+        text: String(messages?.[0]?.content || "")
+          .replace(/"/g, '\\"')
+          .replace(/\n/g, " ")
+          .slice(0, 3000)
+      }
+    ]
+  }
+];
+
+const res = await fetch('/api/chat', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   signal: controller.signal,
   body: JSON.stringify({
     model: 'claude-sonnet-4-6',
     max_tokens: maxTokens || 900,
-    messages: messages
+    messages: safeMessages
   })
-});
-        const data = await res.json().catch(() => ({}));
+});onst data = await res.json().catch(() => ({}));
 
         if (!res.ok || data.error) {
           throw new Error(
