@@ -719,7 +719,8 @@ const res = await fetch('/api/chat', {
     max_tokens: maxTokens || 900,
     messages: safeMessages
   })
-});onst data = await res.json().catch(() => ({}));
+});
+    const data = await res.json().catch(() => ({}));
 
         if (!res.ok || data.error) {
           throw new Error(
