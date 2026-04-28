@@ -1017,10 +1017,6 @@ try {
   console.error('Erro ao fazer parse do JSON da IA:', jsonText);
   throw e;
 }
-
-const jsonText = cleanRaw.slice(jsonStart, jsonEnd + 1);
-result = JSON.parse(jsonText);
-      } catch (e) {
         const rv = parseInt(rev, 10) || 0;
         result = {
           scores: {
