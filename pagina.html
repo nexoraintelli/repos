@@ -701,7 +701,7 @@ const safeMessages = [
     content: [
       {
         type: "text",
-        ttext: String(
+       text: String(
   Array.isArray(messages?.[0]?.content)
     ? messages[0].content.find(c => c.type === 'text')?.text || ''
     : messages?.[0]?.content || ''
