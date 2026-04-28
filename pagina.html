@@ -998,10 +998,25 @@ Retorne SOMENTE JSON válido sem markdown:
           raw = await callAI([{ role: 'user', content: prompt + '\n\nObservação técnica: as imagens foram enviadas pelo usuário, mas a chamada visual falhou. Faça a análise pelos campos textuais e pelo Cérebro 1.' }], 1500);
         }
 
-       const cleanRaw = String(raw || '')
+     const cleanRaw = String(raw || '')
   .replace(/```json|```/g, '')
   .trim();
 
+const jsonStart = cleanRaw.indexOf('{');
+const jsonEnd = cleanRaw.lastIndexOf('}');
+
+if (jsonStart === -1 || jsonEnd === -1) {
+  throw new Error('IA não retornou JSON válido: ' + cleanRaw.slice(0, 200));
+}
+
+const jsonText = cleanRaw.slice(jsonStart, jsonEnd + 1);
+
+try {
+  result = JSON.parse(jsonText);
+} catch (e) {
+  console.error('Erro ao fazer parse do JSON da IA:', jsonText);
+  throw e;
+}
 const jsonStart = cleanRaw.indexOf('{');
 const jsonEnd = cleanRaw.lastIndexOf('}');
 
