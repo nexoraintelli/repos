@@ -1017,6 +1017,7 @@ try {
   console.error('Erro ao fazer parse do JSON da IA:', jsonText);
   throw e;
 }
+        } catch (e) {
         const rv = parseInt(rev, 10) || 0;
         result = {
           scores: {
