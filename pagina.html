@@ -1017,12 +1017,6 @@ try {
   console.error('Erro ao fazer parse do JSON da IA:', jsonText);
   throw e;
 }
-const jsonStart = cleanRaw.indexOf('{');
-const jsonEnd = cleanRaw.lastIndexOf('}');
-
-if (jsonStart === -1 || jsonEnd === -1) {
-  throw new Error('A IA não retornou JSON válido: ' + cleanRaw.slice(0, 200));
-}
 
 const jsonText = cleanRaw.slice(jsonStart, jsonEnd + 1);
 result = JSON.parse(jsonText);
