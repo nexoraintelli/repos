@@ -1090,13 +1090,13 @@ try {
 }
 sb
   .from('brain_results')
-  .insert({
+  .upsert({
     brain_code: 'c2',
     brain_name: 'Cérebro 2 - Análise de Página',
     score: result?.scores?.cvr_readiness || 0,
    diagnostic_id: C1?.diagnostic_id || localStorage.getItem('nx_diagnostic_id') || null,
     result_data: result
-  })
+ }, { onConflict: 'diagnostic_id,brain_code' })
   .then(({ data, error }) => {
     if (error) {
       console.error('Erro ao salvar Cérebro 2 no Supabase:', error);
