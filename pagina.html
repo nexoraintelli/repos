@@ -1017,98 +1017,61 @@ FORMATO EXATO:
 
 let result;
 
-function extrairJSON(texto) {
-  const clean = String(texto || '')
+function extrairScore(texto, chave, fallback) {
+  const match = String(texto || '').match(new RegExp(`"${chave}"\\s*:\\s*(\\d+)`));
+  return match ? Number(match[1]) : fallback;
+}
+
+try {
+  let raw = await callAI([{ role: 'user', content: msgContent }], 1500);
+
+  const cleanRaw = String(raw || '')
     .replace(/```json/g, '')
     .replace(/```/g, '')
     .trim();
 
-  const inicio = clean.indexOf('{');
-  const fim = clean.lastIndexOf('}');
+  const jsonStart = cleanRaw.indexOf('{');
+  const jsonEnd = cleanRaw.lastIndexOf('}');
 
-  if (inicio === -1 || fim === -1) {
-    throw new Error('Nenhum JSON encontrado na resposta da IA.');
-  }
+  if (jsonStart !== -1 && jsonEnd !== -1) {
+    const jsonString = cleanRaw
+      .slice(jsonStart, jsonEnd + 1)
+      .replace(/,\s*}/g, '}')
+      .replace(/,\s*]/g, ']');
 
-  return clean.slice(inicio, fim + 1)
-    .replace(/,\s*}/g, '}')
-    .replace(/,\s*]/g, ']');
-}
+    try {
+      result = JSON.parse(jsonString);
+    } catch (parseError) {
+      console.warn('JSON imperfeito. Usando leitura parcial da IA.');
 
-function validarResultado(obj) {
-  return {
-    scores: {
-      ctr_readiness: Number(obj?.scores?.ctr_readiness ?? 40),
-      cvr_readiness: Number(obj?.scores?.cvr_readiness ?? 40),
-      diferenciacao: Number(obj?.scores?.diferenciacao ?? 40),
-      confianca: Number(obj?.scores?.confianca ?? 40)
-    },
-    problema_principal: String(obj?.problema_principal || 'Análise baseada nos dados fornecidos'),
-    diagnostico: String(obj?.diagnostico || 'A IA retornou uma análise sem diagnóstico textual estruturado.'),
-    gaps: Array.isArray(obj?.gaps) ? obj.gaps : [],
-    prioridades: Array.isArray(obj?.prioridades) ? obj.prioridades : [
-      'Revisar clareza da oferta',
-      'Melhorar diferenciação da página',
-      'Fortalecer confiança e prova social'
-    ]
-  };
-}
-
-async function tentarAnaliseIA() {
-  const raw = await callAI([{ role: 'user', content: msgContent }], 1500);
-
-  try {
-    const jsonString = extrairJSON(raw);
-    return validarResultado(JSON.parse(jsonString));
-  } catch (erroParse) {
-    console.warn('Primeira resposta da IA veio fora do padrão. Tentando corrigir JSON.');
-
-    const retryPrompt = `
-A resposta abaixo deveria ser JSON válido, mas veio quebrada.
-
-Converta para UM ÚNICO OBJETO JSON VÁLIDO.
-Não adicione texto antes ou depois.
-Não use markdown.
-
-Resposta original:
-${String(raw || '').slice(0, 5000)}
-
-Formato obrigatório:
-{
-  "scores": {
-    "ctr_readiness": 0,
-    "cvr_readiness": 0,
-    "diferenciacao": 0,
-    "confianca": 0
-  },
-  "problema_principal": "",
-  "diagnostico": "",
-  "gaps": [
-    {
-      "nivel": "CRÍTICO",
-      "descricao": ""
+      result = {
+        scores: {
+          ctr_readiness: extrairScore(jsonString, 'ctr_readiness', 40),
+          cvr_readiness: extrairScore(jsonString, 'cvr_readiness', 40),
+          diferenciacao: extrairScore(jsonString, 'diferenciacao', 40),
+          confianca: extrairScore(jsonString, 'confianca', 40)
+        },
+        problema_principal: 'Análise baseada nos dados fornecidos',
+        diagnostico: cleanRaw,
+        gaps: [
+          {
+            nivel: 'ALTO',
+            descricao: 'A IA retornou uma análise válida, mas em formato parcialmente fora do padrão JSON.'
+          }
+        ],
+        prioridades: [
+          'Revisar clareza da oferta',
+          'Melhorar diferenciação da página',
+          'Fortalecer confiança e prova social'
+        ]
+      };
     }
-  ],
-  "prioridades": ["", "", ""]
-}
-`;
-
-    const rawCorrigido = await callAI([
-      {
-        role: 'user',
-        content: retryPrompt
-      }
-    ], 900);
-
-    const jsonStringCorrigido = extrairJSON(rawCorrigido);
-    return validarResultado(JSON.parse(jsonStringCorrigido));
+  } else {
+    throw new Error('Nenhum JSON encontrado');
   }
-}
 
-try {
-  result = await tentarAnaliseIA();
 } catch (err) {
-  console.error('IA falhou mesmo após retry:', err);
+  console.warn('IA indisponível ou resposta inválida. Usando fallback seguro.', err);
 
   result = {
     scores: {
